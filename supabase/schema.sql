@@ -330,3 +330,24 @@ DROP POLICY IF EXISTS fest_docs_upload ON storage.objects;
 CREATE POLICY fest_docs_upload ON storage.objects
     FOR INSERT TO anon, authenticated
     WITH CHECK (bucket_id = 'fest-docs');
+
+-- ============================================================================
+-- 15. OLVASHATO NEZET: Problemafal (SOS) a Supabase feluleten
+-- Csak olvasasra; az app tovabbra is a fest_records tablaba ir.
+-- ============================================================================
+CREATE OR REPLACE VIEW fest_incidents WITH (security_invoker = true) AS
+SELECT
+    id,
+    data->>'severity'                 AS severity,
+    data->>'location'                 AS location,
+    data->>'text'                     AS text,
+    data->>'reporter'                 AS reporter,
+    data->>'time'                     AS reported_time,
+    COALESCE((data->>'isResolved')::boolean, false) AS is_resolved,
+    data->>'resolvedBy'               AS resolved_by,
+    data->>'resolvedAt'               AS resolved_time,
+    created_at,
+    updated_at
+FROM fest_records
+WHERE collection = 'incidents'
+ORDER BY created_at DESC;
