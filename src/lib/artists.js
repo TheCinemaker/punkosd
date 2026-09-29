@@ -13,7 +13,7 @@ export function findArtist(artists, item) {
 
 export function hasRider(artist) {
   if (!artist) return false;
-  return Boolean(docUrl(artist.techRiderDoc)) || (artist.techRider || '').startsWith('Jóváhagyva');
+  return Boolean(artist.riderApproved) || Boolean(docUrl(artist.techRiderDoc)) || (artist.techRider || '').startsWith('Jóváhagyva');
 }
 
 export function isContractSigned(artist) {

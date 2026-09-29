@@ -61,6 +61,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
       contractStatus: formData.get('contractStatus'),
       paymentStatus: formData.get('paymentStatus'),
       techRider: formData.get('techRider'),
+      riderApproved: formData.get('riderApproved') === 'on',
       hospitality: formData.get('hospitality'),
       diet: formData.get('diet'),
       accommodation: formData.get('accommodation'),
@@ -369,7 +370,11 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                   <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                     Technical Rider Igények (Csatornák, mikrofonok, áram)
                   </label>
-                  <textarea name="techRider" defaultValue={selectedArtist.techRider} rows={2} style={{ width: '100%' }} />
+                  <textarea name="techRider" defaultValue={selectedArtist.techRider} rows={3} style={{ width: '100%' }} />
+                  <label className="checkbox-row" style={{ marginTop: '8px' }}>
+                    <input type="checkbox" name="riderApproved" defaultChecked={Boolean(selectedArtist.riderApproved)} />
+                    Rider egyeztetve, jóváhagyva
+                  </label>
                 </div>
 
                 <div className="grid-2">

@@ -21,7 +21,9 @@ const ARTIST_FIELDS = {
   diet: 'diet',
   techRiderDoc: 'techRiderDoc',
   contractDoc: 'contractDoc',
-  stagePlotDoc: 'stagePlotDoc'
+  stagePlotDoc: 'stagePlotDoc',
+  techRider: 'techRider',
+  riderApproved: 'riderApproved'
 };
 const DOC_FIELDS = ['techRiderDoc', 'contractDoc', 'stagePlotDoc'];
 
@@ -127,6 +129,7 @@ export function ScheduleView({
     const out = {};
     for (const [k, v] of fd.entries()) out[k] = v;
     out.featured = fd.get('featured') === 'on';
+    out.riderApproved = fd.get('riderApproved') === 'on';
     return out;
   };
 
@@ -174,6 +177,8 @@ export function ScheduleView({
       email: f.contactEmail,
       hospitality: f.hospitality,
       diet: f.diet,
+      techRider: f.techRider,
+      riderApproved: f.riderApproved,
       techRiderDoc: selectedItem.techRiderDoc || null,
       contractDoc: selectedItem.contractDoc || null,
       stagePlotDoc: selectedItem.stagePlotDoc || null
@@ -196,7 +201,6 @@ export function ScheduleView({
         id: artistId,
         name: artistName,
         paymentStatus: 'Fizetésre vár',
-        techRider: 'Egyeztetés alatt',
         accommodation: 'Egyeztetés alatt',
         passes: 2,
         ...artistData
@@ -645,6 +649,9 @@ export function ScheduleView({
                 </div>
                 <div className="field-hint">Éjfél utáni idő is megadható, pl. 23:30 - 02:00 (a napváltás 06:00-kor van).</div>
 
+                <div className="section-box">
+                  <h4 className="section-title"><FileText size={16} color="#2563eb" /> Rider és dokumentumok</h4>
+  
                 <div className="grid-2">
                   <div>
                     <label className="field-label">Felelős (stage manager)</label>
@@ -664,9 +671,7 @@ export function ScheduleView({
                   <Star size={15} color="#f59e0b" /> Kiemelt program (megjelenik a nap kiemelései között)
                 </label>
 
-                <div className="section-box">
-                  <h4 className="section-title"><FileText size={16} color="#2563eb" /> Fellépő dokumentumai</h4>
-                  <div className="grid-3">
+                <div className="grid-3">
                     <DocSlot
                       label="Technikai rider"
                       doc={selectedItem.techRiderDoc}
