@@ -1,5 +1,5 @@
 -- ============================================================================
--- KTSZE VILAG- ES UTCAZENEI FESZTIVAL 2026 (PUNKOSD)
+-- KTSZE VILAG- ES UTCAZENEI FESZTIVAL 2027 (PUNKOSD)
 -- PROGRAM MANAGEMENT & PRODUCTION SCHEMA
 -- Prefix: fest_ (Teljes szeparalas a meglevo KTSZE tablakhoz kepest)
 -- ============================================================================

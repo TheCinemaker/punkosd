@@ -3,12 +3,12 @@ export const FESTIVAL = {
   name: 'KTSZE Világ- és Utcazenei Fesztivál',
   shortName: 'KTSZE Fesztivál',
   place: 'Kőszeg',
-  year: 2026,
+  year: 2027,
   days: [
-    { name: 'Péntek', date: '2026-05-22' },
-    { name: 'Szombat', date: '2026-05-23' },
-    { name: 'Vasárnap', date: '2026-05-24' },
-    { name: 'Hétfő', date: '2026-05-25' }
+    { name: 'Péntek', date: '2027-05-14' },
+    { name: 'Szombat', date: '2027-05-15' },
+    { name: 'Vasárnap', date: '2027-05-16' },
+    { name: 'Hétfő', date: '2027-05-17' }
   ],
   // 06:00 előtt még az előző fesztiválnaphoz tartozik minden (pl. péntek éjjel 02:00)
   dayStartsAtHour: 6

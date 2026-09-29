@@ -1,3 +1,4 @@
+import { FESTIVAL } from './config';
 import * as XLSX from 'xlsx';
 
 export function exportFestivalToExcel({ schedule, artists, contractors, vendors, tasks, shoppingList, inventory, tracklist, budget, logs }) {
@@ -5,7 +6,7 @@ export function exportFestivalToExcel({ schedule, artists, contractors, vendors,
 
   // 1. Pályázati Költségvetés
   const budgetRows = [
-    ['KOSZEGI VILAG- ES UTCAZENEI FESZTIVAL 2026 — PALYAZATI KOLTSEGVETES'],
+    [`KOSZEGI VILAG- ES UTCAZENEI FESZTIVAL ${FESTIVAL.year} — PALYAZATI KOLTSEGVETES`],
     ['Palyazo: KTSZE | Helyszin: Koszeg Belvaros | Idoszak: Punkosd (4 nap)'],
     [],
     ['Kod', 'Fokategoria', 'Tetel Pontos Megnevezese', 'Mennyiseg', 'Egyseg', 'Egysegar (Ft)', 'Osszkoltseg (Ft)', 'Tamogatas (Ft)', 'KTSZE Onresz (Ft)', 'Szallito / Partner', 'Bizonylatszam', 'Statusz']

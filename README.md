@@ -1,5 +1,5 @@
-# KTSZE Punkosdi Vilag- es Utcazenei Fesztival 2026
-**Koszeg -- 2026. majus 22-25. (Punkosd)**
+# KTSZE Punkosdi Vilag- es Utcazenei Fesztival 2027
+**Koszeg -- 2027. majus 14-17. (Punkosd)**
 
 Operativ fesztivalmenedzsment, fellepo-koordinacio, helyszinlogisztika es palyazati elszamolasi rendszer a Koszegi Turisztikai Szovetseg Egyesulet (KTSZE) szamara.
 

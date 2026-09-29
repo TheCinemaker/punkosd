@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, Check, X } from 'lucide-react';
 import { uid } from '../lib/store';
+import { FESTIVAL } from '../lib/config';
 
 export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'completed'
@@ -387,7 +388,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Határidő Dátuma
                     </label>
-                    <input type="date" name="dueDate" defaultValue="2026-05-22" style={{ width: '100%' }} />
+                    <input type="date" name="dueDate" defaultValue={FESTIVAL.days[0].date} style={{ width: '100%' }} />
                   </div>
                 </div>
 
