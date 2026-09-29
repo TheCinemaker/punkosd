@@ -62,7 +62,7 @@ Operativ fesztivalmenedzsment, fellepo-koordinacio, helyszinlogisztika es palyaz
 ## Technologiai Stack
 
 - **Frontend**: React 19, Vite 6, Lucide Icons, SheetJS (`xlsx`). Telepitheto PWA (offline is betolt).
-- **Adatbazis**: Supabase. Az app a `fest_records` tablat hasznalja (soronkenti mentes, Realtime elo szinkron, offline kimeno sor). A fajlok (riderek, szerzodesek, szamlak) a `fest-docs` Storage bucketbe kerulnek. Lasd `supabase/schema.sql` 13-14. pont.
+- **Adatbazis**: Supabase. Az app a `fest_records` tablat hasznalja (soronkenti mentes, Realtime elo szinkron, offline kimeno sor). A fajlok (riderek, szerzodesek, szamlak) a `fest-docs` Storage bucketbe kerulnek. Lasd `supabase/schema.sql` (az egesz fajl lefuttathato).
 - **Supabase nelkul**: helyi mod (csak az adott eszkozon, bongeszofulek kozott szinkronizal).
 - **Kornyezeti valtozok**: lasd `.env.example` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MASTER_PIN`).
 - **Fesztival datumai**: `src/lib/config.js` — uj evnel csak ezt kell atirni.
