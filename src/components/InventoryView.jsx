@@ -107,7 +107,7 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', flexWrap: 'wrap' }}>
           {categories.map(cat => {
             const isAll = cat === 'Összes kategória';
             const isActive = isAll ? selectedCat === 'all' : selectedCat === cat;
@@ -116,13 +116,14 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
                 key={cat}
                 onClick={() => setSelectedCat(isAll ? 'all' : cat)}
                 style={{
-                  padding: '6px 12px',
+                  padding: '7px 14px',
                   borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: isActive ? '700' : '500',
-                  backgroundColor: isActive ? '#2563eb' : '#1e293b',
-                  color: isActive ? '#ffffff' : '#94a3b8',
-                  border: '1px solid #27354d',
+                  fontSize: '12.5px',
+                  fontWeight: isActive ? '800' : '600',
+                  backgroundColor: isActive ? '#2563eb' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#0f172a',
+                  border: '1.5px solid',
+                  borderColor: isActive ? '#1d4ed8' : '#cbd5e1',
                   whiteSpace: 'nowrap',
                   cursor: 'pointer'
                 }}
@@ -136,9 +137,9 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
         <button
           onClick={handleOpenAdd}
           className="btn-primary"
-          style={{ padding: '7px 14px', fontSize: '12.5px' }}
+          style={{ padding: '8px 16px', fontSize: '13px' }}
         >
-          <Plus size={15} /> Új Készlet / Kellék Tétel
+          <Plus size={16} /> Új Készlet / Kellék Tétel
         </button>
       </div>
 
@@ -160,33 +161,33 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nem található eszköz a keresési feltételekkel.
                 </td>
               </tr>
             ) : (
               filtered.map(item => (
                 <tr key={item.id} onClick={() => handleOpenEdit(item)} style={{ cursor: 'pointer' }}>
-                  <td style={{ fontWeight: '700', color: '#38bdf8', fontFamily: 'JetBrains Mono', fontSize: '12.5px', whiteSpace: 'nowrap' }}>
+                  <td style={{ fontWeight: '800', color: '#1d4ed8', fontFamily: 'JetBrains Mono', fontSize: '12.5px', whiteSpace: 'nowrap' }}>
                     {item.code}
                   </td>
-                  <td style={{ fontWeight: '600', color: '#f8fafc' }}>
+                  <td style={{ fontWeight: '700', color: '#000000', fontSize: '13.5px' }}>
                     {item.name}
                   </td>
                   <td>
                     <span className="badge badge-gray">{item.category}</span>
                   </td>
-                  <td style={{ fontWeight: '700', color: '#fbbf24', whiteSpace: 'nowrap' }}>
+                  <td style={{ fontWeight: '800', color: '#000000', whiteSpace: 'nowrap' }}>
                     {item.qty} {item.unit}
                   </td>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#cbd5e1', fontSize: '12px' }}>
-                      <MapPin size={12} color="#38bdf8" /> {item.location}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#0f172a', fontSize: '12.5px', fontWeight: '500' }}>
+                      <MapPin size={13} color="#2563eb" /> {item.location}
                     </div>
                   </td>
                   <td>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px' }}>
-                      <UserCheck size={12} color="#60a5fa" /> {item.responsible}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12.5px', color: '#0f172a', fontWeight: '600' }}>
+                      <UserCheck size={13} color="#2563eb" /> {item.responsible}
                     </div>
                   </td>
                   <td>
@@ -198,16 +199,16 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
                     <button
                       onClick={(e) => { e.stopPropagation(); handleOpenEdit(item); }}
                       title="Szerkesztés"
-                      style={{ color: '#38bdf8', padding: '4px 6px' }}
+                      style={{ color: '#2563eb', padding: '4px 6px' }}
                     >
-                      <Edit2 size={15} />
+                      <Edit2 size={16} />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(item.id, item.code, item.name); }}
                       title="Törlés"
-                      style={{ color: '#f87171', padding: '4px 6px', marginLeft: '4px' }}
+                      style={{ color: '#dc2626', padding: '4px 6px', marginLeft: '4px' }}
                     >
-                      <Trash2 size={15} />
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
@@ -222,22 +223,22 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
                 {isNew ? 'Új Készlet / Kellék Rögzítése' : `${selectedItem.code} — ${selectedItem.name}`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Azonosító Kód (pl. ZSAK-01, KUKA-02)
                     </label>
                     <input name="code" defaultValue={selectedItem.code} required style={{ width: '100%', fontFamily: 'JetBrains Mono' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kategória
                     </label>
                     <select name="category" defaultValue={selectedItem.category} style={{ width: '100%' }}>
@@ -247,36 +248,36 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                    Tétel Pontos Megnevezése
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                    Eszköz / Tétel Megnevezése *
                   </label>
-                  <input name="name" defaultValue={selectedItem.name} placeholder="pl. 120L Extra Erős Zsákok (Kék Kommunális)" required style={{ width: '100%' }} />
+                  <input name="name" defaultValue={selectedItem.name} placeholder="pl. 120L Gurulós Szemetes Kuka" required style={{ width: '100%' }} />
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Mennyiség
                     </label>
                     <input type="number" name="qty" defaultValue={selectedItem.qty} required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                      Mértékegység
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Egység
                     </label>
-                    <input name="unit" defaultValue={selectedItem.unit} placeholder="pl. db, tekercs, méter" required style={{ width: '100%' }} />
+                    <input name="unit" defaultValue={selectedItem.unit} placeholder="db, tekercs, m..." required style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                      Helyszíni Zóna / Telepítési Pont
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Helyszíni Zóna / Elhelyezés
                     </label>
-                    <input name="location" defaultValue={selectedItem.location} placeholder="pl. Jurisics tér Ételek utcája" required style={{ width: '100%' }} />
+                    <input name="location" defaultValue={selectedItem.location} placeholder="pl. Fő tér nagyszínpad mögött" required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Felelős Személy
                     </label>
                     <input name="responsible" defaultValue={selectedItem.responsible} required style={{ width: '100%' }} />
@@ -284,16 +285,15 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                    Státusz
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                    Állapot / Státusz
                   </label>
                   <select name="status" defaultValue={selectedItem.status} style={{ width: '100%' }}>
                     <option value="Raktáron">Raktáron</option>
+                    <option value="Ellenőrizve">Ellenőrizve</option>
                     <option value="Kiadva">Kiadva</option>
                     <option value="Telepítve">Telepítve</option>
-                    <option value="Használatban">Használatban</option>
-                    <option value="Ellenőrizve">Ellenőrizve</option>
-                    <option value="Hiányzik / Fogyóban">Hiányzik / Fogyóban</option>
+                    <option value="Karbantartás alatt">Karbantartás alatt</option>
                   </select>
                 </div>
               </div>

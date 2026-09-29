@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Building2, Plus, Edit2, Trash2, Phone, Mail, FileText, 
-  Download, Upload, CheckCircle2, AlertCircle, DollarSign, 
-  ShieldCheck, Wrench, Truck, Zap, HeartPulse, Sparkles, X, User
+  Download, Upload, CheckCircle2, DollarSign, X
 } from 'lucide-react';
 
 export function ContractorsView({ contractors, onUpdateContractors, onAddLog, currentUser, searchQuery }) {
@@ -150,7 +149,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
   };
 
   const handleDownloadDoc = (fileName) => {
-    alert(`Letoltes elinditva: ${fileName}\n(Helyi munkamenetbol elokeszitve)`);
+    alert(`Letöltés előkészítve: ${fileName}`);
   };
 
   return (
@@ -162,38 +161,38 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Building2 size={14} color="#38bdf8" /> Szerződött Szolgáltatók
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#1e40af', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Building2 size={15} color="#2563eb" /> Szerződött Szolgáltatók
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#38bdf8', marginTop: '4px' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#000000', marginTop: '4px' }}>
             {contractors.length} cég / partner
           </div>
-          <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Technika, hulladék, villany, mentő, őrzés, WC
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <DollarSign size={14} color="#fbbf24" /> Alvállalkozói Keretösszeg
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#92400e', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <DollarSign size={15} color="#b45309" /> Alvállalkozói Keretösszeg
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#fbbf24', marginTop: '4px' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#b45309', marginTop: '4px' }}>
             {totalContractedHuf.toLocaleString()} Ft
           </div>
-          <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Összes leszerződött és tervezett költség
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#94a3b8', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <FileText size={14} color="#34d399" /> Szerződések Állapota
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#14532d', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <FileText size={15} color="#059669" /> Szerződések Állapota
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#34d399', marginTop: '4px' }}>
-            {signedCount} aláírva <span style={{ fontSize: '14px', color: '#f87171', fontWeight: '700' }}>({pendingCount} hiányzik)</span>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#047857', marginTop: '4px' }}>
+            {signedCount} aláírva <span style={{ fontSize: '14px', color: '#dc2626', fontWeight: '700' }}>({pendingCount} folyamatban)</span>
           </div>
-          <div style={{ fontSize: '11px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             PDF csatolmányok rendelkezésre állása
           </div>
         </div>
@@ -209,7 +208,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
         marginBottom: '16px'
       }}>
         {/* Category Pills */}
-        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px', maxWidth: '85%' }}>
+        <div style={{ display: 'flex', gap: '6px', overflowX: 'auto', paddingBottom: '4px', maxWidth: '85%', flexWrap: 'wrap' }}>
           {categories.map(cat => {
             const isAll = cat === 'Összes szolgáltató';
             const isActive = isAll ? selectedCategory === 'all' : selectedCategory === cat;
@@ -218,14 +217,14 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                 key={cat}
                 onClick={() => setSelectedCategory(isAll ? 'all' : cat)}
                 style={{
-                  padding: '6px 12px',
+                  padding: '7px 14px',
                   borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: isActive ? '700' : '500',
-                  backgroundColor: isActive ? '#2563eb' : '#1e293b',
-                  color: isActive ? '#ffffff' : '#94a3b8',
-                  border: '1px solid',
-                  borderColor: isActive ? '#3b82f6' : '#27354d',
+                  fontSize: '12.5px',
+                  fontWeight: isActive ? '800' : '600',
+                  backgroundColor: isActive ? '#2563eb' : '#ffffff',
+                  color: isActive ? '#ffffff' : '#0f172a',
+                  border: '1.5px solid',
+                  borderColor: isActive ? '#1d4ed8' : '#cbd5e1',
                   whiteSpace: 'nowrap',
                   cursor: 'pointer'
                 }}
@@ -239,9 +238,9 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
         <button
           onClick={handleOpenAdd}
           className="btn-primary"
-          style={{ padding: '7px 14px', fontSize: '12.5px' }}
+          style={{ padding: '8px 16px', fontSize: '13px' }}
         >
-          <Plus size={15} /> Új Szolgáltató
+          <Plus size={16} /> Új Szolgáltató
         </button>
       </div>
 
@@ -265,7 +264,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={10} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                <td colSpan={10} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nem található szolgáltató ezen feltételekkel.
                 </td>
               </tr>
@@ -278,32 +277,32 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
 
                 return (
                   <tr key={c.id} onClick={() => handleOpenEdit(c)} style={{ cursor: 'pointer' }}>
-                    <td style={{ fontWeight: '700', color: '#38bdf8', fontFamily: 'JetBrains Mono', fontSize: '12px' }}>
+                    <td style={{ fontWeight: '800', color: '#1d4ed8', fontFamily: 'JetBrains Mono', fontSize: '12.5px' }}>
                       {c.code}
                     </td>
                     <td>
-                      <div style={{ fontWeight: '700', color: '#f8fafc' }}>
+                      <div style={{ fontWeight: '700', color: '#000000', fontSize: '13.5px' }}>
                         {c.companyName}
                       </div>
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                      <div style={{ fontSize: '11.5px', color: '#475569' }}>
                         Szla: {c.invoiceNumber}
                       </div>
                     </td>
                     <td>
                       <span className="badge badge-gray">{c.category}</span>
                     </td>
-                    <td style={{ fontSize: '12px', color: '#cbd5e1', maxWidth: '280px' }}>
+                    <td style={{ fontSize: '12.5px', color: '#1e293b', maxWidth: '280px', fontWeight: '500' }}>
                       {c.service}
                     </td>
                     <td>
-                      <div style={{ fontWeight: '600', fontSize: '12px', color: '#f8fafc' }}>
+                      <div style={{ fontWeight: '700', fontSize: '12.5px', color: '#0f172a' }}>
                         {c.contactName}
                       </div>
-                      <div style={{ fontSize: '11px', color: '#38bdf8' }}>
+                      <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}>
                         {c.phone}
                       </div>
                     </td>
-                    <td style={{ fontWeight: '700', color: '#fbbf24', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontWeight: '800', color: '#b45309', textAlign: 'right', whiteSpace: 'nowrap' }}>
                       {c.feeHuf ? `${c.feeHuf.toLocaleString()} Ft` : '-'}
                     </td>
                     <td>
@@ -331,16 +330,16 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                       <button
                         onClick={(e) => { e.stopPropagation(); handleOpenEdit(c); }}
                         title="Adatlap & Doksik szerkesztése"
-                        style={{ color: '#38bdf8', padding: '4px 6px' }}
+                        style={{ color: '#2563eb', padding: '4px 6px' }}
                       >
-                        <Edit2 size={15} />
+                        <Edit2 size={16} />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(c.id, c.companyName); }}
                         title="Törlés"
-                        style={{ color: '#f87171', padding: '4px 6px', marginLeft: '4px' }}
+                        style={{ color: '#dc2626', padding: '4px 6px', marginLeft: '4px' }}
                       >
-                        <Trash2 size={15} />
+                        <Trash2 size={16} />
                       </button>
                     </td>
                   </tr>
@@ -357,17 +356,17 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
           <div className="modal-card" style={{ maxWidth: '780px' }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Building2 size={20} color="#38bdf8" />
+                <Building2 size={20} color="#2563eb" />
                 <div>
-                  <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
+                  <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
                     {isNew ? 'Új Szerződött Szolgáltató Felvétele' : `${selectedContractor.companyName} — Adatlap & Doksik`}
                   </h2>
-                  <p style={{ fontSize: '11px', color: '#94a3b8' }}>
-                    Szolgáltatási leírás, árak, számlaszám és letölthető / feltölthető dokumentumok
+                  <p style={{ fontSize: '12px', color: '#475569' }}>
+                    Szolgáltatási leírás, árak, számlaszám és csatolmányok
                   </p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleSaveModal}>
@@ -376,14 +375,14 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                 {/* Row 1: Code, Company, Category */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Azonosító Kód
                     </label>
                     <input name="code" defaultValue={selectedContractor.code} required style={{ width: '100%', fontFamily: 'JetBrains Mono' }} />
                   </div>
                   <div style={{ gridColumn: 'span 2' }}>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
-                      Cég / Vállalkozás Neve
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Cég / Vállalkozás Neve *
                     </label>
                     <input name="companyName" defaultValue={selectedContractor.companyName} placeholder="pl. Stage Pro Hungary Kft." required style={{ width: '100%' }} />
                   </div>
@@ -392,7 +391,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                 {/* Row 2: Category and Service description */}
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szakterület / Kategória
                     </label>
                     <select name="category" defaultValue={selectedContractor.category} style={{ width: '100%' }}>
@@ -400,8 +399,8 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
-                      Megrendelt Szolgáltatás / Munkakör
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Megrendelt Szolgáltatás / Munkakör *
                     </label>
                     <input name="service" defaultValue={selectedContractor.service} placeholder="pl. 10x8m fedett nagyszínpad és hangtechnika" required style={{ width: '100%' }} />
                   </div>
@@ -410,19 +409,19 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                 {/* Row 3: Contacts */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kapcsolattartó Neve
                     </label>
                     <input name="contactName" defaultValue={selectedContractor.contactName} placeholder="pl. Kovács Péter" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Telefonszám
                     </label>
                     <input name="phone" defaultValue={selectedContractor.phone} placeholder="+36 30 123 4567" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       E-mail cím
                     </label>
                     <input name="email" defaultValue={selectedContractor.email} placeholder="iroda@partner.hu" style={{ width: '100%' }} />
@@ -432,13 +431,13 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                 {/* Row 4: Financials */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szerződéses Összeg (Bruttó Ft)
                     </label>
                     <input type="number" name="feeHuf" defaultValue={selectedContractor.feeHuf} placeholder="pl. 3900000" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szerződés Státusza
                     </label>
                     <select name="contractStatus" defaultValue={selectedContractor.contractStatus} style={{ width: '100%' }}>
@@ -448,7 +447,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Fizetési Állapot
                     </label>
                     <select name="paymentStatus" defaultValue={selectedContractor.paymentStatus} style={{ width: '100%' }}>
@@ -462,119 +461,119 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
 
                 {/* DOCUMENT MANAGEMENT SECTION (Contract, Quote, Completion) */}
                 <div style={{
-                  backgroundColor: '#0d1420',
-                  border: '1px solid #27354d',
+                  backgroundColor: '#f8fafc',
+                  border: '1.5px solid #cbd5e1',
                   borderRadius: '8px',
-                  padding: '14px'
+                  padding: '16px'
                 }}>
-                  <h4 style={{ fontSize: '12.5px', fontWeight: '700', color: '#38bdf8', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <FileText size={15} /> Szerződés és Számla Dokumentumtár
+                  <h4 style={{ fontSize: '13px', fontWeight: '800', color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileText size={16} color="#2563eb" /> Szerződés és Számla Dokumentumtár
                   </h4>
 
                   <div className="grid-3">
                     {/* Contract PDF */}
-                    <div style={{ backgroundColor: '#182234', border: '1px solid #27354d', borderRadius: '6px', padding: '10px' }}>
-                      <div style={{ fontSize: '11.5px', fontWeight: '700', color: '#f8fafc', marginBottom: '4px' }}>
+                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                         Hivatalos Szerződés
                       </div>
                       {selectedContractor.contractDoc ? (
                         <div>
-                          <div style={{ fontSize: '11px', color: '#34d399', marginBottom: '6px', wordBreak: 'break-all' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
                             {selectedContractor.contractDoc}
                           </div>
                           <button
                             type="button"
                             onClick={() => handleDownloadDoc(selectedContractor.contractDoc)}
                             className="btn-secondary"
-                            style={{ fontSize: '11px', padding: '4px 8px', width: '100%', justifyContent: 'center' }}
+                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
                           >
-                            <Download size={12} /> Letöltés
+                            <Download size={13} /> Letöltés
                           </button>
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '11px', color: '#f87171', marginBottom: '6px' }}>
+                          <div style={{ fontSize: '12px', color: '#dc2626', marginBottom: '8px', fontWeight: '600' }}>
                             Nincs feltöltve
                           </div>
                           <button
                             type="button"
                             onClick={() => handleUploadDoc('contractDoc')}
                             className="btn-primary"
-                            style={{ fontSize: '11px', padding: '4px 8px', width: '100%', justifyContent: 'center' }}
+                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
                           >
-                            <Upload size={12} /> PDF Feltöltése
+                            <Upload size={13} /> PDF Feltöltése
                           </button>
                         </div>
                       )}
                     </div>
 
                     {/* Quote / Calculation PDF */}
-                    <div style={{ backgroundColor: '#182234', border: '1px solid #27354d', borderRadius: '6px', padding: '10px' }}>
-                      <div style={{ fontSize: '11.5px', fontWeight: '700', color: '#f8fafc', marginBottom: '4px' }}>
+                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                         Árajánlat / Műszaki Terv
                       </div>
                       {selectedContractor.quoteDoc ? (
                         <div>
-                          <div style={{ fontSize: '11px', color: '#38bdf8', marginBottom: '6px', wordBreak: 'break-all' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
                             {selectedContractor.quoteDoc}
                           </div>
                           <button
                             type="button"
                             onClick={() => handleDownloadDoc(selectedContractor.quoteDoc)}
                             className="btn-secondary"
-                            style={{ fontSize: '11px', padding: '4px 8px', width: '100%', justifyContent: 'center' }}
+                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
                           >
-                            <Download size={12} /> Letöltés
+                            <Download size={13} /> Letöltés
                           </button>
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '6px' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
                             Nincs csatolva
                           </div>
                           <button
                             type="button"
                             onClick={() => handleUploadDoc('quoteDoc')}
                             className="btn-primary"
-                            style={{ fontSize: '11px', padding: '4px 8px', width: '100%', justifyContent: 'center' }}
+                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
                           >
-                            <Upload size={12} /> Feltöltés
+                            <Upload size={13} /> Feltöltés
                           </button>
                         </div>
                       )}
                     </div>
 
                     {/* Invoice / Completion Certificate */}
-                    <div style={{ backgroundColor: '#182234', border: '1px solid #27354d', borderRadius: '6px', padding: '10px' }}>
-                      <div style={{ fontSize: '11.5px', fontWeight: '700', color: '#f8fafc', marginBottom: '4px' }}>
+                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                         Számla / Teljesítésigazolás
                       </div>
                       {selectedContractor.completionDoc ? (
                         <div>
-                          <div style={{ fontSize: '11px', color: '#fbbf24', marginBottom: '6px', wordBreak: 'break-all' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
                             {selectedContractor.completionDoc}
                           </div>
                           <button
                             type="button"
                             onClick={() => handleDownloadDoc(selectedContractor.completionDoc)}
                             className="btn-secondary"
-                            style={{ fontSize: '11px', padding: '4px 8px', width: '100%', justifyContent: 'center' }}
+                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
                           >
-                            <Download size={12} /> Letöltés
+                            <Download size={13} /> Letöltés
                           </button>
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '11px', color: '#94a3b8', marginBottom: '6px' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
                             Még nem érkezett be
                           </div>
                           <button
                             type="button"
                             onClick={() => handleUploadDoc('completionDoc')}
                             className="btn-primary"
-                            style={{ fontSize: '11px', padding: '4px 8px', width: '100%', justifyContent: 'center' }}
+                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
                           >
-                            <Upload size={12} /> Számla Csatolása
+                            <Upload size={13} /> Számla Csatolása
                           </button>
                         </div>
                       )}
@@ -585,13 +584,13 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                 {/* Notes and Invoicing number */}
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Bizonylatszám / Számlaszám
                     </label>
                     <input name="invoiceNumber" defaultValue={selectedContractor.invoiceNumber} placeholder="pl. SPH-2026/041" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Helyszíni Időpont / Telepítési Megjegyzés
                     </label>
                     <input name="notes" defaultValue={selectedContractor.notes} placeholder="pl. Építés: Csütörtök 08:00 Fő tér" style={{ width: '100%' }} />
@@ -607,9 +606,9 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     <button
                       type="button"
                       onClick={() => handleDelete(selectedContractor.id, selectedContractor.companyName)}
-                      style={{ color: '#f87171', fontSize: '12px', display: 'flex', alignItems: 'center', gap: '4px' }}
+                      style={{ color: '#dc2626', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: '700', cursor: 'pointer' }}
                     >
-                      <Trash2 size={14} /> Partner Törlése
+                      <Trash2 size={15} /> Partner Törlése
                     </button>
                   )}
                 </div>
@@ -618,7 +617,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     Mégse
                   </button>
                   <button type="submit" className="btn-primary">
-                    <CheckCircle2 size={15} /> Mentés & Rögzítés
+                    <CheckCircle2 size={16} /> Mentés & Rögzítés
                   </button>
                 </div>
               </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   Users, UserPlus, Phone, Mail, Shield, Radio, Key, Edit2, 
-  Trash2, CheckSquare, ShoppingCart, Check, X, Search, ShieldCheck, Tag
+  Trash2, CheckSquare, ShoppingCart, Check, X, Tag
 } from 'lucide-react';
 
 export function TeamView({ 
@@ -74,14 +74,14 @@ export function TeamView({
       alert('Legalább egy szervezőnek maradnia kell a rendszerben!');
       return;
     }
-    if (window.confirm(`Biztosan törölni szeretnéd \"${userName}\" szervezőt a stábból?`)) {
+    if (window.confirm(`Biztosan törölni szeretnéd "${userName}" szervezőt a stábból?`)) {
       const updated = users.filter(u => u.id !== userId);
       onUpdateUsers(updated);
       onAddLog({
         user: currentUser,
         action: 'DELETE',
         module: 'Szervezők & Csapat',
-        description: `Eltávolította a szervezőt a rendszerből: \"${userName}\"`
+        description: `Eltávolította a szervezőt a rendszerből: "${userName}"`
       });
     }
   };
@@ -111,7 +111,7 @@ export function TeamView({
         user: currentUser,
         action: 'CREATE',
         module: 'Szervezők & Csapat',
-        description: `Új szervezőt rögzített a stábba: \"${updated.name}\" (${updated.role} • PIN: ${updated.pin})`
+        description: `Új szervezőt rögzített a stábba: "${updated.name}" (${updated.role} • PIN: ${updated.pin})`
       });
     } else {
       onUpdateUsers(users.map(u => u.id === updated.id ? updated : u));
@@ -119,7 +119,7 @@ export function TeamView({
         user: currentUser,
         action: 'UPDATE',
         module: 'Szervezők & Csapat',
-        description: `Módosította \"${updated.name}\" szervezői adatait (PIN: ${updated.pin})`
+        description: `Módosította "${updated.name}" szervezői adatait (PIN: ${updated.pin})`
       });
     }
 
@@ -129,61 +129,61 @@ export function TeamView({
   const getBadgeStyle = (badge) => {
     switch (badge) {
       case 'Technika':
-        return { bg: 'rgba(59, 130, 246, 0.15)', color: '#60a5fa', border: '#3b82f6' };
+        return { bg: '#dbeafe', color: '#1e40af', border: '#93c5fd' };
       case 'Elnökség':
-        return { bg: 'rgba(234, 179, 8, 0.15)', color: '#facc15', border: '#eab308' };
+        return { bg: '#fef3c7', color: '#92400e', border: '#fcd34d' };
       case 'Pénzügy':
-        return { bg: 'rgba(16, 185, 129, 0.15)', color: '#34d399', border: '#10b981' };
+        return { bg: '#dcfce7', color: '#166534', border: '#86efac' };
       case 'Helyszín':
-        return { bg: 'rgba(168, 85, 247, 0.15)', color: '#c084fc', border: '#a855f7' };
+        return { bg: '#f3e8ff', color: '#6b21a8', border: '#d8b4fe' };
       case 'Biztonság':
-        return { bg: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '#ef4444' };
+        return { bg: '#fee2e2', color: '#991b1b', border: '#fca5a5' };
       default:
-        return { bg: 'rgba(148, 163, 184, 0.15)', color: '#cbd5e1', border: '#64748b' };
+        return { bg: '#e2e8f0', color: '#0f172a', border: '#cbd5e1' };
     }
   };
 
   return (
-    <div style={{ padding: '24px 0' }}>
+    <div style={{ padding: '8px 0' }}>
       {/* Top Stats Cards */}
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
         gap: '12px',
-        marginBottom: '20px'
+        marginBottom: '16px'
       }}>
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#cbd5e1', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Users size={14} color="#60a5fa" /> Regisztrált Szervezők & Stáb
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#1e40af', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Users size={15} color="#2563eb" /> Regisztrált Szervezők & Stáb
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#60a5fa', marginTop: '4px' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#000000', marginTop: '4px' }}>
             {users.length} fő
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Bárki beléphet, akinek kódot adsz
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#cbd5e1', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Radio size={14} color="#fbbf24" /> Műszaki & Technikai Stáb
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#92400e', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Radio size={15} color="#d97706" /> Műszaki & Technikai Stáb
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#fbbf24', marginTop: '4px' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#b45309', marginTop: '4px' }}>
             {users.filter(u => u.badge === 'Technika').length} fő
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Hang, fény, színpadmesterek, áram
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#cbd5e1', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Key size={14} color="#34d399" /> Központi Mester PIN Kód
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#14532d', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Key size={15} color="#059669" /> Központi Mester PIN Kód
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#34d399', marginTop: '4px', letterSpacing: '0.05em' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#047857', marginTop: '4px', letterSpacing: '0.05em' }}>
             1532
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             + Egyedi személyes PIN is megadható
           </div>
         </div>
@@ -196,9 +196,9 @@ export function TeamView({
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: '12px',
-        marginBottom: '18px'
+        marginBottom: '16px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
           {badges.map((badge) => {
             const isAll = badge === 'Összes szakterület';
             const value = isAll ? 'all' : badge;
@@ -208,14 +208,14 @@ export function TeamView({
                 key={badge}
                 onClick={() => setFilterBadge(value)}
                 style={{
-                  padding: '6px 12px',
+                  padding: '7px 14px',
                   borderRadius: '6px',
                   fontSize: '12.5px',
-                  fontWeight: isSelected ? '700' : '500',
-                  backgroundColor: isSelected ? '#2563eb' : '#1e293b',
-                  color: isSelected ? '#ffffff' : '#cbd5e1',
+                  fontWeight: isSelected ? '800' : '600',
+                  backgroundColor: isSelected ? '#2563eb' : '#ffffff',
+                  color: isSelected ? '#ffffff' : '#0f172a',
                   border: '1.5px solid',
-                  borderColor: isSelected ? '#3b82f6' : '#334155',
+                  borderColor: isSelected ? '#1d4ed8' : '#cbd5e1',
                   cursor: 'pointer'
                 }}
               >
@@ -235,8 +235,8 @@ export function TeamView({
       </div>
 
       {/* Organizers List Table */}
-      <div className="table-container">
-        <table>
+      <div className="ops-table-container">
+        <table className="ops-table">
           <thead>
             <tr>
               <th>Szervező Neve & Profil</th>
@@ -252,7 +252,7 @@ export function TeamView({
           <tbody>
             {filteredUsers.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', padding: '36px', color: '#94a3b8' }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nem található szervező a megadott szűrési feltételekkel.
                 </td>
               </tr>
@@ -264,41 +264,38 @@ export function TeamView({
                 const isCurrentUser = currentUser === user.name;
 
                 return (
-                  <tr key={user.id} style={{ backgroundColor: isCurrentUser ? 'rgba(37, 99, 235, 0.06)' : undefined }}>
+                  <tr key={user.id} style={{ backgroundColor: isCurrentUser ? '#eff6ff' : undefined }}>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <div style={{
                           width: '34px',
                           height: '34px',
                           borderRadius: '8px',
-                          backgroundColor: badgeStyle.border,
+                          backgroundColor: '#2563eb',
                           color: '#ffffff',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
                           fontWeight: '800',
-                          fontSize: '13px',
+                          fontSize: '14px',
                           flexShrink: 0
                         }}>
                           {user.name.charAt(0).toUpperCase()}
                         </div>
                         <div>
-                          <div style={{ fontWeight: '700', color: '#ffffff', fontSize: '13.5px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ fontWeight: '800', color: '#000000', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             {user.name}
                             {isCurrentUser && (
-                              <span style={{ fontSize: '10.5px', padding: '2px 6px', borderRadius: '4px', backgroundColor: '#1d4ed8', color: '#ffffff' }}>
+                              <span style={{ fontSize: '11px', padding: '2px 7px', borderRadius: '4px', backgroundColor: '#dbeafe', color: '#1e40af', fontWeight: '800' }}>
                                 Te vagy belépve
                               </span>
                             )}
-                          </div>
-                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                            ID: {user.id}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td>
-                      <div style={{ fontWeight: '600', color: '#e2e8f0', fontSize: '13px' }}>
+                      <div style={{ fontWeight: '600', color: '#0f172a', fontSize: '13px' }}>
                         {user.role || '—'}
                       </div>
                     </td>
@@ -307,10 +304,10 @@ export function TeamView({
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px',
-                        padding: '3px 8px',
+                        padding: '3px 9px',
                         borderRadius: '4px',
                         fontSize: '11.5px',
-                        fontWeight: '700',
+                        fontWeight: '800',
                         backgroundColor: badgeStyle.bg,
                         color: badgeStyle.color,
                         border: `1px solid ${badgeStyle.border}`
@@ -319,11 +316,11 @@ export function TeamView({
                       </span>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '3px', fontSize: '12px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', fontSize: '12px' }}>
                         {user.phone ? (
                           <a
                             href={`tel:${user.phone}`}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#38bdf8', textDecoration: 'none' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#2563eb', textDecoration: 'none', fontWeight: '600' }}
                           >
                             <Phone size={12} /> {user.phone}
                           </a>
@@ -333,7 +330,7 @@ export function TeamView({
                         {user.email ? (
                           <a
                             href={`mailto:${user.email}`}
-                            style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#cbd5e1', textDecoration: 'none', fontSize: '11.5px' }}
+                            style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', color: '#0f172a', textDecoration: 'none', fontSize: '11.5px' }}
                           >
                             <Mail size={11} /> {user.email}
                           </a>
@@ -346,11 +343,12 @@ export function TeamView({
                         alignItems: 'center',
                         gap: '4px',
                         fontSize: '12px',
-                        color: '#fbbf24',
-                        fontWeight: '600',
-                        backgroundColor: '#1f293d',
-                        padding: '2px 7px',
-                        borderRadius: '4px'
+                        color: '#92400e',
+                        fontWeight: '700',
+                        backgroundColor: '#fef3c7',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        border: '1px solid #fde68a'
                       }}>
                         <Radio size={12} /> {user.radio || 'URH Ch-1'}
                       </span>
@@ -358,13 +356,13 @@ export function TeamView({
                     <td>
                       <span style={{
                         fontFamily: 'JetBrains Mono, monospace',
-                        fontWeight: '700',
-                        fontSize: '12.5px',
-                        color: '#34d399',
-                        backgroundColor: '#132e26',
-                        padding: '2px 8px',
+                        fontWeight: '800',
+                        fontSize: '13px',
+                        color: '#166534',
+                        backgroundColor: '#dcfce7',
+                        padding: '3px 8px',
                         borderRadius: '4px',
-                        border: '1px solid rgba(16, 185, 129, 0.3)'
+                        border: '1px solid #86efac'
                       }}>
                         {user.pin || '1532'}
                       </span>
@@ -377,14 +375,17 @@ export function TeamView({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '3px',
-                            fontSize: '11px',
-                            padding: '2px 6px',
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            padding: '3px 7px',
                             borderRadius: '4px',
-                            backgroundColor: pendingTasks > 0 ? 'rgba(245, 158, 11, 0.15)' : '#1e293b',
-                            color: pendingTasks > 0 ? '#fbbf24' : '#64748b'
+                            backgroundColor: pendingTasks > 0 ? '#fef3c7' : '#f1f5f9',
+                            color: pendingTasks > 0 ? '#92400e' : '#64748b',
+                            border: '1px solid',
+                            borderColor: pendingTasks > 0 ? '#fde68a' : '#cbd5e1'
                           }}
                         >
-                          <CheckSquare size={11} /> {pendingTasks} teendő
+                          <CheckSquare size={12} /> {pendingTasks} teendő
                         </span>
                         <span
                           title="Függő beszerzési tételek"
@@ -392,14 +393,17 @@ export function TeamView({
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '3px',
-                            fontSize: '11px',
-                            padding: '2px 6px',
+                            fontSize: '11.5px',
+                            fontWeight: '700',
+                            padding: '3px 7px',
                             borderRadius: '4px',
-                            backgroundColor: pendingShopping > 0 ? 'rgba(236, 72, 153, 0.15)' : '#1e293b',
-                            color: pendingShopping > 0 ? '#f472b6' : '#64748b'
+                            backgroundColor: pendingShopping > 0 ? '#fce7f3' : '#f1f5f9',
+                            color: pendingShopping > 0 ? '#9d174d' : '#64748b',
+                            border: '1px solid',
+                            borderColor: pendingShopping > 0 ? '#fbcfe8' : '#cbd5e1'
                           }}
                         >
-                          <ShoppingCart size={11} /> {pendingShopping} beszerzés
+                          <ShoppingCart size={12} /> {pendingShopping} beszerzés
                         </span>
                       </div>
                     </td>
@@ -409,29 +413,29 @@ export function TeamView({
                           onClick={() => handleOpenEdit(user)}
                           title="Szerkesztés"
                           style={{
-                            color: '#60a5fa',
+                            color: '#2563eb',
                             padding: '5px 8px',
                             borderRadius: '4px',
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #334155',
+                            backgroundColor: '#ffffff',
+                            border: '1px solid #cbd5e1',
                             cursor: 'pointer'
                           }}
                         >
-                          <Edit2 size={13} />
+                          <Edit2 size={14} />
                         </button>
                         <button
                           onClick={() => handleDeleteUser(user.id, user.name)}
                           title="Törlés"
                           style={{
-                            color: '#f87171',
+                            color: '#dc2626',
                             padding: '5px 8px',
                             borderRadius: '4px',
-                            backgroundColor: '#1e293b',
-                            border: '1px solid #334155',
+                            backgroundColor: '#ffffff',
+                            border: '1px solid #cbd5e1',
                             cursor: 'pointer'
                           }}
                         >
-                          <Trash2 size={13} />
+                          <Trash2 size={14} />
                         </button>
                       </div>
                     </td>
@@ -448,11 +452,11 @@ export function TeamView({
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Users size={18} color="#60a5fa" />
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Users size={18} color="#2563eb" />
                 {isNew ? 'Új Szervező / Stábtag Hozzáadása' : `${selectedUser.name} adatainak szerkesztése`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}>
                 <X size={20} />
               </button>
             </div>
@@ -460,7 +464,7 @@ export function TeamView({
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szervező / Stábtag Neve *
                     </label>
                     <input
@@ -472,7 +476,7 @@ export function TeamView({
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szakterület / Részleg
                     </label>
                     <select name="badge" defaultValue={selectedUser.badge} style={{ width: '100%' }}>
@@ -487,7 +491,7 @@ export function TeamView({
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                     Munkakör / Felelősségi Kör *
                   </label>
                   <input
@@ -501,7 +505,7 @@ export function TeamView({
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Telefonszám (Helyszíni eléréshez)
                     </label>
                     <input
@@ -512,7 +516,7 @@ export function TeamView({
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       E-mail cím
                     </label>
                     <input
@@ -527,7 +531,7 @@ export function TeamView({
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Belépési PIN Kód (Ezzel léphet be a rendszerbe)
                     </label>
                     <input
@@ -537,12 +541,12 @@ export function TeamView({
                       placeholder="1532"
                       style={{ width: '100%', fontFamily: 'JetBrains Mono, monospace' }}
                     />
-                    <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '3px' }}>
-                      Alapértelmezett: 1532, vagy adj meg egyedi 4 jegyű kódot.
+                    <div style={{ fontSize: '11.5px', color: '#475569', marginTop: '3px' }}>
+                      Alapértelmezett: 1532, vagy adj meg egyedi kódot.
                     </div>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       URH Rádiócsatorna
                     </label>
                     <input

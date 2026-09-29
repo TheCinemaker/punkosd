@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, ShieldCheck, DollarSign, X } from 'lucide-react';
+import { Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, DollarSign, X } from 'lucide-react';
 
 export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, searchQuery }) {
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -118,38 +118,38 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#cbd5e1', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Zap size={14} color="#fbbf24" /> Összesített Áramigény
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#92400e', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Zap size={15} color="#b45309" /> Összesített Áramigény
           </div>
-          <div style={{ fontSize: '20px', fontWeight: '800', color: '#fbbf24', marginTop: '4px' }}>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: '#000000', marginTop: '4px' }}>
             {total32ACount}x 3x32A Ipari • {total16ACount}x 16A
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Fő tér borhűtők & Jurisics tér food truckok
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#cbd5e1', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Trash2 size={14} color="#38bdf8" /> Kiosztott Szemétkezelés
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#1e40af', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Trash2 size={15} color="#2563eb" /> Kiosztott Szemétkezelés
           </div>
-          <div style={{ fontSize: '20px', fontWeight: '800', color: '#38bdf8', marginTop: '4px' }}>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: '#1d4ed8', marginTop: '4px' }}>
             {totalTrashBins} db kuka • {totalTrashBags} db 120L zsák
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Árusonként nyomon követve
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#182234' }}>
-          <div style={{ fontSize: '11.5px', color: '#cbd5e1', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <DollarSign size={14} color="#34d399" /> Kauciók & Helypénzek
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#14532d', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <DollarSign size={15} color="#059669" /> Kauciók & Helypénzek
           </div>
-          <div style={{ fontSize: '20px', fontWeight: '800', color: '#34d399', marginTop: '4px' }}>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: '#047857', marginTop: '4px' }}>
             {totalDeposits.toLocaleString()} Ft letétben
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Tisztaság és zárás után visszajár
           </div>
         </div>
@@ -164,18 +164,19 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             onClick={() => setSelectedLocation('all')}
             style={{
               padding: '7px 14px',
               borderRadius: '6px',
               fontSize: '13px',
-              fontWeight: selectedLocation === 'all' ? '700' : '500',
-              backgroundColor: selectedLocation === 'all' ? '#2563eb' : '#1e293b',
-              color: '#ffffff',
+              fontWeight: selectedLocation === 'all' ? '800' : '600',
+              backgroundColor: selectedLocation === 'all' ? '#2563eb' : '#ffffff',
+              color: selectedLocation === 'all' ? '#ffffff' : '#0f172a',
               border: '1.5px solid',
-              borderColor: selectedLocation === 'all' ? '#3b82f6' : '#334155'
+              borderColor: selectedLocation === 'all' ? '#1d4ed8' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Minden kitelepülő ({vendors.length})
@@ -189,11 +190,12 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
               padding: '7px 14px',
               borderRadius: '6px',
               fontSize: '13px',
-              fontWeight: selectedLocation === 'wine' ? '700' : '500',
-              backgroundColor: selectedLocation === 'wine' ? '#8b5cf6' : '#1e293b',
-              color: '#ffffff',
+              fontWeight: selectedLocation === 'wine' ? '800' : '600',
+              backgroundColor: selectedLocation === 'wine' ? '#7c3aed' : '#ffffff',
+              color: selectedLocation === 'wine' ? '#ffffff' : '#0f172a',
               border: '1.5px solid',
-              borderColor: selectedLocation === 'wine' ? '#a855f7' : '#334155'
+              borderColor: selectedLocation === 'wine' ? '#6d28d9' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             <Wine size={14} /> Borok Tere (Fő tér)
@@ -207,11 +209,12 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
               padding: '7px 14px',
               borderRadius: '6px',
               fontSize: '13px',
-              fontWeight: selectedLocation === 'food' ? '700' : '500',
-              backgroundColor: selectedLocation === 'food' ? '#d97706' : '#1e293b',
-              color: '#ffffff',
+              fontWeight: selectedLocation === 'food' ? '800' : '600',
+              backgroundColor: selectedLocation === 'food' ? '#d97706' : '#ffffff',
+              color: selectedLocation === 'food' ? '#ffffff' : '#0f172a',
               border: '1.5px solid',
-              borderColor: selectedLocation === 'food' ? '#f59e0b' : '#334155'
+              borderColor: selectedLocation === 'food' ? '#b45309' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             <Utensils size={14} /> Ételek Utcája (Jurisics tér)
@@ -221,9 +224,9 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
         <button
           onClick={handleOpenAdd}
           className="btn-primary"
-          style={{ padding: '7px 14px', fontSize: '12.5px' }}
+          style={{ padding: '8px 16px', fontSize: '13px' }}
         >
-          <Plus size={15} /> Új Árus / Stand
+          <Plus size={16} /> Új Árus / Stand Rögzítése
         </button>
       </div>
 
@@ -248,21 +251,21 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
           <tbody>
             {filteredVendors.length === 0 ? (
               <tr>
-                <td colSpan={11} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                <td colSpan={11} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nem található vendéglátó a kiválasztott szűrőkkel.
                 </td>
               </tr>
             ) : (
               filteredVendors.map(v => (
                 <tr key={v.id} onClick={() => handleOpenEdit(v)} style={{ cursor: 'pointer' }}>
-                  <td style={{ fontWeight: '700', color: '#38bdf8', fontFamily: 'JetBrains Mono', fontSize: '12px' }}>
+                  <td style={{ fontWeight: '800', color: '#1d4ed8', fontFamily: 'JetBrains Mono', fontSize: '12.5px' }}>
                     {v.code}
                   </td>
                   <td>
-                    <div style={{ fontWeight: '700', color: '#f8fafc' }}>
+                    <div style={{ fontWeight: '700', color: '#000000', fontSize: '13.5px' }}>
                       {v.name}
                     </div>
-                    <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                    <div style={{ fontSize: '12px', color: '#475569' }}>
                       {v.location}
                     </div>
                   </td>
@@ -272,38 +275,38 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
                     </span>
                   </td>
                   <td>
-                    <div style={{ fontSize: '12px', color: '#cbd5e1' }}>{v.contact}</div>
-                    <div style={{ fontSize: '11px', color: '#38bdf8' }}>{v.phone}</div>
+                    <div style={{ fontSize: '12.5px', color: '#0f172a', fontWeight: '600' }}>{v.contact}</div>
+                    <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}>{v.phone}</div>
                   </td>
                   <td>
                     <span style={{
                       fontWeight: '700',
-                      fontSize: '11.5px',
-                      color: v.power.includes('3x32A') ? '#fbbf24' : '#cbd5e1',
+                      fontSize: '12px',
+                      color: v.power.includes('3x32A') ? '#b45309' : '#0f172a',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px'
                     }}>
-                      <Zap size={12} color={v.power.includes('3x32A') ? '#fbbf24' : '#94a3b8'} />
+                      <Zap size={13} color={v.power.includes('3x32A') ? '#d97706' : '#2563eb'} />
                       {v.power}
                     </span>
                   </td>
                   <td>
                     {v.water ? (
-                      <span className="badge badge-green" style={{ fontSize: '10.5px' }}>
-                        <Droplets size={10} /> Víz + Szennyvíz
+                      <span className="badge badge-green" style={{ fontSize: '11px' }}>
+                        <Droplets size={11} /> Víz + Szennyvíz
                       </span>
                     ) : (
-                      <span style={{ fontSize: '11.5px', color: '#64748b' }}>Nem kér</span>
+                      <span style={{ fontSize: '12px', color: '#64748b' }}>Nem kér</span>
                     )}
                   </td>
-                  <td style={{ textAlign: 'center', fontWeight: '600' }}>
+                  <td style={{ textAlign: 'center', fontWeight: '700', color: '#000000' }}>
                     {v.trashBins} db
                   </td>
-                  <td style={{ textAlign: 'center', fontWeight: '700', color: '#38bdf8' }}>
+                  <td style={{ textAlign: 'center', fontWeight: '800', color: '#1d4ed8' }}>
                     {v.trashBagsIssued} db
                   </td>
-                  <td style={{ textAlign: 'right', fontWeight: '700', color: '#34d399' }}>
+                  <td style={{ textAlign: 'right', fontWeight: '800', color: '#047857' }}>
                     {v.deposit ? `${v.deposit.toLocaleString()} Ft` : '-'}
                   </td>
                   <td>
@@ -315,16 +318,16 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
                     <button
                       onClick={(e) => { e.stopPropagation(); handleOpenEdit(v); }}
                       title="Szerkesztés"
-                      style={{ color: '#38bdf8', padding: '4px 6px' }}
+                      style={{ color: '#2563eb', padding: '4px 6px' }}
                     >
-                      <Edit2 size={15} />
+                      <Edit2 size={16} />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(v.id, v.name); }}
                       title="Törlés"
-                      style={{ color: '#f87171', padding: '4px 6px', marginLeft: '4px' }}
+                      style={{ color: '#dc2626', padding: '4px 6px', marginLeft: '4px' }}
                     >
-                      <Trash2 size={15} />
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
@@ -339,27 +342,27 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
                 {isNew ? 'Új Árus / Stand Rögzítése' : `${selectedVendor.name} (${selectedVendor.code})`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Stand Kód</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Stand Kód</label>
                     <input name="code" defaultValue={selectedVendor.code} required style={{ width: '100%', fontFamily: 'JetBrains Mono' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Árus / Pincészet Neve</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Árus / Pincészet Neve *</label>
                     <input name="name" defaultValue={selectedVendor.name} placeholder="pl. Stefanich Pincészet" required style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Kategória</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kategória</label>
                     <select name="category" defaultValue={selectedVendor.category} style={{ width: '100%' }}>
                       <option value="Borászat (Fő tér)">Borászat (Fő tér)</option>
                       <option value="Ételek utcája (Jurisics tér)">Ételek utcája (Jurisics tér)</option>
@@ -368,25 +371,25 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Pontos Helyszín / Stand</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Pontos Helyszín / Stand</label>
                     <input name="location" defaultValue={selectedVendor.location} placeholder="pl. Fő tér 1. pavilon" required style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Kapcsolattartó</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kapcsolattartó</label>
                     <input name="contact" defaultValue={selectedVendor.contact} required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Telefonszám</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Telefonszám</label>
                     <input name="phone" defaultValue={selectedVendor.phone} required style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Áramigény</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Áramigény</label>
                     <select name="power" defaultValue={selectedVendor.power} style={{ width: '100%' }}>
                       <option value="1x16A (Hűtőkhöz)">1x16A (Hűtőkhöz / 230V)</option>
                       <option value="3x16A">3x16A</option>
@@ -395,7 +398,7 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Vízvétel igény</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Vízvétel igény</label>
                     <select name="water" defaultValue={String(selectedVendor.water)} style={{ width: '100%' }}>
                       <option value="false">Nem kér</option>
                       <option value="true">Igen (Vízvétel + Szennyvíz)</option>
@@ -405,15 +408,15 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
 
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>Kiosztott Szemeteskuka</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kiosztott Szemeteskuka</label>
                     <input type="number" name="trashBins" defaultValue={selectedVendor.trashBins} style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>120L Zsák Kiosztva</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>120L Zsák Kiosztva</label>
                     <input type="number" name="trashBagsIssued" defaultValue={selectedVendor.trashBagsIssued} style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Kaució Letét (Ft)</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kaució Letét (Ft)</label>
                     <input type="number" name="deposit" defaultValue={selectedVendor.deposit} style={{ width: '100%' }} />
                   </div>
                 </div>

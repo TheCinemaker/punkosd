@@ -28,50 +28,50 @@ export function PinLogin({ onLogin, users = DEFAULT_USERS }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px',
-      background: '#0b0f19'
+      padding: '16px',
+      background: '#f8fafc'
     }}>
       <div style={{
         maxWidth: '480px',
         width: '100%',
-        backgroundColor: '#111827',
-        border: '1.5px solid #334155',
+        backgroundColor: '#ffffff',
+        border: '1px solid #e2e8f0',
         borderRadius: '12px',
-        padding: '36px 30px',
-        boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)'
+        padding: '32px 26px',
+        boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)'
       }}>
         {/* Header */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
           <div style={{
             display: 'inline-flex',
             alignItems: 'center',
             justifyContent: 'center',
-            width: '56px',
-            height: '56px',
+            width: '52px',
+            height: '52px',
             borderRadius: '12px',
             background: '#2563eb',
-            marginBottom: '16px',
-            boxShadow: '0 8px 16px rgba(37, 99, 235, 0.4)'
+            marginBottom: '14px',
+            boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)'
           }}>
-            <Lock size={28} color="#ffffff" />
+            <Lock size={26} color="#ffffff" />
           </div>
-          <h1 style={{ fontSize: '22px', fontWeight: '800', letterSpacing: '-0.02em', color: '#ffffff' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: '800', letterSpacing: '-0.02em', color: '#000000' }}>
             KTSZE Fesztivál Menedzser
           </h1>
-          <p style={{ fontSize: '13.5px', color: '#cbd5e1', marginTop: '6px' }}>
+          <p style={{ fontSize: '13px', color: '#334155', marginTop: '4px', fontWeight: '500' }}>
             Világ- és Utcazenei Fesztivál Kőszeg 2026 (Pünkösd)
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           {/* User selector */}
           <div>
-            <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '700', color: '#ffffff', marginBottom: '10px' }}>
+            <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '700', color: '#1e293b', marginBottom: '8px' }}>
               Válassz csapattag profilt (Módosítások naplózása):
             </label>
             <div style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))',
               gap: '8px',
               maxHeight: '220px',
               overflowY: 'auto',
@@ -90,21 +90,22 @@ export function PinLogin({ onLogin, users = DEFAULT_USERS }) {
                       borderRadius: '6px',
                       textAlign: 'left',
                       fontSize: '13px',
-                      fontWeight: isSelected ? '700' : '600',
-                      border: isSelected ? '2px solid #3b82f6' : '1.5px solid #334155',
-                      backgroundColor: isSelected ? '#1e3a8a' : '#172033',
-                      color: '#ffffff',
+                      fontWeight: isSelected ? '700' : '500',
+                      border: isSelected ? '2px solid #2563eb' : '1px solid #cbd5e1',
+                      backgroundColor: isSelected ? '#eff6ff' : '#ffffff',
+                      color: isSelected ? '#1e40af' : '#0f172a',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      transition: 'all 0.15s ease'
                     }}
                   >
                     <div>
-                      <div style={{ fontWeight: '700', fontSize: '13px', color: '#ffffff' }}>{u.name}</div>
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>{u.badge || u.role}</div>
+                      <div style={{ fontWeight: '700', fontSize: '13px', color: isSelected ? '#1e40af' : '#0f172a' }}>{u.name}</div>
+                      <div style={{ fontSize: '11px', color: '#64748b' }}>{u.badge || u.role}</div>
                     </div>
-                    {isSelected && <Check size={14} color="#60a5fa" />}
+                    {isSelected && <Check size={15} color="#2563eb" />}
                   </button>
                 );
               })}
@@ -115,18 +116,24 @@ export function PinLogin({ onLogin, users = DEFAULT_USERS }) {
               placeholder="vagy írj be egyedi nevet (pl. Szilveszter)..."
               value={customUser}
               onChange={(e) => setCustomUser(e.target.value)}
-              style={{ width: '100%', fontSize: '13.5px' }}
+              style={{
+                width: '100%',
+                fontSize: '13px',
+                backgroundColor: '#ffffff',
+                borderColor: '#cbd5e1',
+                color: '#0f172a'
+              }}
             />
           </div>
 
           {/* PIN input */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-              <label style={{ fontSize: '12.5px', fontWeight: '700', color: '#ffffff' }}>
-                Mester PIN kód (1532):
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+              <label style={{ fontSize: '12.5px', fontWeight: '700', color: '#1e293b' }}>
+                Belépési PIN kód:
               </label>
-              <span style={{ fontSize: '12px', color: '#38bdf8', fontWeight: '600' }}>
-                Kőszeg 1532
+              <span style={{ fontSize: '12px', color: '#2563eb', fontWeight: '600' }}>
+                Mesterkód: 1532
               </span>
             </div>
             <input
@@ -141,13 +148,15 @@ export function PinLogin({ onLogin, users = DEFAULT_USERS }) {
                 fontSize: '22px',
                 textAlign: 'center',
                 letterSpacing: '0.25em',
-                padding: '12px',
+                padding: '10px',
                 fontWeight: '800',
-                color: '#ffffff'
+                backgroundColor: '#f8fafc',
+                borderColor: error ? '#dc2626' : '#cbd5e1',
+                color: '#0f172a'
               }}
             />
             {error && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#fca5a5', fontSize: '12.5px', marginTop: '8px', fontWeight: '600' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#b91c1c', fontSize: '12.5px', marginTop: '6px', fontWeight: '600' }}>
                 <AlertCircle size={15} />
                 <span>{error}</span>
               </div>
@@ -159,24 +168,24 @@ export function PinLogin({ onLogin, users = DEFAULT_USERS }) {
             className="btn-primary"
             style={{
               justifyContent: 'center',
-              padding: '14px',
-              fontSize: '15px',
-              fontWeight: '800',
+              padding: '12px',
+              fontSize: '14.5px',
+              fontWeight: '700',
               marginTop: '4px'
             }}
           >
-            <Shield size={18} /> Belépés a Rendszerbe
+            <Shield size={17} /> Belépés a Rendszerbe
           </button>
         </form>
 
         <div style={{
-          marginTop: '24px',
-          padding: '12px',
-          borderRadius: '8px',
-          backgroundColor: '#0a0f1d',
-          border: '1px solid #243044',
-          fontSize: '12px',
-          color: '#94a3b8',
+          marginTop: '20px',
+          padding: '10px 12px',
+          borderRadius: '6px',
+          backgroundColor: '#f1f5f9',
+          border: '1px solid #e2e8f0',
+          fontSize: '11.5px',
+          color: '#64748b',
           textAlign: 'center'
         }}>
           Naplózás aktív: Minden feladat-kipipálás és módosítás a neveddel rögzítésre kerül.

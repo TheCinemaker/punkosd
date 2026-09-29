@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Plus, Edit2, Trash2, Phone, Mail, FileText, CheckCircle2, DollarSign, Utensils, Hotel, Car, X } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Phone, Mail, FileText, CheckCircle2, DollarSign, Utensils, Hotel, Car, X, Tag } from 'lucide-react';
 
 export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, searchQuery }) {
   const [selectedArtist, setSelectedArtist] = useState(null);
@@ -8,9 +8,9 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
 
   const filteredArtists = artists.filter(a => {
     return !searchQuery ||
-      a.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.contact.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      a.phone.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (a.name && a.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (a.contact && a.contact.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      (a.phone && a.phone.toLowerCase().includes(searchQuery.toLowerCase())) ||
       (a.diet && a.diet.toLowerCase().includes(searchQuery.toLowerCase()));
   });
 
@@ -22,7 +22,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
       id: 'art-' + Date.now(),
       name: '',
       contact: '',
-      phone: '',
+      phone: '+36 ',
       email: '',
       fee: 0,
       feeType: 'Átutalás / Kft számla',
@@ -48,10 +48,10 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
     const formData = new FormData(e.target);
     const updated = {
       ...selectedArtist,
-      name: formData.get('name'),
-      contact: formData.get('contact'),
-      phone: formData.get('phone'),
-      email: formData.get('email'),
+      name: formData.get('name').trim(),
+      contact: formData.get('contact').trim(),
+      phone: formData.get('phone').trim(),
+      email: formData.get('email').trim(),
       fee: Number(formData.get('fee')) || 0,
       feeType: formData.get('feeType'),
       contractStatus: formData.get('contractStatus'),
@@ -62,6 +62,11 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
       accommodation: formData.get('accommodation'),
       passes: Number(formData.get('passes')) || 1
     };
+
+    if (!updated.name) {
+      alert('Kérlek add meg a fellépő vagy zenekar nevét!');
+      return;
+    }
 
     if (isNew) {
       onUpdateArtists([...artists, updated]);
@@ -107,23 +112,21 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <div>
-            <h2 style={{ fontSize: '15px', fontWeight: '800', color: '#f8fafc' }}>
-              Fellépők Törzsadatbázisa & Riderek
-            </h2>
-            <p style={{ fontSize: '12px', color: '#94a3b8' }}>
-              Összesen {artists.length} regisztrált előadó • Gázsik: <strong>{totalFeeHuf.toLocaleString()} Ft</strong>
-            </p>
-          </div>
+        <div>
+          <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
+            Fellépők Törzsadatbázisa & Riderek
+          </h2>
+          <p style={{ fontSize: '12px', color: '#64748b' }}>
+            Összesen {artists.length} regisztrált előadó • Összes gázsi: <strong style={{ color: '#0f172a' }}>{totalFeeHuf.toLocaleString()} Ft</strong>
+          </p>
         </div>
 
         <button
           onClick={handleOpenAdd}
           className="btn-primary"
-          style={{ padding: '7px 14px', fontSize: '12.5px' }}
+          style={{ padding: '8px 16px', fontSize: '13px' }}
         >
-          <Plus size={15} /> Új Fellépő Hozzáadása
+          <Plus size={16} /> Új Fellépő / Zenekar Rögzítése
         </button>
       </div>
 
@@ -135,13 +138,13 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
               <th>Zenekar / Fellépő</th>
               <th>Kapcsolattartó</th>
               <th>Telefon & Email</th>
-              <th>Gázsi (Ft)</th>
+              <th style={{ textAlign: 'right' }}>Gázsi (Ft)</th>
               <th>Számlázási Mód</th>
               <th>Szerződés</th>
               <th>Tech Rider</th>
               <th>Hospitality & Diéta</th>
               <th>Szállás</th>
-              <th>VIP Pass</th>
+              <th style={{ textAlign: 'center' }}>VIP Pass</th>
               <th style={{ textAlign: 'right' }}>Művelet</th>
             </tr>
           </thead>
@@ -159,20 +162,20 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
 
                 return (
                   <tr key={a.id} onClick={() => handleOpenEdit(a)} style={{ cursor: 'pointer' }}>
-                    <td style={{ fontWeight: '700', color: '#f8fafc', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontWeight: '800', color: '#000000', whiteSpace: 'nowrap' }}>
                       {a.name}
                     </td>
-                    <td style={{ fontSize: '12px' }}>
+                    <td style={{ fontSize: '12.5px', color: '#0f172a', fontWeight: '600' }}>
                       {a.contact}
                     </td>
                     <td style={{ fontSize: '12px' }}>
-                      <div style={{ color: '#38bdf8' }}>{a.phone}</div>
-                      <div style={{ fontSize: '11px', color: '#64748b' }}>{a.email}</div>
+                      <div style={{ color: '#1d4ed8', fontWeight: '700' }}>{a.phone}</div>
+                      <div style={{ fontSize: '11.5px', color: '#0f172a', fontWeight: '500' }}>{a.email}</div>
                     </td>
-                    <td style={{ fontWeight: '700', color: '#fbbf24', textAlign: 'right', whiteSpace: 'nowrap' }}>
+                    <td style={{ fontWeight: '800', color: '#000000', textAlign: 'right', whiteSpace: 'nowrap' }}>
                       {a.fee ? `${a.fee.toLocaleString()} Ft` : '0 Ft'}
                     </td>
-                    <td style={{ fontSize: '11.5px', color: '#cbd5e1' }}>
+                    <td style={{ fontSize: '12px', color: '#0f172a', fontWeight: '600' }}>
                       {a.feeType}
                     </td>
                     <td>
@@ -185,32 +188,32 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                         {hasRider ? 'Rider OK' : a.techRider}
                       </span>
                     </td>
-                    <td style={{ fontSize: '12px', maxWidth: '220px' }}>
-                      <div style={{ color: '#cbd5e1' }}>{a.hospitality}</div>
+                    <td style={{ fontSize: '12px', maxWidth: '200px' }}>
+                      <div style={{ color: '#0f172a', fontWeight: '500' }}>{a.hospitality}</div>
                       {a.diet && a.diet !== 'Nincs' && (
-                        <div style={{ fontSize: '11px', color: '#f87171' }}>Diéta: {a.diet}</div>
+                        <div style={{ fontSize: '11.5px', color: '#dc2626', fontWeight: '700' }}>Diéta: {a.diet}</div>
                       )}
                     </td>
-                    <td style={{ fontSize: '12px', color: '#cbd5e1' }}>
+                    <td style={{ fontSize: '12px', color: '#0f172a', fontWeight: '500' }}>
                       {a.accommodation}
                     </td>
-                    <td style={{ textAlign: 'center', fontWeight: '700', color: '#38bdf8' }}>
+                    <td style={{ textAlign: 'center', fontWeight: '800', color: '#1d4ed8' }}>
                       {a.passes} db
                     </td>
                     <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleOpenEdit(a); }}
                         title="Szerkesztés"
-                        style={{ color: '#38bdf8', padding: '4px 6px' }}
+                        style={{ color: '#2563eb', padding: '4px 6px' }}
                       >
-                        <Edit2 size={15} />
+                        <Edit2 size={14} />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(a.id, a.name); }}
                         title="Törlés"
-                        style={{ color: '#f87171', padding: '4px 6px', marginLeft: '4px' }}
+                        style={{ color: '#dc2626', padding: '4px 6px', marginLeft: '4px' }}
                       >
-                        <Trash2 size={15} />
+                        <Trash2 size={14} />
                       </button>
                     </td>
                   </tr>
@@ -221,55 +224,82 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
         </table>
       </div>
 
-      {/* Edit / Add Modal */}
+      {/* Modal: New / Edit Performer */}
       {isModalOpen && selectedArtist && (
         <div className="modal-overlay">
-          <div className="modal-card" style={{ maxWidth: '720px' }}>
+          <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
-                {isNew ? 'Új Fellépő Felvétele' : `${selectedArtist.name} — Adatlap`}
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Users size={18} color="#2563eb" />
+                {isNew ? 'Új Fellépő / Zenekar Felvétele' : `${selectedArtist.name} — Adatlap`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#64748b', padding: '6px', cursor: 'pointer' }}>
+                <X size={20} />
+              </button>
             </div>
             <form onSubmit={handleSaveModal}>
-              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '75vh' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                    Zenekar / Előadó Neve
+              <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px', maxHeight: '78vh' }}>
+                
+                {/* 1. KI LÉP FEL - A LEGFONTOSABB MEZŐ */}
+                <div style={{
+                  backgroundColor: '#eff6ff',
+                  border: '1.5px solid #93c5fd',
+                  borderRadius: '8px',
+                  padding: '12px 14px'
+                }}>
+                  <label style={{ display: 'block', fontSize: '13px', fontWeight: '800', color: '#1e40af', marginBottom: '4px' }}>
+                    Zenekar / Fellépő Neve (Ki lép fel?) *
                   </label>
-                  <input name="name" defaultValue={selectedArtist.name} placeholder="pl. Ocho Macho" required style={{ width: '100%' }} />
+                  <input
+                    name="name"
+                    defaultValue={selectedArtist.name}
+                    placeholder="pl. Ocho Macho, Besh o droM, DJ Desert, Bohemian Betyars..."
+                    required
+                    autoFocus
+                    style={{
+                      width: '100%',
+                      fontSize: '15px',
+                      fontWeight: '700',
+                      backgroundColor: '#ffffff',
+                      borderColor: '#3b82f6',
+                      color: '#0f172a'
+                    }}
+                  />
+                  <div style={{ fontSize: '11.5px', color: '#1e40af', marginTop: '3px' }}>
+                    Ide írd be az együttes vagy zenész hivatalos nevét!
+                  </div>
                 </div>
 
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                      Kapcsolattartó Neve
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
+                      Kapcsolattartó / Menedzser
                     </label>
-                    <input name="contact" defaultValue={selectedArtist.contact} placeholder="Menedzser neve" required style={{ width: '100%' }} />
+                    <input name="contact" defaultValue={selectedArtist.contact} placeholder="pl. Kovács Péter" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       Telefonszám
                     </label>
-                    <input name="phone" defaultValue={selectedArtist.phone} placeholder="+36 30..." required style={{ width: '100%' }} />
+                    <input name="phone" defaultValue={selectedArtist.phone} placeholder="+36 30 123 4567" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       E-mail cím
                     </label>
-                    <input name="email" defaultValue={selectedArtist.email} placeholder="booking@..." required style={{ width: '100%' }} />
+                    <input name="email" defaultValue={selectedArtist.email} placeholder="booking@zenekar.hu" style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       Gázsi / Tiszteletdíj (Ft)
                     </label>
-                    <input type="number" name="fee" defaultValue={selectedArtist.fee} style={{ width: '100%' }} />
+                    <input type="number" name="fee" defaultValue={selectedArtist.fee} style={{ width: '100%', fontWeight: '700' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       Számlázási Mód
                     </label>
                     <select name="feeType" defaultValue={selectedArtist.feeType} style={{ width: '100%' }}>
@@ -281,7 +311,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       Szerződés Státusza
                     </label>
                     <select name="contractStatus" defaultValue={selectedArtist.contractStatus} style={{ width: '100%' }}>
@@ -294,7 +324,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       Fizetési Állapot
                     </label>
                     <select name="paymentStatus" defaultValue={selectedArtist.paymentStatus} style={{ width: '100%' }}>
@@ -305,7 +335,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       VIP / Backstage Behajtó Pass (db)
                     </label>
                     <input type="number" name="passes" defaultValue={selectedArtist.passes} style={{ width: '100%' }} />
@@ -313,37 +343,42 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                    Technical Rider Igények
+                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
+                    Technical Rider Igények (Csatornák, mikrofonok, áram)
                   </label>
                   <textarea name="techRider" defaultValue={selectedArtist.techRider} rows={2} style={{ width: '100%' }} />
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                      Hospitality / Backstage Igény
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
+                      Hospitality Rider (Öltöző, ital, snack)
                     </label>
                     <input name="hospitality" defaultValue={selectedArtist.hospitality} style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                      Speciális Étrendi Igény (Vegán, Glutén...)
+                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
+                      Különleges Diéta (Vegán, Gluténmentes stb.)
                     </label>
-                    <input name="diet" defaultValue={selectedArtist.diet} style={{ width: '100%' }} />
+                    <input name="diet" defaultValue={selectedArtist.diet} placeholder="pl. 1 vegán, 1 laktózérzékeny" style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
-                    Szállás Igény Kőszegen
+                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
+                    Szállás és Parkolás Kőszegen
                   </label>
-                  <input name="accommodation" defaultValue={selectedArtist.accommodation} placeholder="pl. 5 szoba a Hotel Írottkőben" style={{ width: '100%' }} />
+                  <input name="accommodation" defaultValue={selectedArtist.accommodation} placeholder="pl. Hotel Írottkő 4 db 2 ágyas szoba" style={{ width: '100%' }} />
                 </div>
               </div>
+
               <div className="modal-footer">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">Mégse</button>
-                <button type="submit" className="btn-primary">Mentés</button>
+                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">
+                  Mégse
+                </button>
+                <button type="submit" className="btn-primary" style={{ padding: '8px 20px', fontWeight: '700' }}>
+                  {isNew ? 'Fellépő Mentése' : 'Módosítások Mentése'}
+                </button>
               </div>
             </form>
           </div>

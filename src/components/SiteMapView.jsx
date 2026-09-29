@@ -51,15 +51,15 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
   };
 
   const getPointColor = (p) => {
-    if (p.hasProblem) return '#ef4444';
-    if (p.type === 'stage') return '#3b82f6';
-    if (p.type === 'wine') return '#a855f7';
-    if (p.type === 'food') return '#f59e0b';
-    if (p.type === 'power') return '#eab308';
-    if (p.type === 'water') return '#06b6d4';
-    if (p.type === 'toilet') return '#10b981';
-    if (p.type === 'medical') return '#ec4899';
-    return '#94a3b8';
+    if (p.hasProblem) return '#dc2626';
+    if (p.type === 'stage') return '#2563eb';
+    if (p.type === 'wine') return '#7c3aed';
+    if (p.type === 'food') return '#d97706';
+    if (p.type === 'power') return '#b45309';
+    if (p.type === 'water') return '#0284c7';
+    if (p.type === 'toilet') return '#059669';
+    if (p.type === 'medical') return '#db2777';
+    return '#64748b';
   };
 
   const renderIcon = (type) => {
@@ -89,10 +89,10 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
         marginBottom: '16px'
       }}>
         <div>
-          <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <MapPin size={20} color="#38bdf8" /> Kőszeg Belváros Helyszínrajz & Stand Térkép
+          <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MapPin size={20} color="#2563eb" /> Kőszeg Belváros Helyszínrajz & Stand Térkép
           </h2>
-          <p style={{ fontSize: '13px', color: '#cbd5e1' }}>
+          <p style={{ fontSize: '13px', color: '#475569' }}>
             Minden boros pavilon, kajás food truck, színpad és közmű pont pontos elhelyezkedése
           </p>
         </div>
@@ -102,7 +102,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
           <select
             value={selectedZone}
             onChange={(e) => setSelectedZone(e.target.value)}
-            style={{ fontSize: '13px', padding: '7px 12px' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
           >
             <option value="all">Minden Zóna</option>
             {MAP_ZONES.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
@@ -111,7 +111,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
-            style={{ fontSize: '13px', padding: '7px 12px' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
           >
             <option value="all">Minden típus</option>
             <option value="wine">Borászatok (Fő tér)</option>
@@ -128,24 +128,24 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
       {/* Main Map Viewport + Side Inspector Card */}
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '16px', alignItems: 'start' }}>
         
-        {/* Visual Interactive Map Canvas */}
+        {/* Visual Interactive Map Canvas (Light Mode) */}
         <div style={{
-          backgroundColor: '#0a0f1d',
-          border: '1.5px solid #334155',
+          backgroundColor: '#f8fafc',
+          border: '1.5px solid #cbd5e1',
           borderRadius: '12px',
           padding: '24px',
           minHeight: '640px',
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: 'inset 0 0 40px rgba(0, 0, 0, 0.8)'
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
         }}>
-          {/* Blueprint Grid Lines & Street Visual Labels */}
+          {/* Grid lines */}
           <div style={{
             position: 'absolute',
             inset: 0,
-            backgroundImage: 'radial-gradient(#334155 1.5px, transparent 1.5px)',
+            backgroundImage: 'radial-gradient(#cbd5e1 1.5px, transparent 1.5px)',
             backgroundSize: '28px 28px',
-            opacity: 0.4
+            opacity: 0.6
           }} />
 
           {/* Zone 1 Outline: FŐ TÉR */}
@@ -155,13 +155,13 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
             top: '20px',
             width: '92%',
             height: '42%',
-            border: '2px dashed rgba(59, 130, 246, 0.4)',
+            border: '2px dashed #93c5fd',
             borderRadius: '12px',
-            backgroundColor: 'rgba(30, 58, 138, 0.1)',
+            backgroundColor: '#eff6ff',
             padding: '12px'
           }}>
-            <span style={{ fontSize: '13px', fontWeight: '800', color: '#93c5fd', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              KŐSZEG FŐ TÉR — BOROK HEYSZÍNE & NAGYSZÍNPAD
+            <span style={{ fontSize: '13px', fontWeight: '800', color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              KŐSZEG FŐ TÉR — BOROK HELYSZÍNE & NAGYSZÍNPAD
             </span>
           </div>
 
@@ -172,12 +172,12 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
             bottom: '20px',
             width: '92%',
             height: '48%',
-            border: '2px dashed rgba(245, 158, 11, 0.4)',
+            border: '2px dashed #fde68a',
             borderRadius: '12px',
-            backgroundColor: 'rgba(120, 53, 15, 0.1)',
+            backgroundColor: '#fffbeb',
             padding: '12px'
           }}>
-            <span style={{ fontSize: '13px', fontWeight: '800', color: '#fde68a', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: '13px', fontWeight: '800', color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               JURISICS TÉR — ÉTELEK UTCÁJA (GASZTRO SOR) & KISSZÍNPAD 1
             </span>
           </div>
@@ -204,9 +204,9 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
                 {p.hasProblem && (
                   <div style={{
                     position: 'absolute',
-                    inset: '-8px',
+                    inset: '-6px',
                     borderRadius: '50%',
-                    backgroundColor: 'rgba(220, 38, 38, 0.5)',
+                    backgroundColor: 'rgba(220, 38, 38, 0.4)',
                     animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite'
                   }} />
                 )}
@@ -216,22 +216,22 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '6px',
-                  backgroundColor: isSelected ? '#ffffff' : '#111827',
-                  border: `2px solid ${pinColor}`,
-                  color: isSelected ? '#0b0f19' : '#ffffff',
-                  padding: '5px 10px',
+                  backgroundColor: isSelected ? '#2563eb' : '#ffffff',
+                  border: `2px solid ${isSelected ? '#1d4ed8' : pinColor}`,
+                  color: isSelected ? '#ffffff' : '#0f172a',
+                  padding: '5px 12px',
                   borderRadius: '20px',
                   fontSize: '12.5px',
                   fontWeight: '800',
                   boxShadow: isSelected
-                    ? `0 0 25px ${pinColor}, 0 4px 12px rgba(0,0,0,0.8)`
-                    : '0 2px 8px rgba(0,0,0,0.6)',
+                    ? `0 4px 14px rgba(37, 99, 235, 0.35)`
+                    : '0 2px 6px rgba(0,0,0,0.1)',
                   transition: 'all 0.15s ease',
                   whiteSpace: 'nowrap'
                 }}>
-                  <span style={{ color: isSelected ? '#0b0f19' : pinColor }}>{renderIcon(p.type)}</span>
+                  <span style={{ color: isSelected ? '#ffffff' : pinColor }}>{renderIcon(p.type)}</span>
                   <span>{p.code}</span>
-                  {p.hasProblem && <span style={{ color: '#ef4444', fontWeight: '900' }}>!</span>}
+                  {p.hasProblem && <span style={{ color: isSelected ? '#ffffff' : '#dc2626', fontWeight: '900' }}>!</span>}
                 </div>
               </div>
             );
@@ -240,7 +240,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
 
         {/* Right: Selected Stand / Point Inspector */}
         {activePoint ? (
-          <div className="ops-card" style={{ padding: '22px', backgroundColor: '#172033', position: 'sticky', top: '80px' }}>
+          <div className="ops-card" style={{ padding: '22px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', position: 'sticky', top: '80px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
               <span className={`badge ${activePoint.type === 'wine' ? 'badge-blue' : activePoint.type === 'food' ? 'badge-amber' : activePoint.type === 'stage' ? 'badge-gray' : 'badge-green'}`}>
                 {activePoint.type.toUpperCase()}
@@ -248,30 +248,30 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
               <span style={{
                 fontFamily: 'JetBrains Mono',
                 fontWeight: '800',
-                color: activePoint.hasProblem ? '#f87171' : '#38bdf8',
+                color: activePoint.hasProblem ? '#dc2626' : '#2563eb',
                 fontSize: '14px'
               }}>
                 {activePoint.code}
               </span>
             </div>
 
-            <h3 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff', marginBottom: '6px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#000000', marginBottom: '6px' }}>
               {activePoint.name}
             </h3>
 
             {/* Problem Alert Banner if active */}
             {activePoint.hasProblem && (
               <div style={{
-                backgroundColor: '#7f1d1d',
-                border: '1.5px solid #dc2626',
+                backgroundColor: '#fee2e2',
+                border: '1.5px solid #f87171',
                 borderRadius: '8px',
                 padding: '12px 14px',
                 margin: '14px 0',
                 fontSize: '13px',
-                color: '#ffffff'
+                color: '#991b1b'
               }}>
                 <div style={{ fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <AlertCircle size={16} color="#fca5a5" /> AKTÍV PROBLÉMA A STANDNÁL!
+                  <AlertCircle size={16} color="#dc2626" /> AKTÍV PROBLÉMA A STANDNÁL!
                 </div>
                 <div>{activePoint.problemText || 'Helyszíni beavatkozás szükséges!'}</div>
               </div>
@@ -279,31 +279,31 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
 
             {/* Details List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px', fontSize: '13.5px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #334155', paddingBottom: '8px' }}>
-                <span style={{ color: '#cbd5e1' }}>Áramellátás:</span>
-                <span style={{ fontWeight: '800', color: activePoint.power.includes('32A') ? '#fbbf24' : '#ffffff' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
+                <span style={{ color: '#475569' }}>Áramellátás:</span>
+                <span style={{ fontWeight: '800', color: activePoint.power.includes('32A') ? '#b45309' : '#0f172a' }}>
                   {activePoint.power}
                 </span>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #334155', paddingBottom: '8px' }}>
-                <span style={{ color: '#cbd5e1' }}>Kapcsolattartó:</span>
-                <span style={{ fontWeight: '700', color: '#ffffff' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
+                <span style={{ color: '#475569' }}>Kapcsolattartó:</span>
+                <span style={{ fontWeight: '700', color: '#000000' }}>
                   {activePoint.contact}
                 </span>
               </div>
 
               {activePoint.trashBags && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #334155', paddingBottom: '8px' }}>
-                  <span style={{ color: '#cbd5e1' }}>Kiadott 120L zsák:</span>
-                  <span style={{ fontWeight: '800', color: '#38bdf8' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
+                  <span style={{ color: '#475569' }}>Kiadott 120L zsák:</span>
+                  <span style={{ fontWeight: '800', color: '#1d4ed8' }}>
                     {activePoint.trashBags} db zsák
                   </span>
                 </div>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #334155', paddingBottom: '8px' }}>
-                <span style={{ color: '#cbd5e1' }}>Állapot:</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
+                <span style={{ color: '#475569' }}>Állapot:</span>
                 <span className={`badge ${activePoint.hasProblem ? 'badge-rose' : 'badge-green'}`}>
                   {activePoint.status}
                 </span>
@@ -342,7 +342,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
             </div>
           </div>
         ) : (
-          <div className="ops-card" style={{ padding: '36px', textAlign: 'center', color: '#94a3b8' }}>
+          <div className="ops-card" style={{ padding: '36px', textAlign: 'center', color: '#475569', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
             Kattints a térképen bármelyik standra vagy színpadra a részletekért!
           </div>
         )}

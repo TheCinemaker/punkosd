@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { History, UserCheck, Search, Filter, ShieldCheck, Activity } from 'lucide-react';
+import { Activity } from 'lucide-react';
 
 export function AuditLogView({ logs, currentUser, searchQuery }) {
   const [selectedUser, setSelectedUser] = useState('all');
@@ -31,10 +31,10 @@ export function AuditLogView({ logs, currentUser, searchQuery }) {
         marginBottom: '16px'
       }}>
         <div>
-          <h2 style={{ fontSize: '15px', fontWeight: '800', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Activity size={18} color="#38bdf8" /> Aktivitási & Műveleti Napló (Audit Trail)
+          <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Activity size={18} color="#2563eb" /> Aktivitási & Műveleti Napló (Audit Trail)
           </h2>
-          <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+          <p style={{ fontSize: '12px', color: '#475569' }}>
             Minden feladat-kipipálás, időrendi áthelyezés és szerkesztés pontosan rögzítésre kerül
           </p>
         </div>
@@ -44,7 +44,7 @@ export function AuditLogView({ logs, currentUser, searchQuery }) {
           <select
             value={selectedUser}
             onChange={(e) => setSelectedUser(e.target.value)}
-            style={{ fontSize: '12px', padding: '6px 10px' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
           >
             <option value="all">Minden csapattag</option>
             {users.map(u => <option key={u} value={u}>{u}</option>)}
@@ -53,7 +53,7 @@ export function AuditLogView({ logs, currentUser, searchQuery }) {
           <select
             value={selectedModule}
             onChange={(e) => setSelectedModule(e.target.value)}
-            style={{ fontSize: '12px', padding: '6px 10px' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
           >
             <option value="all">Minden modul</option>
             {modules.map(m => <option key={m} value={m}>{m}</option>)}
@@ -76,7 +76,7 @@ export function AuditLogView({ logs, currentUser, searchQuery }) {
           <tbody>
             {filteredLogs.length === 0 ? (
               <tr>
-                <td colSpan={5} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                <td colSpan={5} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nincs rögzített aktivitás a szűrési feltételekkel.
                 </td>
               </tr>
@@ -88,26 +88,26 @@ export function AuditLogView({ logs, currentUser, searchQuery }) {
 
                 return (
                   <tr key={l.id}>
-                    <td style={{ fontSize: '12px', color: '#94a3b8', whiteSpace: 'nowrap', fontFamily: 'JetBrains Mono' }}>
+                    <td style={{ fontSize: '12px', color: '#475569', whiteSpace: 'nowrap', fontFamily: 'JetBrains Mono', fontWeight: '600' }}>
                       {l.time}
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div style={{
-                          width: '22px',
-                          height: '22px',
+                          width: '24px',
+                          height: '24px',
                           borderRadius: '50%',
                           backgroundColor: '#2563eb',
                           color: '#ffffff',
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
-                          fontWeight: '700',
-                          fontSize: '10px'
+                          fontWeight: '800',
+                          fontSize: '11px'
                         }}>
                           {l.user.charAt(0)}
                         </div>
-                        <span style={{ fontWeight: '700', color: '#f8fafc', fontSize: '12.5px' }}>
+                        <span style={{ fontWeight: '700', color: '#000000', fontSize: '13px' }}>
                           {l.user}
                         </span>
                       </div>
@@ -120,7 +120,7 @@ export function AuditLogView({ logs, currentUser, searchQuery }) {
                     <td>
                       <span className="badge badge-gray">{l.module}</span>
                     </td>
-                    <td style={{ fontSize: '13px', color: isTaskDone ? '#34d399' : '#cbd5e1' }}>
+                    <td style={{ fontSize: '13.5px', color: '#0f172a', fontWeight: isTaskDone ? '700' : '500' }}>
                       {l.description}
                     </td>
                   </tr>

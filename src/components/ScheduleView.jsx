@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { 
   Plus, Edit2, Trash2, Clock, Volume2, UserCheck, AlertCircle, 
-  Sparkles, FileText, ArrowRightLeft, Download, Upload, CheckCircle2, 
-  Phone, Mail, Calendar, DollarSign, Utensils, Music, ShieldCheck, Eye,
-  Radio, Compass, FileCheck, Layers, X
+  FileText, CheckCircle2, Phone, Mail, Calendar, DollarSign,
+  Music, Eye, Radio, X, Download, Upload
 } from 'lucide-react';
 import { DAYS, STAGES } from '../lib/initialData';
 
@@ -101,7 +100,8 @@ export function ScheduleView({
   const handleSaveModal = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const artistName = formData.get('artist');
+    const artistName = formData.get('artist') || '';
+    const eventTitle = formData.get('title') || artistName || 'Koncert';
     const existingArtist = artists.find(a => a.name.toLowerCase() === artistName.toLowerCase());
 
     const updatedItem = {
@@ -109,7 +109,7 @@ export function ScheduleView({
       stageId: formData.get('stageId'),
       day: formData.get('day'),
       time: formData.get('time'),
-      title: formData.get('title'),
+      title: eventTitle,
       artist: artistName,
       genre: formData.get('genre'),
       soundcheck: formData.get('soundcheck'),
@@ -136,7 +136,7 @@ export function ScheduleView({
         user: currentUser,
         action: 'CREATE',
         module: 'Menetrend & Lineup',
-        description: `Új fellépést rögzített (${updatedItem.day}, ${updatedItem.time}): ${updatedItem.title} - ${updatedItem.artist}`
+        description: `Új fellépést rögzített (${updatedItem.day}, ${updatedItem.time}): ${updatedItem.artist} - ${updatedItem.title}`
       });
     } else {
       onUpdateSchedule(schedule.map(s => s.id === updatedItem.id ? updatedItem : s));
@@ -144,7 +144,7 @@ export function ScheduleView({
         user: currentUser,
         action: 'UPDATE',
         module: 'Menetrend & Lineup',
-        description: `Frissítette a program adatlapját: ${updatedItem.title} (${updatedItem.artist})`
+        description: `Frissítette a program adatlapját: ${updatedItem.artist} (${updatedItem.title})`
       });
     }
 
@@ -236,7 +236,7 @@ export function ScheduleView({
   };
 
   const handleSimulatedDownload = (fileName) => {
-    alert(`Dokumentum letöltése folyamatban: ${fileName}\n(Fájl sikeresen előkészítve a helyi gépre mentéshez)`);
+    alert(`Dokumentum letöltése folyamatban: ${fileName}\n(Fájl előkészítve)`);
   };
 
   return (
@@ -251,20 +251,20 @@ export function ScheduleView({
         marginBottom: '16px'
       }}>
         {/* Day Selector */}
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {DAYS.map(day => (
             <button
               key={day}
               onClick={() => setSelectedDay(day)}
               style={{
-                padding: '8px 18px',
+                padding: '8px 16px',
                 borderRadius: '6px',
                 fontSize: '13.5px',
                 fontWeight: selectedDay === day ? '800' : '600',
-                backgroundColor: selectedDay === day ? '#2563eb' : '#1e293b',
-                color: '#ffffff',
+                backgroundColor: selectedDay === day ? '#2563eb' : '#ffffff',
+                color: selectedDay === day ? '#ffffff' : '#0f172a',
                 border: '1.5px solid',
-                borderColor: selectedDay === day ? '#3b82f6' : '#334155',
+                borderColor: selectedDay === day ? '#1d4ed8' : '#cbd5e1',
                 cursor: 'pointer'
               }}
             >
@@ -277,19 +277,19 @@ export function ScheduleView({
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
             display: 'inline-flex',
-            backgroundColor: '#172033',
-            border: '1.5px solid #334155',
+            backgroundColor: '#ffffff',
+            border: '1.5px solid #cbd5e1',
             borderRadius: '6px',
             padding: '2px'
           }}>
             <button
               onClick={() => setViewMode('board')}
               style={{
-                padding: '7px 14px',
+                padding: '6px 14px',
                 fontSize: '12.5px',
                 fontWeight: viewMode === 'board' ? '800' : '600',
                 backgroundColor: viewMode === 'board' ? '#2563eb' : 'transparent',
-                color: '#ffffff',
+                color: viewMode === 'board' ? '#ffffff' : '#0f172a',
                 borderRadius: '4px'
               }}
             >
@@ -298,11 +298,11 @@ export function ScheduleView({
             <button
               onClick={() => setViewMode('list')}
               style={{
-                padding: '7px 14px',
+                padding: '6px 14px',
                 fontSize: '12.5px',
                 fontWeight: viewMode === 'list' ? '800' : '600',
                 backgroundColor: viewMode === 'list' ? '#2563eb' : 'transparent',
-                color: '#ffffff',
+                color: viewMode === 'list' ? '#ffffff' : '#0f172a',
                 borderRadius: '4px'
               }}
             >
@@ -315,40 +315,40 @@ export function ScheduleView({
             className="btn-primary"
             style={{ padding: '8px 16px' }}
           >
-            <Plus size={16} /> Új Műsor / Fellépő
+            <Plus size={16} /> Új Fellépő / Műsor Rögzítése
           </button>
         </div>
       </div>
 
       {/* Program Highlights Banner for Day */}
       <div style={{
-        backgroundColor: '#172033',
-        border: '1.5px solid #3b82f6',
+        backgroundColor: '#f0fdf4',
+        border: '1.5px solid #86efac',
         borderRadius: '8px',
         padding: '12px 18px',
         marginBottom: '16px',
         fontSize: '13.5px',
-        color: '#ffffff',
+        color: '#14532d',
         lineHeight: 1.5
       }}>
         {selectedDay === 'Péntek' && (
           <div>
-            <strong style={{ color: '#60a5fa' }}>PÉNTEK KIEMELT PROGRAM:</strong> Délután chill afro DJ szettek, este <strong>20:30-tól VÁRDISCO LEGENDS NIGHT</strong> (TornyosiGabi, Kunyik, Magnus, és 23:30-tól <strong>TISZTAFAXXA LIVE</strong> 02:00-ig csendrendeleti felmentéssel!).
+            <strong style={{ color: '#166534' }}>PÉNTEK KIEMELT PROGRAM:</strong> Délután chill afro DJ szettek, este <strong>20:30-tól VÁRDISCO LEGENDS NIGHT</strong> (TornyosiGabi, Kunyik, Magnus, és 23:30-tól <strong>TISZTAFAXXA LIVE</strong> 02:00-ig csendrendeleti felmentéssel!).
           </div>
         )}
         {selectedDay === 'Szombat' && (
           <div>
-            <strong style={{ color: '#fbbf24' }}>SZOMBAT KIEMELT PROGRAM:</strong> Napközben tambura & világzene, <strong>21:00-kor OCHO MACHO ÉLŐ NAGYKONCERT</strong> a Nagyszínpadon, a Jurisics téren balkán rézfúvósok!
+            <strong style={{ color: '#166534' }}>SZOMBAT KIEMELT PROGRAM:</strong> Napközben tambura & világzene, <strong>21:00-kor OCHO MACHO ÉLŐ NAGYKONCERT</strong> a Nagyszínpadon, a Jurisics téren balkán rézfúvósok!
           </div>
         )}
         {selectedDay === 'Vasárnap' && (
           <div>
-            <strong style={{ color: '#38bdf8' }}>VASÁRNAP KIEMELT PROGRAM:</strong> Bohemian Betyars, <strong>20:30-kor SZTÁRFELLÉPŐ (G.w.M / MAJKA)</strong>, utána <strong>OPEN STAGE</strong> (bárki felmehet zenélni)!
+            <strong style={{ color: '#166534' }}>VASÁRNAP KIEMELT PROGRAM:</strong> Bohemian Betyars, <strong>20:30-kor SZTÁRFELLÉPŐ (G.w.M / MAJKA)</strong>, utána <strong>OPEN STAGE</strong> (bárki felmehet zenélni)!
           </div>
         )}
         {selectedDay === 'Hétfő' && (
           <div>
-            <strong style={{ color: '#34d399' }}>HÉTFŐ KIEMELT PROGRAM:</strong> Pünkösdhétfői Fesztivál Gála, Utcazenész verseny díjátadó, és a Parno Graszt nagykoncert a Fő téren!
+            <strong style={{ color: '#166534' }}>HÉTFŐ KIEMELT PROGRAM:</strong> Pünkösdhétfői Fesztivál Gála, Utcazenész verseny díjátadó, és a Parno Graszt nagykoncert a Fő téren!
           </div>
         )}
       </div>
@@ -372,47 +372,48 @@ export function ScheduleView({
               <div
                 key={stage.id}
                 style={{
-                  backgroundColor: '#111827',
-                  border: isMain ? '2px solid #2563eb' : '1.5px solid #334155',
+                  backgroundColor: '#ffffff',
+                  border: isMain ? '2px solid #2563eb' : '1.5px solid #cbd5e1',
                   borderRadius: '10px',
                   display: 'flex',
                   flexDirection: 'column',
-                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.4)'
+                  boxShadow: '0 2px 5px rgba(0, 0, 0, 0.05)'
                 }}
               >
                 {/* Stage Column Header */}
                 <div style={{
                   padding: '14px 18px',
-                  borderBottom: '1.5px solid #334155',
-                  backgroundColor: '#172033',
+                  borderBottom: '1.5px solid #cbd5e1',
+                  backgroundColor: isMain ? '#eff6ff' : '#f8fafc',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   borderRadius: '9px 9px 0 0'
                 }}>
                   <div>
-                    <h3 style={{ fontSize: '15px', fontWeight: '800', color: '#ffffff' }}>
+                    <h3 style={{ fontSize: '15px', fontWeight: '800', color: isMain ? '#1e40af' : '#0f172a' }}>
                       {stage.name}
                     </h3>
-                    <p style={{ fontSize: '12px', color: '#cbd5e1' }}>{stage.location}</p>
+                    <p style={{ fontSize: '12px', color: '#334155', fontWeight: '500' }}>{stage.location}</p>
                   </div>
                   <button
                     onClick={() => handleAddNew(stage.id)}
-                    title="Új program ezen a színpadon"
+                    title="Új program rögzítése erre a színpadra"
                     style={{
-                      backgroundColor: '#1e293b',
-                      color: '#ffffff',
-                      border: '1px solid #475569',
+                      backgroundColor: '#ffffff',
+                      color: '#0f172a',
+                      border: '1.5px solid #cbd5e1',
                       borderRadius: '50%',
-                      width: '28px',
-                      height: '28px',
+                      width: '30px',
+                      height: '30px',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      fontWeight: '800'
                     }}
                   >
-                    <Plus size={15} />
+                    <Plus size={16} />
                   </button>
                 </div>
 
@@ -422,25 +423,25 @@ export function ScheduleView({
                     <div style={{
                       padding: '36px 16px',
                       textAlign: 'center',
-                      color: '#94a3b8',
+                      color: '#475569',
                       fontSize: '13px',
-                      border: '1.5px dashed #334155',
-                      borderRadius: '8px'
+                      border: '1.5px dashed #cbd5e1',
+                      borderRadius: '8px',
+                      backgroundColor: '#f8fafc'
                     }}>
                       Nincs betervezett műsor erre a színpadra ezen a napon.
                       <div style={{ marginTop: '8px' }}>
                         <button
                           onClick={() => handleAddNew(stage.id)}
-                          style={{ color: '#38bdf8', fontSize: '12.5px', textDecoration: 'underline', fontWeight: '700' }}
+                          style={{ color: '#2563eb', fontSize: '13px', textDecoration: 'underline', fontWeight: '700' }}
                         >
-                          + Program hozzáadása
+                          + Új műsor rögzítése
                         </button>
                       </div>
                     </div>
                   ) : (
                     stageItems.map(item => {
                       const isVardisco = item.title.includes('VÁRDISCO') || item.title.includes('TISZTAFAXXA');
-                      const isOcho = item.title.includes('OCHO MACHO');
                       const matchedArtist = artists.find(a => a.name.toLowerCase() === item.artist.toLowerCase());
                       const hasRider = item.techRiderDoc || (matchedArtist && matchedArtist.techRider);
                       const hasContract = item.contractDoc || (matchedArtist && matchedArtist.contractStatus === 'Aláírva');
@@ -450,44 +451,51 @@ export function ScheduleView({
                           key={item.id}
                           onClick={() => handleOpenItem(item)}
                           style={{
-                            backgroundColor: isVardisco ? '#1e1b4b' : isOcho ? '#3b2506' : '#172033',
-                            border: isVardisco ? '2px solid #8b5cf6' : isOcho ? '2px solid #f59e0b' : '1.5px solid #334155',
+                            backgroundColor: '#ffffff',
+                            border: isVardisco ? '2px solid #7c3aed' : '1.5px solid #cbd5e1',
                             borderRadius: '8px',
                             padding: '14px',
                             cursor: 'pointer',
-                            transition: 'all 0.15s ease'
+                            transition: 'all 0.15s ease',
+                            boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)'
                           }}
-                          onMouseEnter={(e) => e.currentTarget.style.borderColor = '#60a5fa'}
-                          onMouseLeave={(e) => e.currentTarget.style.borderColor = isVardisco ? '#8b5cf6' : isOcho ? '#f59e0b' : '#334155'}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.borderColor = '#2563eb';
+                            e.currentTarget.style.boxShadow = '0 3px 8px rgba(37, 99, 235, 0.15)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.borderColor = isVardisco ? '#7c3aed' : '#cbd5e1';
+                            e.currentTarget.style.boxShadow = '0 1px 3px rgba(0, 0, 0, 0.05)';
+                          }}
                         >
                           {/* Card Top: Time & Status */}
                           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                             <div style={{
                               fontWeight: '800',
-                              fontSize: '13.5px',
-                              color: '#38bdf8',
+                              fontSize: '14px',
+                              color: '#1d4ed8',
                               display: 'flex',
                               alignItems: 'center',
                               gap: '5px'
                             }}>
-                              <Clock size={14} /> {item.time}
+                              <Clock size={15} /> {item.time}
                             </div>
                             <span className={`badge ${item.status === 'Visszaigazolva' || item.status === 'Jóváhagyva' ? 'badge-green' : item.status === 'Egyeztetés alatt' ? 'badge-amber' : 'badge-blue'}`}>
                               {item.status}
                             </span>
                           </div>
 
-                          {/* Card Title & Artist */}
+                          {/* Card Performer & Title */}
                           <div style={{
                             fontWeight: '800',
-                            fontSize: '14.5px',
-                            color: isVardisco ? '#c084fc' : isOcho ? '#fbbf24' : '#ffffff',
-                            marginBottom: '4px'
+                            fontSize: '15px',
+                            color: '#000000',
+                            marginBottom: '2px'
                           }}>
-                            {item.title}
+                            {item.artist}
                           </div>
-                          <div style={{ fontSize: '13px', color: '#f1f5f9', marginBottom: '10px' }}>
-                            {item.artist} • <span style={{ color: '#cbd5e1' }}>{item.genre}</span>
+                          <div style={{ fontSize: '13px', color: '#1e293b', fontWeight: '600', marginBottom: '10px' }}>
+                            {item.title} • <span style={{ color: '#475569', fontWeight: '500' }}>{item.genre}</span>
                           </div>
 
                           {/* Soundcheck & Stage Manager */}
@@ -496,16 +504,16 @@ export function ScheduleView({
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             fontSize: '12px',
-                            color: '#cbd5e1',
-                            borderTop: '1px solid #334155',
+                            color: '#1e293b',
+                            borderTop: '1px solid #e2e8f0',
                             paddingTop: '8px',
                             marginTop: '8px'
                           }}>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#93c5fd', fontWeight: '700' }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#1e40af', fontWeight: '700' }}>
                               <Volume2 size={13} /> Beállás: {item.soundcheck}
                             </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <UserCheck size={13} color="#60a5fa" /> {item.stageManager}
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
+                              <UserCheck size={13} color="#2563eb" /> {item.stageManager}
                             </span>
                           </div>
 
@@ -516,7 +524,7 @@ export function ScheduleView({
                             justifyContent: 'space-between',
                             marginTop: '10px',
                             paddingTop: '8px',
-                            borderTop: '1px dashed #334155'
+                            borderTop: '1px dashed #cbd5e1'
                           }}>
                             <div style={{ display: 'flex', gap: '5px', fontSize: '11px' }}>
                               {hasRider ? (
@@ -536,11 +544,13 @@ export function ScheduleView({
                               value={item.stageId}
                               title="Gyors áthelyezés másik színpadra"
                               style={{
-                                fontSize: '11px',
-                                padding: '3px 6px',
-                                backgroundColor: '#0a0f1d',
-                                borderColor: '#334155',
-                                color: '#ffffff'
+                                fontSize: '12px',
+                                padding: '4px 6px',
+                                backgroundColor: '#ffffff',
+                                borderColor: '#cbd5e1',
+                                color: '#0f172a',
+                                fontWeight: '600',
+                                width: 'auto'
                               }}
                             >
                               <option disabled value="">Áthelyezés...</option>
@@ -566,8 +576,8 @@ export function ScheduleView({
               <tr>
                 <th>Idősáv</th>
                 <th>Színpad</th>
+                <th>Fellépő / Zenekar</th>
                 <th>Produkció Címe</th>
-                <th>Fellépő</th>
                 <th>Stílus</th>
                 <th>Beállás</th>
                 <th>Dokumentumok</th>
@@ -579,7 +589,7 @@ export function ScheduleView({
             <tbody>
               {currentDaySchedule.length === 0 ? (
                 <tr>
-                  <td colSpan={10} style={{ textAlign: 'center', padding: '36px', color: '#94a3b8' }}>
+                  <td colSpan={10} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                     Nincs műsor ezen a napon.
                   </td>
                 </tr>
@@ -592,7 +602,7 @@ export function ScheduleView({
 
                   return (
                     <tr key={item.id} onClick={() => handleOpenItem(item)} style={{ cursor: 'pointer' }}>
-                      <td style={{ fontWeight: '800', color: '#38bdf8', whiteSpace: 'nowrap' }}>
+                      <td style={{ fontWeight: '800', color: '#1d4ed8', whiteSpace: 'nowrap' }}>
                         {item.time}
                       </td>
                       <td>
@@ -600,16 +610,16 @@ export function ScheduleView({
                           {stageObj ? stageObj.name.split('(')[0] : item.stageId}
                         </span>
                       </td>
-                      <td style={{ fontWeight: '800', color: '#ffffff' }}>
-                        {item.title}
-                      </td>
-                      <td style={{ color: '#ffffff', fontWeight: '600' }}>
+                      <td style={{ fontWeight: '800', color: '#000000', fontSize: '13.5px' }}>
                         {item.artist}
                       </td>
-                      <td style={{ fontSize: '13px', color: '#cbd5e1' }}>
+                      <td style={{ color: '#1e293b', fontWeight: '600' }}>
+                        {item.title}
+                      </td>
+                      <td style={{ fontSize: '13px', color: '#334155' }}>
                         {item.genre}
                       </td>
-                      <td style={{ fontSize: '13px', color: '#93c5fd', fontWeight: '700' }}>
+                      <td style={{ fontSize: '13px', color: '#1e40af', fontWeight: '700' }}>
                         {item.soundcheck}
                       </td>
                       <td>
@@ -620,7 +630,7 @@ export function ScheduleView({
                           {hasContract && <span className="badge badge-blue">Szerz. OK</span>}
                         </div>
                       </td>
-                      <td style={{ fontSize: '13px', color: '#ffffff' }}>
+                      <td style={{ fontSize: '13px', color: '#0f172a', fontWeight: '600' }}>
                         {item.stageManager}
                       </td>
                       <td>
@@ -632,14 +642,14 @@ export function ScheduleView({
                         <button
                           onClick={(e) => { e.stopPropagation(); handleOpenItem(item); }}
                           title="Részletek & Doksik"
-                          style={{ color: '#38bdf8', padding: '4px 6px' }}
+                          style={{ color: '#2563eb', padding: '4px 6px' }}
                         >
                           <Eye size={16} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDelete(item.id, item.title); }}
                           title="Törlés"
-                          style={{ color: '#f87171', padding: '4px 6px', marginLeft: '4px' }}
+                          style={{ color: '#dc2626', padding: '4px 6px', marginLeft: '4px' }}
                         >
                           <Trash2 size={16} />
                         </button>
@@ -659,62 +669,107 @@ export function ScheduleView({
           <div className="modal-card" style={{ maxWidth: '800px' }}>
             <div className="modal-header">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Radio size={22} color="#3b82f6" />
+                <Radio size={22} color="#2563eb" />
                 <div>
-                  <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff' }}>
-                    {isNewItem ? 'Új Fellépés / Program Rögzítése' : selectedItem.title || 'Műsor és Fellépő Adatlap'}
+                  <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#0f172a' }}>
+                    {isNewItem ? 'Új Fellépés / Műsor Rögzítése' : `${selectedItem.artist || selectedItem.title} - Adatlap`}
                   </h2>
-                  <p style={{ fontSize: '12px', color: '#cbd5e1' }}>
-                    Adatlap, gázsi, rider, szerződés és színpadi áthelyezés
+                  <p style={{ fontSize: '12px', color: '#334155' }}>
+                    Fellépő neve, időpont, helyszín, gázsi és dokumentumok
                   </p>
                 </div>
               </div>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '75vh' }}>
                 
-                {/* Quick Artist Picker from Existing Roster */}
+                {/* 1. KI LÉP FEL? HIGHLIGHTED PROMINENT SECTION */}
                 <div style={{
-                  backgroundColor: '#172033',
-                  border: '1.5px solid #3b82f6',
+                  backgroundColor: '#eff6ff',
+                  border: '2px solid #3b82f6',
                   borderRadius: '8px',
                   padding: '14px 16px'
                 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-                    <label style={{ fontSize: '13px', fontWeight: '800', color: '#93c5fd' }}>
-                      Gyorsválasztó létező fellépőből (Automatikus kitöltés):
+                  <div style={{ marginBottom: '10px' }}>
+                    <label style={{ display: 'block', fontSize: '14px', fontWeight: '800', color: '#1e3a8a', marginBottom: '6px' }}>
+                      ⭐ Fellépő / Zenekar Neve (Ki lép fel?) *
                     </label>
-                    <span style={{ fontSize: '12px', color: '#cbd5e1' }}>
-                      Bármelyik zenekar bármelyik színpadra betehető
-                    </span>
+                    <input
+                      name="artist"
+                      defaultValue={selectedItem.artist}
+                      placeholder="Írd be a zenekar vagy előadó nevét (pl. Ocho Macho, Bohemian Betyars, TornyosiGabi...)"
+                      required
+                      autoFocus
+                      style={{
+                        width: '100%',
+                        fontSize: '15px',
+                        fontWeight: '700',
+                        color: '#000000',
+                        border: '2px solid #2563eb',
+                        backgroundColor: '#ffffff'
+                      }}
+                    />
                   </div>
-                  <select
-                    onChange={(e) => handleSelectExistingArtist(e.target.value)}
-                    style={{ width: '100%', fontSize: '13.5px', backgroundColor: '#0a0f1d' }}
-                  >
-                    <option value="">-- Válassz egy már felvitt fellépőt a listából --</option>
-                    {artists.map(a => (
-                      <option key={a.id} value={a.name}>
-                        {a.name} ({a.fee ? `${a.fee.toLocaleString()} Ft` : 'Gázsi nincs megadva'} • {a.contractStatus})
-                      </option>
-                    ))}
-                  </select>
+
+                  {/* Quick Artist Picker from Existing Roster */}
+                  <div style={{ borderTop: '1px dashed #93c5fd', paddingTop: '10px' }}>
+                    <label style={{ fontSize: '12px', fontWeight: '700', color: '#1e40af', display: 'block', marginBottom: '4px' }}>
+                      VAGY válassz egy már felvitt zenekart a listából:
+                    </label>
+                    <select
+                      onChange={(e) => handleSelectExistingArtist(e.target.value)}
+                      style={{ width: '100%', fontSize: '13px', backgroundColor: '#ffffff', color: '#0f172a' }}
+                    >
+                      <option value="">-- Meglévő zenekar kiválasztása --</option>
+                      {artists.map(a => (
+                        <option key={a.id} value={a.name}>
+                          {a.name} ({a.fee ? `${a.fee.toLocaleString()} Ft` : 'Gázsi nincs megadva'} • {a.contractStatus})
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
-                {/* Section 1: Basic Stage, Day and Title */}
+                {/* Section 2: Program Title and Genre */}
+                <div className="grid-2">
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Produkció / Műsor Címe (Opcionális)
+                    </label>
+                    <input
+                      name="title"
+                      defaultValue={selectedItem.title}
+                      placeholder="pl. Ocho Macho Élőkoncert (üresen hagyva a zenekar neve lesz)"
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Zenei Műfaj / Stílus
+                    </label>
+                    <input
+                      name="genre"
+                      defaultValue={selectedItem.genre}
+                      placeholder="pl. Világzene, Reggae, Népzene, Utcazene..."
+                      style={{ width: '100%' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Section 3: Basic Stage, Day and Status */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
-                      Színpad (Áthelyezhető!)
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Színpad (Helyszín)
                     </label>
                     <select name="stageId" defaultValue={selectedItem.stageId} style={{ width: '100%' }}>
                       {STAGES.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Fesztivál Napja
                     </label>
                     <select name="day" defaultValue={selectedItem.day} style={{ width: '100%' }}>
@@ -722,7 +777,7 @@ export function ScheduleView({
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Státusz
                     </label>
                     <select name="status" defaultValue={selectedItem.status} style={{ width: '100%' }}>
@@ -734,75 +789,47 @@ export function ScheduleView({
                   </div>
                 </div>
 
-                {/* Section 2: Program and Artist Names */}
-                <div className="grid-2">
-                  <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
-                      Produkció / Műsor Címe
-                    </label>
-                    <input
-                      name="title"
-                      defaultValue={selectedItem.title}
-                      placeholder="pl. Ocho Macho Élőkoncert"
-                      required
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
-                      Fellépő / Zenekar Neve
-                    </label>
-                    <input
-                      name="artist"
-                      defaultValue={selectedItem.artist}
-                      placeholder="pl. Ocho Macho"
-                      required
-                      style={{ width: '100%' }}
-                    />
-                  </div>
-                </div>
-
-                {/* Section 3: Timing (Timeup) */}
+                {/* Section 4: Timing (Timeup) */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Koncert Idősáv (Kezdés - Vég)
                     </label>
                     <input name="time" defaultValue={selectedItem.time} required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Beállás (Soundcheck időpont)
                     </label>
                     <input name="soundcheck" defaultValue={selectedItem.soundcheck} required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Érkezés (Load-in)
                     </label>
                     <input name="loadIn" defaultValue={selectedItem.loadIn} style={{ width: '100%' }} />
                   </div>
                 </div>
 
-                {/* Section 4: DOCUMENTS SECTION (Tech Rider & Contract & Stage Plot) */}
+                {/* Section 5: DOCUMENTS SECTION (Tech Rider & Contract & Stage Plot) */}
                 <div style={{
-                  backgroundColor: '#0a0f1d',
-                  border: '1.5px solid #334155',
+                  backgroundColor: '#f8fafc',
+                  border: '1.5px solid #cbd5e1',
                   borderRadius: '8px',
                   padding: '16px'
                 }}>
-                  <h4 style={{ fontSize: '13px', fontWeight: '800', color: '#38bdf8', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <FileText size={16} /> Dokumentumok & Csatolmányok (Rider, Szerződés, Stage Plot)
+                  <h4 style={{ fontSize: '13px', fontWeight: '800', color: '#0f172a', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <FileText size={16} color="#2563eb" /> Dokumentumok & Csatolmányok (Rider, Szerződés, Stage Plot)
                   </h4>
                   <div className="grid-3">
                     {/* Tech Rider */}
-                    <div style={{ backgroundColor: '#172033', border: '1px solid #334155', borderRadius: '6px', padding: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#ffffff', marginBottom: '6px' }}>
+                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                         Technical Rider
                       </div>
                       {selectedItem.techRiderDoc ? (
                         <div>
-                          <div style={{ fontSize: '12px', color: '#34d399', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '600' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
                             {selectedItem.techRiderDoc}
                           </div>
                           <button
@@ -816,7 +843,7 @@ export function ScheduleView({
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '12px', color: '#f87171', marginBottom: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#dc2626', marginBottom: '8px', fontWeight: '600' }}>
                             Még nincs feltöltve
                           </div>
                           <button
@@ -832,13 +859,13 @@ export function ScheduleView({
                     </div>
 
                     {/* Contract */}
-                    <div style={{ backgroundColor: '#172033', border: '1px solid #334155', borderRadius: '6px', padding: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#ffffff', marginBottom: '6px' }}>
+                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                         Szerződés (PDF)
                       </div>
                       {selectedItem.contractDoc ? (
                         <div>
-                          <div style={{ fontSize: '12px', color: '#34d399', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '600' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
                             {selectedItem.contractDoc}
                           </div>
                           <button
@@ -852,7 +879,7 @@ export function ScheduleView({
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
                             Nincs csatolva
                           </div>
                           <button
@@ -868,13 +895,13 @@ export function ScheduleView({
                     </div>
 
                     {/* Stage Plot */}
-                    <div style={{ backgroundColor: '#172033', border: '1px solid #334155', borderRadius: '6px', padding: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#ffffff', marginBottom: '6px' }}>
+                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
+                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                         Stage Plot (Színpadrajz)
                       </div>
                       {selectedItem.stagePlotDoc ? (
                         <div>
-                          <div style={{ fontSize: '12px', color: '#34d399', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '600' }}>
+                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
                             {selectedItem.stagePlotDoc}
                           </div>
                           <button
@@ -888,7 +915,7 @@ export function ScheduleView({
                         </div>
                       ) : (
                         <div>
-                          <div style={{ fontSize: '12px', color: '#cbd5e1', marginBottom: '8px' }}>
+                          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
                             Nincs külön rajz
                           </div>
                           <button
@@ -905,10 +932,10 @@ export function ScheduleView({
                   </div>
                 </div>
 
-                {/* Section 5: Financials & Contracts */}
+                {/* Section 6: Financials & Contracts */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Tiszteletdíj / Gázsi (Ft)
                     </label>
                     <input
@@ -920,7 +947,7 @@ export function ScheduleView({
                     />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Számlázási Mód
                     </label>
                     <select name="feeType" defaultValue={selectedItem.feeType} style={{ width: '100%' }}>
@@ -932,7 +959,7 @@ export function ScheduleView({
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szerződés Státusz
                     </label>
                     <select name="contractStatus" defaultValue={selectedItem.contractStatus} style={{ width: '100%' }}>
@@ -943,54 +970,54 @@ export function ScheduleView({
                   </div>
                 </div>
 
-                {/* Section 6: Contacts */}
+                {/* Section 7: Contacts */}
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kapcsolattartó Neve
                     </label>
                     <input name="contactName" defaultValue={selectedItem.contactName} placeholder="Menedzser / Tour mgr" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Telefonszám
                     </label>
                     <input name="contactPhone" defaultValue={selectedItem.contactPhone} placeholder="+36 30..." style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       E-mail cím
                     </label>
                     <input name="contactEmail" defaultValue={selectedItem.contactEmail} placeholder="booking@..." style={{ width: '100%' }} />
                   </div>
                 </div>
 
-                {/* Section 7: Hospitality & Diet */}
+                {/* Section 8: Hospitality & Diet */}
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Hospitality / Backstage Ellátás
                     </label>
                     <input name="hospitality" defaultValue={selectedItem.hospitality} placeholder="pl. 8 fő melegétel, víz, kávé" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Speciális Étrendi Igény (Diéta)
                     </label>
                     <input name="diet" defaultValue={selectedItem.diet} placeholder="pl. 2 vegetáriánus, 1 gluténmentes" style={{ width: '100%' }} />
                   </div>
                 </div>
 
-                {/* Section 8: Stage Manager & Notes */}
+                {/* Section 9: Stage Manager & Notes */}
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Felelős (Stage Manager)
                     </label>
                     <input name="stageManager" defaultValue={selectedItem.stageManager} style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#ffffff', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Műszaki & Színpadi Megjegyzés
                     </label>
                     <input name="notes" defaultValue={selectedItem.notes} placeholder="Mikrofonok, kordonok, füst..." style={{ width: '100%' }} />
@@ -1006,7 +1033,7 @@ export function ScheduleView({
                     <button
                       type="button"
                       onClick={() => handleDelete(selectedItem.id, selectedItem.title)}
-                      style={{ color: '#f87171', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: '700' }}
+                      style={{ color: '#dc2626', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '5px', fontWeight: '700', cursor: 'pointer' }}
                     >
                       <Trash2 size={15} /> Műsor Törlése
                     </button>

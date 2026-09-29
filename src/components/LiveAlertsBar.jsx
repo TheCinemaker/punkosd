@@ -60,22 +60,25 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
     setIsAddModalOpen(false);
   };
 
+  const isAlertActive = criticalCount > 0 || warningCount > 0;
+
   return (
     <>
-      {/* Sticky Real-Time Alerts Ticker Bar */}
+      {/* Real-Time Alerts Ticker Bar (Light Mode) */}
       <div style={{
-        backgroundColor: criticalCount > 0 ? '#7f1d1d' : warningCount > 0 ? '#78350f' : '#111827',
-        borderBottom: criticalCount > 0 ? '1.5px solid #dc2626' : warningCount > 0 ? '1.5px solid #d97706' : '1.5px solid #334155',
-        padding: '8px 24px',
+        backgroundColor: criticalCount > 0 ? '#fee2e2' : warningCount > 0 ? '#fef3c7' : '#ffffff',
+        borderBottom: criticalCount > 0 ? '2px solid #ef4444' : warningCount > 0 ? '2px solid #f59e0b' : '1px solid #cbd5e1',
+        padding: '8px 20px',
         fontSize: '13px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        transition: 'all 0.2s ease',
-        zIndex: 90
+        flexWrap: 'wrap',
+        gap: '10px',
+        transition: 'all 0.15s ease'
       }}>
         {/* Left: Status Ticker */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden', flex: 1 }}>
           {criticalCount > 0 ? (
             <span style={{
               display: 'inline-flex',
@@ -105,44 +108,44 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
               <AlertTriangle size={15} /> {warningCount} FIGYELMEZTETÉS
             </span>
           ) : (
-            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#6ee7b7', fontWeight: '700' }}>
-              <CheckCircle2 size={15} color="#34d399" /> Minden helyszín és stand zavartalanul üzemel
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: '700' }}>
+              <CheckCircle2 size={16} color="#059669" /> Minden helyszín és stand zavartalanul üzemel
             </span>
           )}
 
           {/* Latest Incident snippet */}
           {activeIncidents.length > 0 && (
-            <span style={{ color: '#ffffff', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '650px', fontSize: '13px' }}>
-              <strong>{activeIncidents[0].location}:</strong> {activeIncidents[0].text} <span style={{ color: '#cbd5e1' }}>({activeIncidents[0].reporter}, {activeIncidents[0].time})</span>
+            <span style={{ color: '#0f172a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '650px', fontSize: '13px', fontWeight: '600' }}>
+              <strong>{activeIncidents[0].location}:</strong> {activeIncidents[0].text} <span style={{ color: '#475569' }}>({activeIncidents[0].reporter}, {activeIncidents[0].time})</span>
             </span>
           )}
         </div>
 
         {/* Right: Quick Buttons */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button
             onClick={() => setIsOpenPanel(true)}
             style={{
-              padding: '5px 12px',
+              padding: '6px 12px',
               borderRadius: '5px',
               fontSize: '12.5px',
               fontWeight: '700',
-              backgroundColor: '#1e293b',
-              color: '#ffffff',
-              border: '1px solid #475569',
+              backgroundColor: '#ffffff',
+              color: '#0f172a',
+              border: '1.5px solid #cbd5e1',
               display: 'flex',
               alignItems: 'center',
               gap: '5px',
               cursor: 'pointer'
             }}
           >
-            <Bell size={14} color="#60a5fa" /> Problémafal ({activeIncidents.length})
+            <Bell size={14} color="#2563eb" /> Problémafal ({activeIncidents.length})
           </button>
 
           <button
             onClick={() => setIsAddModalOpen(true)}
             style={{
-              padding: '5px 12px',
+              padding: '6px 14px',
               borderRadius: '5px',
               fontSize: '12.5px',
               fontWeight: '800',
@@ -155,7 +158,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
               cursor: 'pointer'
             }}
           >
-            <Plus size={14} /> Helyszíni SOS / Észrevétel
+            <Plus size={15} /> Helyszíni SOS / Észrevétel
           </button>
         </div>
       </div>
@@ -167,29 +170,29 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
             width: '100%',
             maxWidth: '540px',
             height: '100vh',
-            backgroundColor: '#111827',
-            borderLeft: '2px solid #334155',
+            backgroundColor: '#ffffff',
+            borderLeft: '2px solid #cbd5e1',
             display: 'flex',
             flexDirection: 'column',
-            boxShadow: '-10px 0 25px rgba(0, 0, 0, 0.8)',
+            boxShadow: '-10px 0 25px rgba(0, 0, 0, 0.15)',
             animation: 'slideInRight 0.2s ease-out'
           }}>
             {/* Panel Header */}
             <div style={{
               padding: '18px 24px',
-              borderBottom: '1.5px solid #334155',
+              borderBottom: '1.5px solid #cbd5e1',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              backgroundColor: '#172033'
+              backgroundColor: '#f8fafc'
             }}>
               <div>
-                <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#ffffff', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Radio size={18} color="#ef4444" /> Valós Idejű SOS & Helyszíni Problémafal
+                <h3 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Radio size={18} color="#dc2626" /> Valós Idejű SOS & Helyszíni Problémafal
                 </h3>
-                <p style={{ fontSize: '12px', color: '#cbd5e1' }}>Minden csapattagnál azonnal megjelenő értesítések</p>
+                <p style={{ fontSize: '12px', color: '#334155' }}>Minden csapattagnál azonnal megjelenő értesítések</p>
               </div>
-              <button onClick={() => setIsOpenPanel(false)} style={{ color: '#ffffff', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsOpenPanel(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             {/* Panel Body: Incident Feed */}
@@ -210,8 +213,8 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                   <div
                     key={inc.id}
                     style={{
-                      backgroundColor: inc.isResolved ? '#0f172a' : isCrit ? '#450a0a' : '#422006',
-                      border: inc.isResolved ? '1px solid #334155' : isCrit ? '1.5px solid #dc2626' : '1.5px solid #d97706',
+                      backgroundColor: inc.isResolved ? '#f8fafc' : isCrit ? '#fef2f2' : '#fffbeb',
+                      border: inc.isResolved ? '1px solid #cbd5e1' : isCrit ? '1.5px solid #f87171' : '1.5px solid #fde68a',
                       borderRadius: '8px',
                       padding: '14px 16px',
                       opacity: inc.isResolved ? 0.75 : 1
@@ -222,32 +225,32 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                       <span className={`badge ${inc.isResolved ? 'badge-green' : isCrit ? 'badge-rose' : 'badge-amber'}`}>
                         {inc.isResolved ? 'MEGOLDVA' : isCrit ? 'SOS PROBLÉMA' : 'FIGYELMEZTETÉS'}
                       </span>
-                      <span style={{ fontSize: '12px', color: '#ffffff', fontFamily: 'JetBrains Mono', fontWeight: '700' }}>
+                      <span style={{ fontSize: '12px', color: '#0f172a', fontFamily: 'JetBrains Mono', fontWeight: '800' }}>
                         {inc.time}
                       </span>
                     </div>
 
                     {/* Location */}
-                    <div style={{ fontSize: '13px', fontWeight: '800', color: isCrit && !inc.isResolved ? '#fca5a5' : '#93c5fd', marginBottom: '6px' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '800', color: isCrit && !inc.isResolved ? '#b91c1c' : '#1e40af', marginBottom: '6px' }}>
                       Helyszín: {inc.location}
                     </div>
 
                     {/* Text */}
-                    <div style={{ fontSize: '13.5px', color: '#ffffff', lineHeight: 1.5, marginBottom: '10px' }}>
+                    <div style={{ fontSize: '13.5px', color: '#000000', lineHeight: 1.5, marginBottom: '10px', fontWeight: '600' }}>
                       {inc.text}
                     </div>
 
                     {/* Footer: Reporter & Action */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.1)', paddingTop: '8px' }}>
-                      <span style={{ color: '#cbd5e1' }}>
-                        Jelentette: <strong style={{ color: '#ffffff' }}>{inc.reporter}</strong>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '8px' }}>
+                      <span style={{ color: '#475569' }}>
+                        Jelentette: <strong style={{ color: '#0f172a' }}>{inc.reporter}</strong>
                       </span>
 
                       {!inc.isResolved ? (
                         <button
                           onClick={() => handleResolve(inc.id, inc.text)}
                           style={{
-                            padding: '4px 10px',
+                            padding: '4px 12px',
                             borderRadius: '4px',
                             backgroundColor: '#059669',
                             color: '#ffffff',
@@ -259,7 +262,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                           Megoldva
                         </button>
                       ) : (
-                        <span style={{ color: '#6ee7b7', fontWeight: '700' }}>
+                        <span style={{ color: '#166534', fontWeight: '800' }}>
                           Megoldotta: {inc.resolvedBy} ({inc.resolvedAt})
                         </span>
                       )}
@@ -277,15 +280,15 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff' }}>
+              <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#0f172a' }}>
                 Helyszíni SOS Probléma vagy Megjegyzés Rögzítése
               </h2>
-              <button onClick={() => setIsAddModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsAddModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleCreateIncident}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '700', color: '#ffffff', marginBottom: '8px' }}>
+                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#0f172a', marginBottom: '8px' }}>
                     Sürgősségi Szint:
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
@@ -293,8 +296,8 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                       padding: '10px',
                       borderRadius: '6px',
                       border: '2px solid #dc2626',
-                      backgroundColor: '#7f1d1d',
-                      color: '#ffffff',
+                      backgroundColor: '#fef2f2',
+                      color: '#991b1b',
                       fontSize: '13px',
                       fontWeight: '800',
                       cursor: 'pointer',
@@ -310,8 +313,8 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                       padding: '10px',
                       borderRadius: '6px',
                       border: '2px solid #d97706',
-                      backgroundColor: '#78350f',
-                      color: '#ffffff',
+                      backgroundColor: '#fffbeb',
+                      color: '#92400e',
                       fontSize: '13px',
                       fontWeight: '800',
                       cursor: 'pointer',
@@ -326,9 +329,9 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                     <label style={{
                       padding: '10px',
                       borderRadius: '6px',
-                      border: '2px solid #334155',
-                      backgroundColor: '#1e293b',
-                      color: '#ffffff',
+                      border: '2px solid #cbd5e1',
+                      backgroundColor: '#ffffff',
+                      color: '#0f172a',
                       fontSize: '13px',
                       fontWeight: '800',
                       cursor: 'pointer',
@@ -343,7 +346,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '700', color: '#ffffff', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                     Pontos Helyszín / Stand / Színpad:
                   </label>
                   <input
@@ -355,7 +358,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '700', color: '#ffffff', marginBottom: '6px' }}>
+                  <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
                     Probléma / Megjegyzés Részletes Leírása:
                   </label>
                   <textarea

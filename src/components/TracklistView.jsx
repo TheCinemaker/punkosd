@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Music, Plus, Edit2, Trash2, CheckCircle2, Clock, AlertCircle, FileText, Check, X } from 'lucide-react';
+import { Music, Plus, Edit2, Trash2, CheckCircle2, Clock, X } from 'lucide-react';
 
 export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog, currentUser, searchQuery }) {
   const [selectedArtist, setSelectedArtist] = useState('all');
@@ -102,10 +102,10 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div>
-            <h2 style={{ fontSize: '15px', fontWeight: '800', color: '#f8fafc' }}>
+            <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
               Artisjus Szerzői Jogdíj & Tracklist Menedzser
             </h2>
-            <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+            <p style={{ fontSize: '12px', color: '#475569' }}>
               Kötelező adatszolgáltatás a pályázathoz és az Artisjus felé ({tracklist.length} dal rögzítve)
             </p>
           </div>
@@ -115,7 +115,7 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
           <select
             value={selectedArtist}
             onChange={(e) => setSelectedArtist(e.target.value)}
-            style={{ fontSize: '12.5px', padding: '6px 10px' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
           >
             <option value="all">Minden előadó dala</option>
             {uniqueArtists.map(a => <option key={a} value={a}>{a}</option>)}
@@ -124,9 +124,9 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
           <button
             onClick={handleOpenAdd}
             className="btn-primary"
-            style={{ padding: '7px 14px', fontSize: '12.5px' }}
+            style={{ padding: '8px 16px', fontSize: '13px' }}
           >
-            <Plus size={15} /> Új Dal Rögzítése
+            <Plus size={16} /> Új Dal Rögzítése
           </button>
         </div>
       </div>
@@ -150,31 +150,31 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={9} style={{ textAlign: 'center', padding: '36px', color: '#64748b' }}>
+                <td colSpan={9} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nem található zeneszám ezen szűrőkkel.
                 </td>
               </tr>
             ) : (
               filtered.map(t => (
                 <tr key={t.id} onClick={() => handleOpenEdit(t)} style={{ cursor: 'pointer' }}>
-                  <td style={{ fontWeight: '700', color: '#38bdf8' }}>
+                  <td style={{ fontWeight: '800', color: '#1d4ed8' }}>
                     {t.artist}
                   </td>
-                  <td style={{ textAlign: 'center', fontWeight: '700', color: '#94a3b8' }}>
+                  <td style={{ textAlign: 'center', fontWeight: '700', color: '#475569' }}>
                     {t.order}.
                   </td>
-                  <td style={{ fontWeight: '700', color: '#f8fafc' }}>
+                  <td style={{ fontWeight: '700', color: '#000000', fontSize: '13.5px' }}>
                     {t.title}
                   </td>
-                  <td style={{ fontSize: '12px', color: '#cbd5e1' }}>
+                  <td style={{ fontSize: '12.5px', color: '#0f172a', fontWeight: '500' }}>
                     {t.composers}
                   </td>
-                  <td style={{ fontSize: '12px', color: '#94a3b8' }}>
+                  <td style={{ fontSize: '12px', color: '#475569' }}>
                     {t.lyricists || '-'}
                   </td>
                   <td style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#a855f7' }}>
-                      <Clock size={11} /> {t.duration}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', color: '#6d28d9', fontWeight: '700' }}>
+                      <Clock size={12} /> {t.duration}
                     </div>
                   </td>
                   <td>
@@ -189,16 +189,16 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
                     <button
                       onClick={(e) => { e.stopPropagation(); handleOpenEdit(t); }}
                       title="Szerkesztés"
-                      style={{ color: '#38bdf8', padding: '4px 6px' }}
+                      style={{ color: '#2563eb', padding: '4px 6px' }}
                     >
-                      <Edit2 size={15} />
+                      <Edit2 size={16} />
                     </button>
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(t.id, t.title); }}
                       title="Törlés"
-                      style={{ color: '#f87171', padding: '4px 6px', marginLeft: '4px' }}
+                      style={{ color: '#dc2626', padding: '4px 6px', marginLeft: '4px' }}
                     >
-                      <Trash2 size={15} />
+                      <Trash2 size={16} />
                     </button>
                   </td>
                 </tr>
@@ -213,47 +213,47 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
                 {isNew ? 'Új Zenemű Rögzítése (Artisjus)' : `${selectedTrack.title} (${selectedTrack.artist})`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Előadó / Zenekar</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Előadó / Zenekar *</label>
                     <input name="artist" defaultValue={selectedTrack.artist} required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Sorszám a műsorban</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Sorszám a műsorban</label>
                     <input type="number" name="order" defaultValue={selectedTrack.order} required style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Dal / Mű Címe</label>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Dal / Mű Címe *</label>
                   <input name="title" defaultValue={selectedTrack.title} placeholder="pl. Jó nekem" required style={{ width: '100%' }} />
                 </div>
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Zeneszerző(k) Teljes Neve</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Zeneszerző(k) Teljes Neve *</label>
                     <input name="composers" defaultValue={selectedTrack.composers} placeholder="pl. Kirchknopf Gergő, Csík András" required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Szövegíró(k) Teljes Neve</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Szövegíró(k) Teljes Neve</label>
                     <input name="lyricists" defaultValue={selectedTrack.lyricists} placeholder="pl. Kirchknopf Gergő" style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-3">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Hossz (perc:mp)</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Hossz (perc:mp)</label>
                     <input name="duration" defaultValue={selectedTrack.duration} placeholder="03:45" style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Mű Jellege</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Mű Jellege</label>
                     <select name="type" defaultValue={selectedTrack.type} style={{ width: '100%' }}>
                       <option value="Saját szerzemény">Saját szerzemény</option>
                       <option value="Feldolgozás">Feldolgozás</option>
@@ -261,7 +261,7 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>Artisjus Bejelentve?</label>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Artisjus Bejelentve?</label>
                     <select name="reported" defaultValue={String(selectedTrack.reported)} style={{ width: '100%' }}>
                       <option value="false">Folyamatban</option>
                       <option value="true">Igen (Bejelentve)</option>

@@ -1,16 +1,15 @@
 import React from 'react';
-import { Download, Search, User, LogOut, Calendar, MapPin, Radio, ShieldCheck, X } from 'lucide-react';
+import { Search, X, LogOut, User } from 'lucide-react';
 
-export function Header({ currentUser, onSwitchUser, onLogout, onExportExcel, searchQuery, onSearchChange }) {
+export function Header({ currentUser, onSwitchUser, onLogout, searchQuery, onSearchChange }) {
   return (
     <header style={{
-      backgroundColor: '#111827',
-      borderBottom: '1.5px solid #334155',
-      padding: '12px 24px',
-      position: 'sticky',
-      top: 0,
-      zIndex: 100,
-      boxShadow: '0 4px 12px rgba(0, 0, 0, 0.5)'
+      backgroundColor: '#ffffff',
+      borderBottom: '1px solid #e2e8f0',
+      padding: '10px 16px',
+      position: 'relative', /* Nem sticky, elgörgethető természetesen */
+      width: '100%',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)'
     }}>
       <div style={{
         maxWidth: '1750px',
@@ -19,77 +18,60 @@ export function Header({ currentUser, onSwitchUser, onLogout, onExportExcel, sea
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
-        gap: '12px'
+        gap: '10px'
       }}>
-        {/* Left: Brand & Festival Info */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
-          <div style={{
-            width: '42px',
-            height: '42px',
-            borderRadius: '8px',
-            background: '#2563eb',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 4px 10px rgba(37, 99, 235, 0.4)'
+        {/* Bal oldal: Csak a Manager cím */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <h1 style={{
+            fontSize: '16px',
+            fontWeight: '800',
+            color: '#0f172a',
+            letterSpacing: '-0.02em',
+            margin: 0
           }}>
-            <Radio size={22} color="#ffffff" />
-          </div>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              <h1 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.01em' }}>
-                KTSZE Fesztivál Menedzser 2026
-              </h1>
-              <span className="badge badge-amber" style={{ fontSize: '11px' }}>
-                PÜNKÖSD (4 NAP)
-              </span>
-              <span className="badge badge-blue" style={{ fontSize: '11px' }}>
-                PIN: 1532
-              </span>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12.5px', color: '#cbd5e1', marginTop: '3px', flexWrap: 'wrap' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <MapPin size={13} color="#38bdf8" /> Kőszeg: Fő tér (Borok) • Jurisics tér (Ételek) • Várjátszótér
-              </span>
-              <span>•</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Calendar size={13} color="#60a5fa" /> Péntek – Hétfő
-              </span>
-            </div>
-          </div>
+            KTSZE Fesztivál Menedzser
+          </h1>
         </div>
 
-        {/* Center: Global Search Bar */}
-        <div style={{ flex: '1', maxWidth: '380px', minWidth: '220px' }}>
+        {/* Közép: Keresősáv */}
+        <div style={{ flex: '1', maxWidth: '360px', minWidth: '180px' }}>
           <div style={{ position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }} />
+            <Search size={15} style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
             <input
               type="text"
-              placeholder="Keresés (zenekar, árus, feladat, ZSAK-01)..."
+              placeholder="Keresés..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
               style={{
                 width: '100%',
-                paddingLeft: '36px',
+                paddingLeft: '32px',
+                paddingRight: searchQuery ? '30px' : '10px',
+                paddingTop: '6px',
+                paddingBottom: '6px',
                 fontSize: '13px',
-                backgroundColor: '#0b0f19',
-                borderColor: searchQuery ? '#3b82f6' : '#334155',
-                color: '#ffffff'
+                backgroundColor: '#f8fafc',
+                borderColor: searchQuery ? '#2563eb' : '#cbd5e1',
+                color: '#0f172a',
+                borderRadius: '6px',
+                height: '36px'
               }}
             />
             {searchQuery && (
               <button
+                type="button"
                 onClick={() => onSearchChange('')}
                 style={{
                   position: 'absolute',
-                  right: '10px',
+                  right: '8px',
                   top: '50%',
                   transform: 'translateY(-50%)',
-                  color: '#ffffff',
+                  color: '#64748b',
                   fontSize: '11px',
-                  background: '#334155',
+                  background: '#e2e8f0',
                   borderRadius: '4px',
-                  padding: '2px 6px'
+                  padding: '2px 5px',
+                  display: 'flex',
+                  alignItems: 'center'
                 }}
               >
                 <X size={12} />
@@ -98,75 +80,47 @@ export function Header({ currentUser, onSwitchUser, onLogout, onExportExcel, sea
           </div>
         </div>
 
-        {/* Right: User Chip & Excel Export */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          {/* Active User Chip */}
+        {/* Jobb oldal: Kompakt felhasználó és kilépés */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <div style={{
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
-            backgroundColor: '#172033',
-            border: '1.5px solid #334155',
+            gap: '6px',
+            backgroundColor: '#f1f5f9',
+            border: '1px solid #cbd5e1',
             borderRadius: '6px',
-            padding: '5px 12px',
-            fontSize: '13px'
+            padding: '4px 10px',
+            fontSize: '12.5px'
           }}>
-            <div style={{
-              width: '26px',
-              height: '26px',
-              borderRadius: '50%',
-              backgroundColor: '#2563eb',
-              color: '#ffffff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontWeight: '800',
-              fontSize: '12px'
-            }}>
-              {currentUser.charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <div style={{ fontWeight: '700', color: '#ffffff', lineHeight: 1.1 }}>{currentUser}</div>
-              <div style={{ fontSize: '10.5px', color: '#38bdf8' }}>Aktív szerkesztő</div>
-            </div>
+            <User size={13} color="#2563eb" />
+            <span style={{ fontWeight: '700', color: '#0f172a' }}>{currentUser}</span>
             <button
               onClick={onSwitchUser}
               title="Váltás másik csapattagra"
               style={{
-                color: '#ffffff',
+                color: '#2563eb',
                 fontSize: '11px',
-                marginLeft: '6px',
-                padding: '3px 7px',
-                borderRadius: '4px',
-                background: '#334155',
-                fontWeight: '600'
+                marginLeft: '4px',
+                fontWeight: '600',
+                padding: '2px 4px'
               }}
             >
               Váltás
             </button>
           </div>
 
-          {/* 1-Click Excel Export Button */}
-          <button
-            onClick={onExportExcel}
-            className="btn-success"
-            title="Letölti a teljes hivatalos pályázati és operatív Excel munkafüzetet"
-            style={{ fontWeight: '800', fontSize: '13.5px' }}
-          >
-            <Download size={16} /> Excel Export (.xlsx)
-          </button>
-
-          {/* Logout */}
           <button
             onClick={onLogout}
             title="Kijelentkezés"
             style={{
-              color: '#94a3b8',
-              padding: '8px',
-              borderRadius: '6px'
+              color: '#64748b',
+              padding: '6px',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center'
             }}
           >
-            <LogOut size={18} />
+            <LogOut size={16} />
           </button>
         </div>
       </div>

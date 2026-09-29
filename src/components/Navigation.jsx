@@ -3,27 +3,28 @@ import { Calendar, Users, Building2, MapPin, CheckSquare, ShoppingCart, Wine, Pa
 
 export function Navigation({ activeTab, onTabChange, counts }) {
   const tabs = [
-    { id: 'schedule', label: 'Menetrend & Színpadok', icon: Calendar, badge: counts.schedule, color: '#3b82f6' },
-    { id: 'artists', label: 'Fellépők & Riderek', icon: Users, badge: counts.artists, color: '#8b5cf6' },
-    { id: 'contractors', label: 'Szolgáltatók & Szerződések', icon: Building2, badge: counts.contractors, color: '#38bdf8' },
-    { id: 'team', label: 'Szervezők & Stáb', icon: UserCheck, badge: counts.users, color: '#10b981' },
-    { id: 'map', label: 'Helyszínrajz & Standok', icon: MapPin, badge: counts.mapPoints, color: '#10b981' },
-    { id: 'tasks', label: 'To-Do & Ki csinálta', icon: CheckSquare, badge: counts.pendingTasks, color: '#f59e0b', alertBadge: counts.pendingTasks > 0 },
-    { id: 'shopping', label: 'Beszerzés & Anyagigény', icon: ShoppingCart, badge: counts.pendingShopping, color: '#ec4899', alertBadge: counts.pendingShopping > 0 },
-    { id: 'vendors', label: 'Árusok & Közművek', icon: Wine, badge: counts.vendors, color: '#f97316' },
-    { id: 'inventory', label: 'Készlet & Zsákok', icon: Package, badge: counts.inventory, color: '#06b6d4' },
-    { id: 'tracklist', label: 'Tracklist & Artisjus', icon: Music, badge: counts.tracklist, color: '#a855f7' },
-    { id: 'budget', label: 'Pályázati Költségvetés', icon: DollarSign, badge: counts.budgetFormatted, color: '#eab308' },
-    { id: 'logs', label: 'Aktivitási Napló', icon: History, badge: counts.logs, color: '#94a3b8' },
+    { id: 'schedule', label: 'Menetrend & Színpadok', icon: Calendar, badge: counts.schedule, color: '#2563eb' },
+    { id: 'artists', label: 'Fellépők & Riderek', icon: Users, badge: counts.artists, color: '#7c3aed' },
+    { id: 'contractors', label: 'Szolgáltatók & Szerződések', icon: Building2, badge: counts.contractors, color: '#0284c7' },
+    { id: 'team', label: 'Szervezők & Stáb', icon: UserCheck, badge: counts.users, color: '#059669' },
+    { id: 'map', label: 'Helyszínrajz & Standok', icon: MapPin, badge: counts.mapPoints, color: '#0d9488' },
+    { id: 'tasks', label: 'To-Do & Ki csinálta', icon: CheckSquare, badge: counts.pendingTasks, color: '#d97706', alertBadge: counts.pendingTasks > 0 },
+    { id: 'shopping', label: 'Beszerzés & Anyagigény', icon: ShoppingCart, badge: counts.pendingShopping, color: '#db2777', alertBadge: counts.pendingShopping > 0 },
+    { id: 'vendors', label: 'Árusok & Közművek', icon: Wine, badge: counts.vendors, color: '#ea580c' },
+    { id: 'inventory', label: 'Készlet & Zsákok', icon: Package, badge: counts.inventory, color: '#0891b2' },
+    { id: 'tracklist', label: 'Tracklist & Artisjus', icon: Music, badge: counts.tracklist, color: '#9333ea' },
+    { id: 'budget', label: 'Pályázati Költségvetés', icon: DollarSign, badge: counts.budgetFormatted, color: '#ca8a04' },
+    { id: 'logs', label: 'Aktivitási Napló', icon: History, badge: counts.logs, color: '#64748b' },
   ];
 
   return (
     <nav style={{
-      backgroundColor: '#0f172a',
-      borderBottom: '1.5px solid #334155',
+      backgroundColor: '#ffffff',
+      borderBottom: '1px solid #e2e8f0',
       overflowX: 'auto',
       whiteSpace: 'nowrap',
-      padding: '0 24px'
+      padding: '0 16px',
+      WebkitOverflowScrolling: 'touch'
     }}>
       <div style={{
         maxWidth: '1750px',
@@ -41,30 +42,31 @@ export function Navigation({ activeTab, onTabChange, counts }) {
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
-                gap: '8px',
-                padding: '13px 15px',
-                fontSize: '13.5px',
+                gap: '7px',
+                padding: '11px 13px',
+                fontSize: '13px',
                 fontWeight: isActive ? '800' : '600',
-                color: isActive ? '#ffffff' : '#cbd5e1',
-                borderBottom: isActive ? `3px solid ${tab.color}` : '3px solid transparent',
-                backgroundColor: isActive ? 'rgba(30, 41, 59, 0.7)' : 'transparent',
+                color: isActive ? '#1d4ed8' : '#0f172a',
+                borderBottom: isActive ? `3px solid #2563eb` : '3px solid transparent',
+                backgroundColor: isActive ? '#eff6ff' : 'transparent',
                 borderRadius: '6px 6px 0 0',
                 transition: 'all 0.15s ease',
-                cursor: 'pointer'
+                cursor: 'pointer',
+                flexShrink: 0
               }}
             >
-              <Icon size={17} color={isActive ? tab.color : '#94a3b8'} />
+              <Icon size={16} color={isActive ? '#2563eb' : '#0f172a'} />
               <span>{tab.label}</span>
               {tab.badge !== undefined && (
                 <span
                   style={{
-                    fontSize: '11.5px',
-                    fontWeight: '800',
-                    padding: '2px 7px',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    padding: '1px 6px',
                     borderRadius: '10px',
-                    backgroundColor: tab.alertBadge ? '#7f1d1d' : isActive ? '#1e3a8a' : '#1e293b',
-                    color: tab.alertBadge ? '#fecaca' : isActive ? '#bfdbfe' : '#ffffff',
-                    border: tab.alertBadge ? '1px solid #dc2626' : '1px solid #334155',
+                    backgroundColor: tab.alertBadge ? '#fee2e2' : isActive ? '#dbeafe' : '#f1f5f9',
+                    color: tab.alertBadge ? '#b91c1c' : isActive ? '#1e40af' : '#475569',
+                    border: tab.alertBadge ? '1px solid #fca5a5' : '1px solid #e2e8f0',
                     marginLeft: '2px'
                   }}
                 >

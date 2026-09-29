@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   ShoppingCart, CheckSquare, Square, Plus, Edit2, Trash2, 
-  Store, DollarSign, Receipt, UserCheck, Calendar, X, AlertTriangle, 
+  Store, DollarSign, Receipt, UserCheck, Calendar, X, 
   User, Check, Layers, Tag
 } from 'lucide-react';
 
@@ -190,38 +190,38 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
         gap: '12px',
         marginBottom: '16px'
       }}>
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#172033', borderLeft: '4px solid #3b82f6' }}>
-          <div style={{ fontSize: '11.5px', color: '#93c5fd', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <ShoppingCart size={14} color="#60a5fa" /> Mester Beszerzési Igények
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', borderLeft: '4px solid #2563eb' }}>
+          <div style={{ fontSize: '11.5px', color: '#1e40af', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <ShoppingCart size={15} color="#2563eb" /> Mester Beszerzési Igények
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#ffffff', marginTop: '4px' }}>
-            {shoppingList.length} tétel <span style={{ fontSize: '14px', color: '#fde68a', fontWeight: '700' }}>({pendingCount} beszerzendő)</span>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#000000', marginTop: '4px' }}>
+            {shoppingList.length} tétel <span style={{ fontSize: '14px', color: '#b45309', fontWeight: '700' }}>({pendingCount} beszerzendő)</span>
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             {purchasedCount} tétel már átvéve és számlázva
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#172033', borderLeft: '4px solid #f59e0b' }}>
-          <div style={{ fontSize: '11.5px', color: '#fde68a', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <DollarSign size={14} color="#fbbf24" /> Tervezett Beszerzési Keret
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', borderLeft: '4px solid #d97706' }}>
+          <div style={{ fontSize: '11.5px', color: '#92400e', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <DollarSign size={15} color="#d97706" /> Tervezett Beszerzési Keret
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#fbbf24', marginTop: '4px' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#b45309', marginTop: '4px' }}>
             {totalEstimatedHuf.toLocaleString()} Ft
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Színpadtól a fogyóanyagokig összesítve
           </div>
         </div>
 
-        <div className="ops-card" style={{ padding: '14px 18px', backgroundColor: '#172033', borderLeft: '4px solid #10b981' }}>
-          <div style={{ fontSize: '11.5px', color: '#6ee7b7', fontWeight: '700', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Receipt size={14} color="#34d399" /> Ténylegesen Fizetett Összeg
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', borderLeft: '4px solid #059669' }}>
+          <div style={{ fontSize: '11.5px', color: '#14532d', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Receipt size={15} color="#059669" /> Ténylegesen Fizetett Összeg
           </div>
-          <div style={{ fontSize: '22px', fontWeight: '800', color: '#34d399', marginTop: '4px' }}>
+          <div style={{ fontSize: '24px', fontWeight: '800', color: '#047857', marginTop: '4px' }}>
             {totalActualHuf.toLocaleString()} Ft
           </div>
-          <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Számlával igazolt kifizetések
           </div>
         </div>
@@ -237,7 +237,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
         marginBottom: '16px'
       }}>
         {/* Status Toggle Buttons */}
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             onClick={() => setFilterStatus('all')}
             style={{
@@ -245,10 +245,11 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
               borderRadius: '6px',
               fontSize: '13px',
               fontWeight: filterStatus === 'all' ? '800' : '600',
-              backgroundColor: filterStatus === 'all' ? '#2563eb' : '#1e293b',
-              color: '#ffffff',
+              backgroundColor: filterStatus === 'all' ? '#2563eb' : '#ffffff',
+              color: filterStatus === 'all' ? '#ffffff' : '#0f172a',
               border: '1.5px solid',
-              borderColor: filterStatus === 'all' ? '#3b82f6' : '#334155'
+              borderColor: filterStatus === 'all' ? '#1d4ed8' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Összes tétel ({shoppingList.length})
@@ -260,10 +261,11 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
               borderRadius: '6px',
               fontSize: '13px',
               fontWeight: filterStatus === 'pending' ? '800' : '600',
-              backgroundColor: filterStatus === 'pending' ? '#d97706' : '#1e293b',
-              color: '#ffffff',
+              backgroundColor: filterStatus === 'pending' ? '#d97706' : '#ffffff',
+              color: filterStatus === 'pending' ? '#ffffff' : '#0f172a',
               border: '1.5px solid',
-              borderColor: filterStatus === 'pending' ? '#f59e0b' : '#334155'
+              borderColor: filterStatus === 'pending' ? '#b45309' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Beszerzésre vár ({pendingCount})
@@ -275,10 +277,11 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
               borderRadius: '6px',
               fontSize: '13px',
               fontWeight: filterStatus === 'purchased' ? '800' : '600',
-              backgroundColor: filterStatus === 'purchased' ? '#059669' : '#1e293b',
-              color: '#ffffff',
+              backgroundColor: filterStatus === 'purchased' ? '#059669' : '#ffffff',
+              color: filterStatus === 'purchased' ? '#ffffff' : '#0f172a',
               border: '1.5px solid',
-              borderColor: filterStatus === 'purchased' ? '#10b981' : '#334155'
+              borderColor: filterStatus === 'purchased' ? '#047857' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Beszerezve / Kész ({purchasedCount})
@@ -290,7 +293,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600', width: 'auto' }}
           >
             {categories.map(c => <option key={c} value={c === 'Összes kategória' ? 'all' : c}>{c}</option>)}
           </select>
@@ -298,7 +301,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
           <select
             value={filterAssignee}
             onChange={(e) => setFilterAssignee(e.target.value)}
-            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
+            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600', width: 'auto' }}
           >
             {teamMembers.map(m => <option key={m} value={m === 'Összes felelős' ? 'all' : m}>{m}</option>)}
           </select>
@@ -306,7 +309,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
           <button
             onClick={handleOpenAdd}
             className="btn-primary"
-            style={{ padding: '7px 15px', fontWeight: '800' }}
+            style={{ padding: '8px 16px', fontWeight: '700' }}
           >
             <Plus size={16} /> Új Beszerzési Igény
           </button>
@@ -335,7 +338,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={12} style={{ textAlign: 'center', padding: '36px', color: '#cbd5e1', fontSize: '14px' }}>
+                <td colSpan={12} style={{ textAlign: 'center', padding: '36px', color: '#475569', fontSize: '14px' }}>
                   Nincs megjeleníthető beszerzési tétel a kiválasztott szűrőkkel.
                 </td>
               </tr>
@@ -344,7 +347,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                 <tr
                   key={item.id}
                   style={{
-                    backgroundColor: item.isPurchased ? 'rgba(6, 78, 59, 0.2)' : 'transparent'
+                    backgroundColor: item.isPurchased ? '#f0fdf4' : '#ffffff'
                   }}
                 >
                   <td style={{ textAlign: 'center' }}>
@@ -352,62 +355,62 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                       onClick={() => handleTogglePurchased(item)}
                       title={item.isPurchased ? 'Visszavonás' : 'Beszerezve / Pipálás'}
                       style={{
-                        color: item.isPurchased ? '#34d399' : '#94a3b8',
-                        padding: '6px',
+                        color: item.isPurchased ? '#059669' : '#64748b',
+                        padding: '4px',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         cursor: 'pointer'
                       }}
                     >
-                      {item.isPurchased ? <CheckSquare size={22} color="#34d399" /> : <Square size={22} color="#94a3b8" />}
+                      {item.isPurchased ? <CheckSquare size={22} color="#059669" /> : <Square size={22} color="#64748b" />}
                     </button>
                   </td>
                   <td>
                     <div style={{
                       fontWeight: '800',
                       fontSize: '14px',
-                      color: item.isPurchased ? '#e2e8f0' : '#ffffff',
+                      color: item.isPurchased ? '#475569' : '#000000',
                       textDecoration: item.isPurchased ? 'line-through' : 'none'
                     }}>
                       {item.name}
                     </div>
                     {item.notes && (
-                      <div style={{ fontSize: '12px', color: '#cbd5e1', marginTop: '2px' }}>
+                      <div style={{ fontSize: '12.5px', color: '#334155', marginTop: '2px', fontWeight: '500' }}>
                         {item.notes}
                       </div>
                     )}
                   </td>
                   <td>
-                    <span className="badge badge-gray" style={{ fontSize: '11.5px', color: '#ffffff', fontWeight: '700' }}>
+                    <span className="badge badge-gray" style={{ fontSize: '11.5px', fontWeight: '700' }}>
                       {item.category || 'Kellékek'}
                     </span>
                   </td>
-                  <td style={{ fontWeight: '800', color: '#ffffff', whiteSpace: 'nowrap' }}>
+                  <td style={{ fontWeight: '800', color: '#000000', whiteSpace: 'nowrap' }}>
                     {item.qty} {item.unit}
                   </td>
-                  <td style={{ color: '#ffffff', fontWeight: '600', fontSize: '13px' }}>
+                  <td style={{ color: '#0f172a', fontWeight: '600', fontSize: '13px' }}>
                     {item.store}
                   </td>
                   <td>
-                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13px', fontWeight: '700', color: '#60a5fa' }}>
-                      <UserCheck size={14} color="#60a5fa" /> {item.responsible}
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '13px', fontWeight: '700', color: '#1d4ed8' }}>
+                      <UserCheck size={14} color="#2563eb" /> {item.responsible}
                     </span>
                   </td>
                   <td>
-                    <div style={{ fontSize: '12.5px', fontWeight: '700', color: '#ffffff' }}>
+                    <div style={{ fontSize: '12.5px', fontWeight: '700', color: '#0f172a' }}>
                       {item.createdBy || 'Szilveszter'}
                     </div>
                     {item.createdAt && (
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+                      <div style={{ fontSize: '11px', color: '#64748b' }}>
                         {item.createdAt}
                       </div>
                     )}
                   </td>
-                  <td style={{ textAlign: 'right', color: '#f1f5f9', fontWeight: '600', whiteSpace: 'nowrap' }}>
+                  <td style={{ textAlign: 'right', color: '#0f172a', fontWeight: '600', whiteSpace: 'nowrap' }}>
                     {item.estimatedPrice ? `${item.estimatedPrice.toLocaleString()} Ft` : '-'}
                   </td>
-                  <td style={{ textAlign: 'right', fontWeight: '800', color: item.actualPrice ? '#34d399' : '#94a3b8', whiteSpace: 'nowrap' }}>
+                  <td style={{ textAlign: 'right', fontWeight: '800', color: item.actualPrice ? '#047857' : '#64748b', whiteSpace: 'nowrap' }}>
                     {item.actualPrice ? `${item.actualPrice.toLocaleString()} Ft` : '-'}
                   </td>
                   <td>
@@ -423,31 +426,31 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px',
-                        color: '#34d399',
+                        color: '#14532d',
                         fontWeight: '800',
-                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                        backgroundColor: '#dcfce7',
                         padding: '3px 8px',
                         borderRadius: '4px',
-                        border: '1px solid rgba(16, 185, 129, 0.3)'
+                        border: '1px solid #86efac'
                       }}>
                         <Check size={13} /> {item.purchasedBy} ({item.purchasedAt})
                       </span>
                     ) : (
-                      <span style={{ color: '#94a3b8', fontWeight: '600' }}>Folyamatban</span>
+                      <span style={{ color: '#64748b', fontWeight: '600' }}>Folyamatban</span>
                     )}
                   </td>
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <button
                       onClick={() => handleOpenEdit(item)}
                       title="Szerkesztés"
-                      style={{ color: '#38bdf8', padding: '6px 8px', cursor: 'pointer' }}
+                      style={{ color: '#2563eb', padding: '6px 8px', cursor: 'pointer' }}
                     >
                       <Edit2 size={16} />
                     </button>
                     <button
                       onClick={() => handleDelete(item.id, item.name)}
                       title="Törlés"
-                      style={{ color: '#f87171', padding: '6px 8px', marginLeft: '4px', cursor: 'pointer' }}
+                      style={{ color: '#dc2626', padding: '6px 8px', marginLeft: '4px', cursor: 'pointer' }}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -464,18 +467,18 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#ffffff' }}>
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
                 {isNew ? 'Új Beszerzési Igény Rögzítése' : `Szerkesztés: ${selectedItem.name}`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}>
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
-                    Tétel Megnevezése (A színpadtól a szemeteszsákig)
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                    Tétel Megnevezése *
                   </label>
                   <input
                     name="name"
@@ -488,7 +491,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kategória
                     </label>
                     <select name="category" defaultValue={selectedItem.category || 'Kellékek & Barkács'} style={{ width: '100%', fontSize: '13.5px' }}>
@@ -496,7 +499,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Beszerzési Forrás / Szállító / Bolt
                     </label>
                     <select name="store" defaultValue={selectedItem.store} style={{ width: '100%', fontSize: '13.5px' }}>
@@ -507,8 +510,8 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
-                      Kinek a dolga beszerezni / egyeztetni? (Felelős)
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                      Kinek a dolga beszerezni? (Felelős)
                     </label>
                     <select name="responsible" defaultValue={selectedItem.responsible} style={{ width: '100%', fontSize: '13.5px' }}>
                       {teamMembers.slice(1).map(m => (
@@ -517,7 +520,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Prioritás
                     </label>
                     <select name="priority" defaultValue={selectedItem.priority || 'Normál'} style={{ width: '100%', fontSize: '13.5px' }}>
@@ -531,13 +534,13 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Mennyiség
                     </label>
                     <input type="number" name="qty" defaultValue={selectedItem.qty} required style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Mértékegység
                     </label>
                     <input name="unit" defaultValue={selectedItem.unit} placeholder="db, tekercs, karton, készlet" required style={{ width: '100%' }} />
@@ -546,13 +549,13 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Becsült Költség (Ft)
                     </label>
                     <input type="number" name="estimatedPrice" defaultValue={selectedItem.estimatedPrice} style={{ width: '100%' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Ténylegesen Fizetett Összeg (Ft)
                     </label>
                     <input type="number" name="actualPrice" defaultValue={selectedItem.actualPrice} placeholder="Vásárlás után kitöltendő" style={{ width: '100%' }} />
@@ -560,7 +563,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                     Áfás Számla Kérve és Elrakva?
                   </label>
                   <select name="hasReceipt" defaultValue={String(selectedItem.hasReceipt)} style={{ width: '100%' }}>
@@ -570,15 +573,15 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                     Mire kell odafigyelni? (Megjegyzés, műszaki specifikáció)
                   </label>
                   <textarea name="notes" defaultValue={selectedItem.notes} rows={2} placeholder="pl. Csak fekete színű jó, min. 60 mikron, csütörtök délig be kell érkeznie..." style={{ width: '100%' }} />
                 </div>
 
-                <div style={{ fontSize: '12px', color: '#94a3b8', borderTop: '1px solid #334155', paddingTop: '8px' }}>
+                <div style={{ fontSize: '12px', color: '#475569', borderTop: '1px solid #e2e8f0', paddingTop: '8px' }}>
                   <span>Ki rögzítette: </span>
-                  <strong style={{ color: '#ffffff' }}>{selectedItem.createdBy || currentUser}</strong>
+                  <strong style={{ color: '#0f172a' }}>{selectedItem.createdBy || currentUser}</strong>
                   {selectedItem.createdAt && <span> ({selectedItem.createdAt})</span>}
                 </div>
               </div>

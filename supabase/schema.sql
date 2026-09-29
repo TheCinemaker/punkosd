@@ -19,14 +19,29 @@ CREATE TABLE IF NOT EXISTS fest_team (
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Alaperelmezett KTSZE csapattagok
+-- Migracio: ha a tablat korabban kevesebb oszloppal hoztad letre, automatikusan kiegesziti:
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS badge TEXT DEFAULT 'Technika';
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS phone TEXT;
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS email TEXT;
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS pin TEXT DEFAULT '1532';
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS radio TEXT DEFAULT 'URH Ch-1';
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS is_active BOOLEAN DEFAULT TRUE;
+ALTER TABLE fest_team ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
+-- Alaperelmezett KTSZE csapattagok (beszuras vagy frissites)
 INSERT INTO fest_team (name, role, badge, phone, email, pin, radio) VALUES
 ('Szilveszter', 'Nagyszínpad Koordinátor & Műszaki vezető', 'Technika', '+36 30 987 6543', 'szilveszter@ktsze.hu', '1532', 'URH Ch-1'),
 ('Gábor', 'KTSZE Elnök & Főszervező', 'Elnökség', '+36 30 876 5432', 'gabor@ktsze.hu', '1532', 'URH Ch-1'),
 ('Zoltán', 'Pénzügyi & Pályázati Felelős', 'Pénzügy', '+36 30 765 4321', 'zoltan@ktsze.hu', '1532', 'URH Ch-3'),
 ('Műszaki Stáb', 'Hang & Fénytechnikai Csapat', 'Technika', '+36 30 654 3210', 'technika@ktsze.hu', '1532', 'URH Ch-2'),
 ('Önkéntes Csapat', 'Helyszíni Koordináció & Zsákos Ügyelet', 'Helyszín', '+36 30 543 2109', 'onkentes@ktsze.hu', '1532', 'URH Ch-4')
-ON CONFLICT (name) DO NOTHING;
+ON CONFLICT (name) DO UPDATE SET
+  role = EXCLUDED.role,
+  badge = EXCLUDED.badge,
+  phone = EXCLUDED.phone,
+  email = EXCLUDED.email,
+  pin = EXCLUDED.pin,
+  radio = EXCLUDED.radio;
 
 -- 2. Aktivitasi Naplo / Audit Trail (Ki mit csinalt, ki pipalta ki, ki szerkesztette)
 CREATE TABLE IF NOT EXISTS fest_activity_logs (
@@ -148,6 +163,22 @@ CREATE TABLE IF NOT EXISTS fest_shopping_list (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Migracio, ha korabban mar lefutott a tablaletrehozas:
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS category TEXT DEFAULT 'Kellékek & Kellékanyagok';
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS store TEXT DEFAULT 'Partner / Bolt';
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS qty NUMERIC DEFAULT 1;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS unit TEXT DEFAULT 'db';
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS estimated_price NUMERIC DEFAULT 0;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS actual_price NUMERIC DEFAULT 0;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS created_by TEXT DEFAULT 'Szilveszter';
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS assigned_to TEXT DEFAULT 'Szilveszter';
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS priority TEXT DEFAULT 'Normál';
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS is_purchased BOOLEAN DEFAULT FALSE;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS purchased_by TEXT;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS purchased_at TIMESTAMPTZ;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS has_receipt BOOLEAN DEFAULT TRUE;
+ALTER TABLE fest_shopping_list ADD COLUMN IF NOT EXISTS notes TEXT;
 
 -- 8. Arusok es Vendeglatok (Borok tere & Etelek utcaja)
 CREATE TABLE IF NOT EXISTS fest_vendors (

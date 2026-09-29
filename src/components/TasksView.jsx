@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, AlertCircle, Filter, CheckCircle2, Check, X } from 'lucide-react';
+import { CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, Check, X } from 'lucide-react';
 
 export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'completed'
@@ -119,17 +119,19 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
         marginBottom: '16px'
       }}>
         {/* Status Pills */}
-        <div style={{ display: 'flex', gap: '6px' }}>
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           <button
             onClick={() => setFilterStatus('all')}
             style={{
-              padding: '6px 14px',
+              padding: '7px 14px',
               borderRadius: '6px',
               fontSize: '12.5px',
-              fontWeight: filterStatus === 'all' ? '700' : '500',
-              backgroundColor: filterStatus === 'all' ? '#2563eb' : '#1e293b',
-              color: filterStatus === 'all' ? '#ffffff' : '#94a3b8',
-              border: '1px solid #27354d'
+              fontWeight: filterStatus === 'all' ? '800' : '600',
+              backgroundColor: filterStatus === 'all' ? '#2563eb' : '#ffffff',
+              color: filterStatus === 'all' ? '#ffffff' : '#0f172a',
+              border: '1.5px solid',
+              borderColor: filterStatus === 'all' ? '#1d4ed8' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Minden feladat ({tasks.length})
@@ -137,13 +139,15 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
           <button
             onClick={() => setFilterStatus('pending')}
             style={{
-              padding: '6px 14px',
+              padding: '7px 14px',
               borderRadius: '6px',
               fontSize: '12.5px',
-              fontWeight: filterStatus === 'pending' ? '700' : '500',
-              backgroundColor: filterStatus === 'pending' ? '#d97706' : '#1e293b',
-              color: filterStatus === 'pending' ? '#ffffff' : '#fbbf24',
-              border: '1px solid #27354d'
+              fontWeight: filterStatus === 'pending' ? '800' : '600',
+              backgroundColor: filterStatus === 'pending' ? '#d97706' : '#ffffff',
+              color: filterStatus === 'pending' ? '#ffffff' : '#0f172a',
+              border: '1.5px solid',
+              borderColor: filterStatus === 'pending' ? '#b45309' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Függőben lévő ({pendingCount})
@@ -151,13 +155,15 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
           <button
             onClick={() => setFilterStatus('completed')}
             style={{
-              padding: '6px 14px',
+              padding: '7px 14px',
               borderRadius: '6px',
               fontSize: '12.5px',
-              fontWeight: filterStatus === 'completed' ? '700' : '500',
-              backgroundColor: filterStatus === 'completed' ? '#059669' : '#1e293b',
-              color: filterStatus === 'completed' ? '#ffffff' : '#34d399',
-              border: '1px solid #27354d'
+              fontWeight: filterStatus === 'completed' ? '800' : '600',
+              backgroundColor: filterStatus === 'completed' ? '#059669' : '#ffffff',
+              color: filterStatus === 'completed' ? '#ffffff' : '#0f172a',
+              border: '1.5px solid',
+              borderColor: filterStatus === 'completed' ? '#047857' : '#cbd5e1',
+              cursor: 'pointer'
             }}
           >
             Kipipálva ({completedCount})
@@ -165,11 +171,11 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
         </div>
 
         {/* Dropdown Filters & Add Button */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
           <select
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
-            style={{ fontSize: '12.5px', padding: '6px 10px' }}
+            style={{ fontSize: '13px', padding: '7px 10px', width: 'auto' }}
           >
             <option value="all">Minden kategória</option>
             {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
@@ -178,7 +184,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
           <select
             value={filterAssignee}
             onChange={(e) => setFilterAssignee(e.target.value)}
-            style={{ fontSize: '12.5px', padding: '6px 10px' }}
+            style={{ fontSize: '13px', padding: '7px 10px', width: 'auto' }}
           >
             <option value="all">Minden felelős</option>
             {teamMembers.map(m => (
@@ -189,23 +195,24 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
           <button
             onClick={() => setIsModalOpen(true)}
             className="btn-primary"
-            style={{ padding: '6px 14px', fontSize: '12.5px' }}
+            style={{ padding: '8px 16px', fontSize: '13px' }}
           >
-            <Plus size={15} /> Új Feladat
+            <Plus size={16} /> Új Feladat
           </button>
         </div>
       </div>
 
       {/* Task List (High Density Program Management UI) */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
         {filteredTasks.length === 0 ? (
           <div style={{
             padding: '40px',
             textAlign: 'center',
-            color: '#64748b',
-            backgroundColor: '#111827',
-            border: '1px solid #27354d',
-            borderRadius: '8px'
+            color: '#475569',
+            backgroundColor: '#ffffff',
+            border: '1.5px dashed #cbd5e1',
+            borderRadius: '8px',
+            fontWeight: '500'
           }}>
             Nincs megjeleníthető feladat a kiválasztott szűrőkkel.
           </div>
@@ -214,25 +221,25 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
             <div
               key={task.id}
               style={{
-                backgroundColor: task.completed ? '#0e1522' : '#182234',
-                border: task.completed ? '1px solid #1c2738' : '1px solid #27354d',
+                backgroundColor: task.completed ? '#f8fafc' : '#ffffff',
+                border: task.completed ? '1.5px solid #e2e8f0' : '1.5px solid #cbd5e1',
                 borderRadius: '8px',
-                padding: '12px 16px',
+                padding: '14px 18px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
                 gap: '14px',
-                opacity: task.completed ? 0.8 : 1,
+                boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 transition: 'all 0.15s ease'
               }}
             >
               {/* Left: Checkbox + Title + Meta */}
-              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '14px', flex: 1 }}>
                 <button
                   onClick={() => handleToggleTask(task)}
                   title={task.completed ? 'Újra megnyitás' : 'Kipipálás (neveddel naplózva)'}
                   style={{
-                    color: task.completed ? '#10b981' : '#64748b',
+                    color: task.completed ? '#059669' : '#64748b',
                     padding: '2px',
                     display: 'flex',
                     alignItems: 'center',
@@ -241,39 +248,39 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     marginTop: '2px'
                   }}
                 >
-                  {task.completed ? <CheckSquare size={20} /> : <Square size={20} />}
+                  {task.completed ? <CheckSquare size={22} color="#059669" /> : <Square size={22} color="#64748b" />}
                 </button>
 
                 <div style={{ flex: 1 }}>
                   <div style={{
-                    fontSize: '13.5px',
-                    fontWeight: '600',
-                    color: task.completed ? '#94a3b8' : '#f8fafc',
+                    fontSize: '14.5px',
+                    fontWeight: '700',
+                    color: task.completed ? '#64748b' : '#000000',
                     textDecoration: task.completed ? 'line-through' : 'none'
                   }}>
                     {task.title}
                   </div>
 
                   {task.notes && (
-                    <div style={{ fontSize: '12px', color: '#64748b', marginTop: '2px' }}>
+                    <div style={{ fontSize: '13px', color: '#334155', marginTop: '4px', fontWeight: '500' }}>
                       {task.notes}
                     </div>
                   )}
 
                   {/* Audit Footer: WHO COMPLETED IT */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '6px', fontSize: '11px', flexWrap: 'wrap' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px', fontSize: '12px', flexWrap: 'wrap' }}>
                     <span className="badge badge-gray">{task.category}</span>
                     <span className={`badge ${task.priority.includes('Sürgős') ? 'badge-rose' : task.priority === 'Magas' ? 'badge-amber' : 'badge-blue'}`}>
                       {task.priority}
                     </span>
 
-                    <span style={{ color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                      <UserCheck size={12} color="#60a5fa" /> Felelős: <strong>{task.assignedTo}</strong>
+                    <span style={{ color: '#0f172a', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '600' }}>
+                      <UserCheck size={14} color="#2563eb" /> Felelős: <strong>{task.assignedTo}</strong>
                     </span>
 
                     {task.dueDate && (
-                      <span style={{ color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                        <Calendar size={12} color="#a855f7" /> Határidő: {task.dueDate}
+                      <span style={{ color: '#0f172a', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: '500' }}>
+                        <Calendar size={14} color="#7c3aed" /> Határidő: {task.dueDate}
                       </span>
                     )}
 
@@ -283,17 +290,17 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '4px',
-                        color: '#34d399',
-                        fontWeight: '700',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        color: '#14532d',
+                        fontWeight: '800',
+                        backgroundColor: '#dcfce7',
                         padding: '2px 8px',
                         borderRadius: '4px',
-                        border: '1px solid rgba(16, 185, 129, 0.2)'
+                        border: '1px solid #86efac'
                       }}>
-                        <Check size={13} /> Kipipálta: {task.completedBy} ({task.completedAt})
+                        <Check size={14} /> Kipipálta: {task.completedBy} ({task.completedAt})
                       </span>
                     ) : (
-                      <span style={{ color: '#cbd5e1' }}>
+                      <span style={{ color: '#475569', fontSize: '11.5px' }}>
                         Létrehozta: {task.createdBy}
                       </span>
                     )}
@@ -306,11 +313,11 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                 <button
                   onClick={() => handleDeleteTask(task.id, task.title)}
                   title="Feladat törlése"
-                  style={{ color: '#94a3b8', padding: '6px', borderRadius: '4px' }}
-                  onMouseEnter={(e) => e.currentTarget.style.color = '#f87171'}
-                  onMouseLeave={(e) => e.currentTarget.style.color = '#94a3b8'}
+                  style={{ color: '#64748b', padding: '6px', borderRadius: '4px', cursor: 'pointer' }}
+                  onMouseEnter={(e) => e.currentTarget.style.color = '#dc2626'}
+                  onMouseLeave={(e) => e.currentTarget.style.color = '#64748b'}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={17} />
                 </button>
               </div>
             </div>
@@ -323,16 +330,16 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
-              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#ffffff' }}>
-                Új Operatív Feladat Hozzáadása
+              <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
+                Új Operatív Feladat Rögzítése
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleAddNewTask}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
-                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
-                    Feladat Megnevezése
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
+                    Feladat Megnevezése *
                   </label>
                   <input
                     name="title"
@@ -344,7 +351,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kategória
                     </label>
                     <select name="category" style={{ width: '100%' }}>
@@ -352,7 +359,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '700', color: '#f1f5f9', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Prioritás
                     </label>
                     <select name="priority" style={{ width: '100%' }}>
@@ -366,7 +373,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
 
                 <div className="grid-2">
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Felelős Személy
                     </label>
                     <select name="assignedTo" defaultValue={currentUser} style={{ width: '100%' }}>
@@ -376,7 +383,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                    <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Határidő Dátuma
                     </label>
                     <input type="date" name="dueDate" defaultValue="2026-05-22" style={{ width: '100%' }} />
@@ -384,7 +391,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                 </div>
 
                 <div>
-                  <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '600', color: '#cbd5e1', marginBottom: '4px' }}>
+                  <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                     Megjegyzés / Részletek
                   </label>
                   <textarea name="notes" rows={3} placeholder="Helyszín, kontakt, speciális teendő..." style={{ width: '100%' }} />
@@ -392,7 +399,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
               </div>
               <div className="modal-footer">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">Mégse</button>
-                <button type="submit" className="btn-primary">Feladat Létrehozása</button>
+                <button type="submit" className="btn-primary">Feladat Rögzítése</button>
               </div>
             </form>
           </div>

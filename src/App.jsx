@@ -130,28 +130,6 @@ export function App() {
   const handleUpdateBudget = (newBudget) => updateAndBroadcast('budget', newBudget, setBudget);
   const handleUpdateIncidents = (newIncidents) => updateAndBroadcast('incidents', newIncidents, setIncidents);
 
-  // Export to Excel
-  const handleExportExcel = () => {
-    exportFestivalToExcel({
-      schedule,
-      artists,
-      contractors,
-      vendors,
-      tasks,
-      shoppingList,
-      inventory,
-      tracklist,
-      budget,
-      logs
-    });
-    handleAddLog({
-      user: currentUser,
-      action: 'EXPORT_EXCEL',
-      module: 'Pályázati Költségvetés',
-      description: 'Letöltötte a teljes 10 munkalapos fesztivál Excel munkafüzetet (.xlsx)'
-    });
-  };
-
   // If not logged in with 1532 PIN, show Login
   if (!currentUser) {
     return <PinLogin onLogin={(userName) => setCurrentUser(userName)} users={users} />;
@@ -180,12 +158,11 @@ export function App() {
 
   return (
     <div className="app-container">
-      {/* 1. Header with branding, user chip, global search, and Excel export */}
+      {/* 1. Header with branding, user chip, global search */}
       <Header
         currentUser={currentUser}
         onSwitchUser={() => setCurrentUser(null)}
         onLogout={() => setCurrentUser(null)}
-        onExportExcel={handleExportExcel}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
@@ -318,7 +295,6 @@ export function App() {
             onUpdateBudget={handleUpdateBudget}
             onAddLog={handleAddLog}
             currentUser={currentUser}
-            onExportExcel={handleExportExcel}
             searchQuery={searchQuery}
           />
         )}
