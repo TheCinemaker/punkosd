@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Package, Plus, Edit2, Trash2, Tag, CheckCircle2, AlertTriangle, MapPin, UserCheck } from 'lucide-react';
+import { Package, Plus, Edit2, Trash2, Tag, CheckCircle2, AlertTriangle, MapPin, UserCheck, X } from 'lucide-react';
 
 export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentUser, searchQuery }) {
   const [selectedCat, setSelectedCat] = useState('all');
@@ -225,7 +225,7 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
               <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#f8fafc' }}>
                 {isNew ? 'Új Készlet / Kellék Rögzítése' : `${selectedItem.code} — ${selectedItem.name}`}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#94a3b8', fontSize: '18px' }}>✕</button>
+              <button onClick={() => setIsModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>

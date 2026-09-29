@@ -55,10 +55,10 @@ def build_festival_workbook():
     NUMBER_FORMAT = '#,##0'
 
     # =========================================================================
-    # 1. MUNKALAP: 📊 Vezetői Összesítő & Pályázat (Dashboard)
+    # 1. MUNKALAP: Vezetői Összesítő & Pályázat (Dashboard)
     # =========================================================================
     ws_dash = wb.active
-    ws_dash.title = "📊 Pályázati Összesítő"
+    ws_dash.title = "Pályázati Összesítő"
     ws_dash.views.sheetView[0].showGridLines = True
     
     # Title Block
@@ -115,14 +115,14 @@ def build_festival_workbook():
         cell.border = border_all
     
     categories = [
-        ("I.", "Fellépői tiszteletdíjak és gázsik (Nagyszínpad + Utcazene)", "'🎸 Nagyszínpad Lineup'", "='🎸 Nagyszínpad Lineup'!I14", "=D12*0.85", "=D12-E12"),
-        ("II.", "Hang-, fény- és színpadtechnika, vizuál", "'🗑️ Teljes Operatív Költségvetés'", "=SUMIF('🗑️ Teljes Operatív Költségvetés'!B9:B80, \"Színpad- és Hangtechnika\", '🗑️ Teljes Operatív Költségvetés'!F9:F80)", "=D13*0.80", "=D13-E13"),
-        ("III.", "Helyszíni infrastruktúra, logisztika és áramellátás", "'🗑️ Teljes Operatív Költségvetés'", "=SUMIF('🗑️ Teljes Operatív Költségvetés'!B9:B80, \"Infrastruktúra és Áramellátás\", '🗑️ Teljes Operatív Költségvetés'!F9:F80)", "=D14*0.80", "=D14-E14"),
-        ("IV.", "Higiénia, hulladékgazdálkodás, tisztaság (utolsó zsákig)", "'🗑️ Teljes Operatív Költségvetés'", "=SUMIF('🗑️ Teljes Operatív Költségvetés'!B9:B80, \"Higiénia és Hulladékkezelés\", '🗑️ Teljes Operatív Költségvetés'!F9:F80)", "=D15*0.85", "=D15-E15"),
-        ("V.", "Biztonság, egészségügy, engedélyek és jogdíjak (Artisjus)", "'🗑️ Teljes Operatív Költségvetés'", "=SUMIF('🗑️ Teljes Operatív Költségvetés'!B9:B80, \"Biztonság és Engedélyek\", '🗑️ Teljes Operatív Költségvetés'!F9:F80)", "=D16*0.75", "=D16-E16"),
-        ("VI.", "Marketing, kommunikáció, arculat és nyomda", "'🗑️ Teljes Operatív Költségvetés'", "=SUMIF('🗑️ Teljes Operatív Költségvetés'!B9:B80, \"Marketing és Kommunikáció\", '🗑️ Teljes Operatív Költségvetés'!F9:F80)", "=D17*0.90", "=D17-E17"),
-        ("VII.", "Backstage, catering, stáb- és fellépőellátás", "'👥 Fellépők & Koordináció'", "=SUM('👥 Fellépők & Koordináció'!J8:J15) + 350000", "=D18*0.70", "=D18-E18"),
-        ("VIII.", "Projektmenedzsment, szervezés és koordináció", "'🗑️ Teljes Operatív Költségvetés'", "=SUMIF('🗑️ Teljes Operatív Költségvetés'!B9:B80, \"Személyzet és Koordináció\", '🗑️ Teljes Operatív Költségvetés'!F9:F80)", "=D19*0.80", "=D19-E19"),
+        ("I.", "Fellépői tiszteletdíjak és gázsik (Nagyszínpad + Utcazene)", "'Nagyszínpad Lineup'", "='Nagyszínpad Lineup'!I14", "=D12*0.85", "=D12-E12"),
+        ("II.", "Hang-, fény- és színpadtechnika, vizuál", "'Teljes Operatív Költségvetés'", "=SUMIF('Teljes Operatív Költségvetés'!B9:B80, \"Színpad- és Hangtechnika\", 'Teljes Operatív Költségvetés'!F9:F80)", "=D13*0.80", "=D13-E13"),
+        ("III.", "Helyszíni infrastruktúra, logisztika és áramellátás", "'Teljes Operatív Költségvetés'", "=SUMIF('Teljes Operatív Költségvetés'!B9:B80, \"Infrastruktúra és Áramellátás\", 'Teljes Operatív Költségvetés'!F9:F80)", "=D14*0.80", "=D14-E14"),
+        ("IV.", "Higiénia, hulladékgazdálkodás, tisztaság (utolsó zsákig)", "'Teljes Operatív Költségvetés'", "=SUMIF('Teljes Operatív Költségvetés'!B9:B80, \"Higiénia és Hulladékkezelés\", 'Teljes Operatív Költségvetés'!F9:F80)", "=D15*0.85", "=D15-E15"),
+        ("V.", "Biztonság, egészségügy, engedélyek és jogdíjak (Artisjus)", "'Teljes Operatív Költségvetés'", "=SUMIF('Teljes Operatív Költségvetés'!B9:B80, \"Biztonság és Engedélyek\", 'Teljes Operatív Költségvetés'!F9:F80)", "=D16*0.75", "=D16-E16"),
+        ("VI.", "Marketing, kommunikáció, arculat és nyomda", "'Teljes Operatív Költségvetés'", "=SUMIF('Teljes Operatív Költségvetés'!B9:B80, \"Marketing és Kommunikáció\", 'Teljes Operatív Költségvetés'!F9:F80)", "=D17*0.90", "=D17-E17"),
+        ("VII.", "Backstage, catering, stáb- és fellépőellátás", "'Fellépők & Koordináció'", "=SUM('Fellépők & Koordináció'!J8:J15) + 350000", "=D18*0.70", "=D18-E18"),
+        ("VIII.", "Projektmenedzsment, szervezés és koordináció", "'Teljes Operatív Költségvetés'", "=SUMIF('Teljes Operatív Költségvetés'!B9:B80, \"Személyzet és Koordináció\", 'Teljes Operatív Költségvetés'!F9:F80)", "=D19*0.80", "=D19-E19"),
         ("IX.", "Előre nem látható tartalékkeret (kb. 5%)", "Belső kalkuláció", "=ROUND(SUM(D12:D19)*0.05, -3)", "=D20*0.50", "=D20-E20")
     ]
     
@@ -187,20 +187,20 @@ def build_festival_workbook():
         cell.fill = total_fill
 
     # Megjegyzés doboz a pályázathoz
-    ws_dash.cell(row=25, column=1, value="ℹ️ Pályázati útmutató és KTSZE feljegyzések:").font = bold_font
+    ws_dash.cell(row=25, column=1, value="Pályázati útmutató és KTSZE feljegyzések:").font = bold_font
     notes = [
         "• A táblázat automatikusan frissül az operatív fül és a nagyszínpad fül adatainak változásakor.",
-        "• A pályázati elszámoláshoz a '🗑️ Teljes Operatív Költségvetés' és a '👥 Fellépők & Koordináció' fülek szolgáltatják a tételes számla-összerendelést.",
-        "• Az Artisjus jogdíj bejelentéshez a '🎵 Tracklist & Artisjus' fül közvetlenül kinyomtatható / exportálható.",
+        "• A pályázati elszámoláshoz a 'Teljes Operatív Költségvetés' és a 'Fellépők & Koordináció' fülek szolgáltatják a tételes számla-összerendelést.",
+        "• Az Artisjus jogdíj bejelentéshez a 'Tracklist & Artisjus' fül közvetlenül kinyomtatható / exportálható.",
         "• A támogatási intenzitás átlagosan ~80-85%-ra van beállítva a pályázati felhívás sztenderdjei szerint."
     ]
     for idx, note in enumerate(notes, 26):
         ws_dash.cell(row=idx, column=1, value=note).font = regular_font
 
     # =========================================================================
-    # 2. MUNKALAP: 🎸 Nagyszínpad Lineup & Időrend (Timeup & Program)
+    # 2. MUNKALAP: Nagyszínpad Lineup & Időrend (Timeup & Program)
     # =========================================================================
-    ws_lineup = wb.create_sheet(title="🎸 Nagyszínpad Lineup")
+    ws_lineup = wb.create_sheet(title="Nagyszínpad Lineup")
     ws_lineup.views.sheetView[0].showGridLines = True
     
     ws_lineup.merge_cells("A1:K2")
@@ -331,9 +331,9 @@ def build_festival_workbook():
         current_row += 1
         
     # =========================================================================
-    # 3. MUNKALAP: 👥 Fellépők Koordinációja, Rider & Hospitality
+    # 3. MUNKALAP: Fellépők Koordinációja, Rider & Hospitality
     # =========================================================================
-    ws_coord = wb.create_sheet(title="👥 Fellépők & Koordináció")
+    ws_coord = wb.create_sheet(title="Fellépők & Koordináció")
     ws_coord.views.sheetView[0].showGridLines = True
     
     ws_coord.merge_cells("A1:M2")
@@ -418,9 +418,9 @@ def build_festival_workbook():
         cell.fill = total_fill
 
     # =========================================================================
-    # 4. MUNKALAP: 🎵 Tracklist & Artisjus Adatszolgáltatás (Setlist & Copyright)
+    # 4. MUNKALAP: Tracklist & Artisjus Adatszolgáltatás (Setlist & Copyright)
     # =========================================================================
-    ws_artisjus = wb.create_sheet(title="🎵 Tracklist & Artisjus")
+    ws_artisjus = wb.create_sheet(title="Tracklist & Artisjus")
     ws_artisjus.views.sheetView[0].showGridLines = True
     
     ws_artisjus.merge_cells("A1:I2")
@@ -481,9 +481,9 @@ def build_festival_workbook():
         current_row += 1
 
     # =========================================================================
-    # 5. MUNKALAP: 🗑️ Teljes Operatív Költségvetés ("Az utolsó szemeteszsákig")
+    # 5. MUNKALAP: Teljes Operatív Költségvetés ("Az utolsó szemeteszsákig")
     # =========================================================================
-    ws_budget = wb.create_sheet(title="🗑️ Teljes Operatív Költségvetés")
+    ws_budget = wb.create_sheet(title="Teljes Operatív Költségvetés")
     ws_budget.views.sheetView[0].showGridLines = True
     
     ws_budget.merge_cells("A1:K2")

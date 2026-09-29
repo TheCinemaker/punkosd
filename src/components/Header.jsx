@@ -1,5 +1,5 @@
 import React from 'react';
-import { Download, Search, User, LogOut, Calendar, MapPin, Radio, ShieldCheck } from 'lucide-react';
+import { Download, Search, User, LogOut, Calendar, MapPin, Radio, ShieldCheck, X } from 'lucide-react';
 
 export function Header({ currentUser, onSwitchUser, onLogout, onExportExcel, searchQuery, onSearchChange }) {
   return (
@@ -92,7 +92,7 @@ export function Header({ currentUser, onSwitchUser, onLogout, onExportExcel, sea
                   padding: '2px 6px'
                 }}
               >
-                ✕
+                <X size={12} />
               </button>
             )}
           </div>

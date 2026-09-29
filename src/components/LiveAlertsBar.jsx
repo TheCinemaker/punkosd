@@ -189,7 +189,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                 </h3>
                 <p style={{ fontSize: '12px', color: '#cbd5e1' }}>Minden csapattagnál azonnal megjelenő értesítések</p>
               </div>
-              <button onClick={() => setIsOpenPanel(false)} style={{ color: '#ffffff', fontSize: '20px' }}>✕</button>
+              <button onClick={() => setIsOpenPanel(false)} style={{ color: '#ffffff', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
 
             {/* Panel Body: Incident Feed */}
@@ -280,7 +280,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
               <h2 style={{ fontSize: '17px', fontWeight: '800', color: '#ffffff' }}>
                 Helyszíni SOS Probléma vagy Megjegyzés Rögzítése
               </h2>
-              <button onClick={() => setIsAddModalOpen(false)} style={{ color: '#94a3b8', fontSize: '20px' }}>✕</button>
+              <button onClick={() => setIsAddModalOpen(false)} style={{ color: '#cbd5e1', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
             <form onSubmit={handleCreateIncident}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
