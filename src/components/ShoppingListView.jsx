@@ -4,6 +4,7 @@ import {
   Store, DollarSign, Receipt, UserCheck, Calendar, X, 
   User, Check, Layers, Tag
 } from 'lucide-react';
+import { uid } from '../lib/store';
 
 export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterCategory, setFilterCategory] = useState('all');
@@ -73,7 +74,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
   const handleTogglePurchased = (item) => {
     const isNowPurchased = !item.isPurchased;
     const now = new Date();
-    const timeString = `${now.toISOString().slice(0, 10)} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;
+    const timeString = `${now.toLocaleDateString('sv-SE')} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;
 
     const updated = {
       ...item,
@@ -96,11 +97,11 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
   const handleOpenAdd = () => {
     const now = new Date();
-    const timeString = `${now.toISOString().slice(0, 10)} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;
+    const timeString = `${now.toLocaleDateString('sv-SE')} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;
 
     setIsNew(true);
     setSelectedItem({
-      id: 'shp-' + Date.now(),
+      id: uid('shp'),
       name: '',
       category: 'Kellékek & Barkács',
       store: 'Metro Szombathely (Nagyker)',
@@ -140,7 +141,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
       estimatedPrice: Number(formData.get('estimatedPrice')) || 0,
       actualPrice: Number(formData.get('actualPrice')) || 0,
       createdBy: selectedItem.createdBy || currentUser,
-      createdAt: selectedItem.createdAt || new Date().toISOString().slice(0, 16).replace('T', ' '),
+      createdAt: selectedItem.createdAt || new Date().toLocaleString('sv-SE').slice(0, 16),
       responsible: formData.get('responsible') || currentUser,
       priority: formData.get('priority') || 'Normál',
       hasReceipt: formData.get('hasReceipt') === 'true',

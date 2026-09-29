@@ -52,18 +52,21 @@ Operativ fesztivalmenedzsment, fellepo-koordinacio, helyszinlogisztika es palyaz
 
 ## Belepes
 
-A felulet operativ, gyors terepi munkara van optimalizalva:
-- Belepesi PIN kod: **`1532`** (Koszeg dicsoseges ostromanak eve).
-- Belepeskor valaszthato a munkatars (Szilveszter, Gabor, Zoltan, Muszaki Stab, Onkentes), igy a rendszer minden modositast azonnal a megfelelo szemelyhez rendel.
+- Mindenki a sajat profiljat valasztja, es a **sajat PIN kodjaval** lep be (a Stab menuben allithato, csak o es az Elnokseg latja).
+- Az alapertelmezett `1532` PIN-t minden profilnal le kell cserelni — a kezdolap figyelmeztet, amig ez nem tortenik meg.
+- Opcionalis vesz-mesterkod: `VITE_MASTER_PIN` kornyezeti valtozo (Netlify).
+- 5 hibas probalkozas utan 30 mp varakozas.
 
 ---
 
 ## Technologiai Stack
 
-- **Frontend**: React 19, Vite 6, Lucide Icons (100% SVG), SheetJS (`xlsx`).
-- **Adatbazis / Backend**: Supabase PostgreSQL (`supabase/schema.sql` sema, `fest_` elotagu tablak a KTSZE tobbi tablatol valo teljes szeparalasert).
-- **Helyi / Offline mod**: Teljes erteku LocalStorage perzisztencia offline terepmunkahoz es azonnali teszteleshez.
-- **Deploy**: Netlify / Cloudflare Pages kompatibilis.
+- **Frontend**: React 19, Vite 6, Lucide Icons, SheetJS (`xlsx`). Telepitheto PWA (offline is betolt).
+- **Adatbazis**: Supabase. Az app a `fest_records` tablat hasznalja (soronkenti mentes, Realtime elo szinkron, offline kimeno sor). A fajlok (riderek, szerzodesek, szamlak) a `fest-docs` Storage bucketbe kerulnek. Lasd `supabase/schema.sql` 13-14. pont.
+- **Supabase nelkul**: helyi mod (csak az adott eszkozon, bongeszofulek kozott szinkronizal).
+- **Kornyezeti valtozok**: lasd `.env.example` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`, `VITE_MASTER_PIN`).
+- **Fesztival datumai**: `src/lib/config.js` — uj evnel csak ezt kell atirni.
+- **Deploy**: Netlify.
 - **Git Repository**: `https://github.com/TheCinemaker/punkosd`
 
 ---

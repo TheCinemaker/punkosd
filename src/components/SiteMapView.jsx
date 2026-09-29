@@ -3,51 +3,69 @@ import {
   MapPin, Wine, Utensils, Zap, Droplets, Trash2, 
   AlertCircle, CheckCircle2, Phone, Eye, ShieldCheck, HeartPulse, Radio, Music
 } from 'lucide-react';
-import { MAP_POINTS, MAP_ZONES } from '../lib/initialData';
+import { MAP_ZONES } from '../lib/initialData';
+import { uid } from '../lib/store';
 
-export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
+export function SiteMapView({ points, onUpdatePoints, incidents, onUpdateIncidents, onAddLog, currentUser, searchQuery }) {
   const [selectedZone, setSelectedZone] = useState('all');
   const [selectedType, setSelectedType] = useState('all');
-  const [activePoint, setActivePoint] = useState(MAP_POINTS[0]);
-  const [points, setPoints] = useState(MAP_POINTS);
+  const [activeId, setActiveId] = useState(() => points.find(p => p.hasProblem)?.id || points[0]?.id);
+  const activePoint = points.find(p => p.id === activeId) || null;
 
+  const q = (searchQuery || '').toLowerCase();
   const filteredPoints = points.filter(p => {
     const matchesZone = selectedZone === 'all' || p.zoneId === selectedZone;
     const matchesType = selectedType === 'all' || p.type === selectedType;
-    const matchesSearch = !searchQuery ||
-      p.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.contact.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch = !q ||
+      p.code.toLowerCase().includes(q) ||
+      p.name.toLowerCase().includes(q) ||
+      (p.contact || '').toLowerCase().includes(q);
     return matchesZone && matchesType && matchesSearch;
   });
+  const problemPoints = points.filter(p => p.hasProblem);
 
-  const handleToggleProblem = (pointId) => {
-    const updated = points.map(p => {
-      if (p.id === pointId) {
-        const willHaveProblem = !p.hasProblem;
-        return {
-          ...p,
-          hasProblem: willHaveProblem,
-          status: willHaveProblem ? 'HIBA JELENTVE (SOS)' : 'Üzemel (Rendben)',
-          problemText: willHaveProblem ? 'Azonnali beavatkozás szükséges a helyszínen!' : ''
-        };
-      }
-      return p;
-    });
+  // A térképen jelzett hiba egyben SOS-bejelentés is (mindenkinél megjelenik)
+  const handleToggleProblem = (point) => {
+    const time = new Date().toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
-    setPoints(updated);
-    const target = updated.find(p => p.id === pointId);
-    if (target) {
-      setActivePoint(target);
+    if (!point.hasProblem) {
+      const text = window.prompt(`Mi a probléma itt: ${point.code} (${point.name})?`, '');
+      if (text === null) return;
+      const problemText = text.trim() || 'Azonnali beavatkozás szükséges a helyszínen!';
+      onUpdatePoints(points.map(p => (p.id === point.id ? { ...p, hasProblem: true, status: 'HIBA JELENTVE', problemText } : p)));
+      onUpdateIncidents([{
+        id: uid('inc'),
+        severity: 'critical',
+        location: `${point.code} — ${point.name}`,
+        pointId: point.id,
+        reporter: currentUser,
+        time,
+        text: problemText,
+        isResolved: false,
+        resolvedBy: null,
+        resolvedAt: null
+      }, ...incidents]);
       onAddLog({
         user: currentUser,
-        action: target.hasProblem ? 'FLAG_ISSUE' : 'RESOLVE_ISSUE',
+        action: 'FLAG_ISSUE',
         module: 'Helyszínrajz & Térkép',
-        description: target.hasProblem
-          ? `[PROBLÉMA JELZÉS] a standnál: ${target.code} (${target.name})`
-          : `[MEGOLDVA] a standnál: ${target.code} (${target.name})`
+        description: `[PROBLÉMA] ${point.code} (${point.name}): ${problemText}`
       });
+      return;
     }
+
+    onUpdatePoints(points.map(p => (p.id === point.id ? { ...p, hasProblem: false, status: 'Üzemel (Rendben)', problemText: '' } : p)));
+    if (incidents.some(i => i.pointId === point.id && !i.isResolved)) {
+      onUpdateIncidents(incidents.map(i => (
+        i.pointId === point.id && !i.isResolved ? { ...i, isResolved: true, resolvedBy: currentUser, resolvedAt: time } : i
+      )));
+    }
+    onAddLog({
+      user: currentUser,
+      action: 'RESOLVE_ISSUE',
+      module: 'Helyszínrajz & Térkép',
+      description: `[MEGOLDVA] ${point.code} (${point.name})`
+    });
   };
 
   const getPointColor = (p) => {
@@ -126,15 +144,31 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
       </div>
 
       {/* Main Map Viewport + Side Inspector Card */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 380px', gap: '16px', alignItems: 'start' }}>
+      {problemPoints.length > 0 && (
+        <div className="alert-box rose">
+          <AlertCircle size={18} />
+          <div>
+            <strong>{problemPoints.length} helyszínen van jelzett probléma:</strong>{' '}
+            {problemPoints.map((p, i) => (
+              <button key={p.id} className="link-btn" onClick={() => setActiveId(p.id)}>
+                {i > 0 && ' · '}{p.code}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="map-layout">
         
         {/* Visual Interactive Map Canvas (Light Mode) */}
+        <div className="map-scroll">
         <div style={{
           backgroundColor: '#f8fafc',
           border: '1.5px solid #cbd5e1',
           borderRadius: '12px',
           padding: '24px',
           minHeight: '640px',
+          minWidth: '760px',
           position: 'relative',
           overflow: 'hidden',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
@@ -190,7 +224,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
             return (
               <div
                 key={p.id}
-                onClick={() => setActivePoint(p)}
+                onClick={() => setActiveId(p.id)}
                 style={{
                   position: 'absolute',
                   left: `${p.x}%`,
@@ -238,9 +272,11 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
           })}
         </div>
 
+        </div>
+
         {/* Right: Selected Stand / Point Inspector */}
         {activePoint ? (
-          <div className="ops-card" style={{ padding: '22px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', position: 'sticky', top: '80px' }}>
+          <div className="ops-card" style={{ padding: '22px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', position: 'sticky', top: '12px' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
               <span className={`badge ${activePoint.type === 'wine' ? 'badge-blue' : activePoint.type === 'food' ? 'badge-amber' : activePoint.type === 'stage' ? 'badge-gray' : 'badge-green'}`}>
                 {activePoint.type.toUpperCase()}
@@ -281,7 +317,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px', fontSize: '13.5px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
                 <span style={{ color: '#475569' }}>Áramellátás:</span>
-                <span style={{ fontWeight: '800', color: activePoint.power.includes('32A') ? '#b45309' : '#0f172a' }}>
+                <span style={{ fontWeight: '800', color: (activePoint.power || '').includes('32A') ? '#b45309' : '#0f172a' }}>
                   {activePoint.power}
                 </span>
               </div>
@@ -313,7 +349,7 @@ export function SiteMapView({ onAddLog, currentUser, searchQuery }) {
             {/* Emergency Action Buttons */}
             <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
               <button
-                onClick={() => handleToggleProblem(activePoint.id)}
+                onClick={() => handleToggleProblem(activePoint)}
                 style={{
                   width: '100%',
                   padding: '12px',

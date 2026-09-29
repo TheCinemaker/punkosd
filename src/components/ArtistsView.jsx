@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { Users, Plus, Edit2, Trash2, Phone, Mail, FileText, CheckCircle2, DollarSign, Utensils, Hotel, Car, X, Tag } from 'lucide-react';
+import { telHref, hasRider as artistHasRider } from '../lib/artists';
+import { docUrl } from '../lib/files';
+import { uid } from '../lib/store';
+import { DocSlot } from './DocSlot';
 
 export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, searchQuery }) {
   const [selectedArtist, setSelectedArtist] = useState(null);
@@ -19,7 +23,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedArtist({
-      id: 'art-' + Date.now(),
+      id: uid('art'),
       name: '',
       contact: '',
       phone: '+36 ',
@@ -158,7 +162,8 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
             ) : (
               filteredArtists.map(a => {
                 const isSigned = a.contractStatus === 'Aláírva';
-                const hasRider = a.techRider && a.techRider.includes('Jóváhagyva');
+                const hasRider = artistHasRider(a);
+                const riderUrl = docUrl(a.techRiderDoc);
 
                 return (
                   <tr key={a.id} onClick={() => handleOpenEdit(a)} style={{ cursor: 'pointer' }}>
@@ -169,7 +174,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                       {a.contact}
                     </td>
                     <td style={{ fontSize: '12px' }}>
-                      <div style={{ color: '#1d4ed8', fontWeight: '700' }}>{a.phone}</div>
+                      <div style={{ color: '#1d4ed8', fontWeight: '700' }}><a href={telHref(a.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{a.phone}</a></div>
                       <div style={{ fontSize: '11.5px', color: '#0f172a', fontWeight: '500' }}>{a.email}</div>
                     </td>
                     <td style={{ fontWeight: '800', color: '#000000', textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -187,6 +192,11 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                       <span className={`badge ${hasRider ? 'badge-green' : 'badge-blue'}`}>
                         {hasRider ? 'Rider OK' : a.techRider}
                       </span>
+                      {riderUrl && (
+                        <a href={riderUrl} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="phone-link" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                          Rider megnyitása
+                        </a>
+                      )}
                     </td>
                     <td style={{ fontSize: '12px', maxWidth: '200px' }}>
                       <div style={{ color: '#0f172a', fontWeight: '500' }}>{a.hospitality}</div>
@@ -340,6 +350,19 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                     </label>
                     <input type="number" name="passes" defaultValue={selectedArtist.passes} style={{ width: '100%' }} />
                   </div>
+                </div>
+
+                <div className="section-box">
+                  <h4 className="section-title"><FileText size={16} color="#2563eb" /> Dokumentumok</h4>
+                  <div className="grid-3">
+                    <DocSlot label="Technikai rider" doc={selectedArtist.techRiderDoc} folder="artists/riders" emptyTone="danger"
+                      onChange={(doc) => setSelectedArtist(prev => ({ ...prev, techRiderDoc: doc }))} />
+                    <DocSlot label="Szerződés" doc={selectedArtist.contractDoc} folder="artists/contracts"
+                      onChange={(doc) => setSelectedArtist(prev => ({ ...prev, contractDoc: doc }))} />
+                    <DocSlot label="Stage plot" doc={selectedArtist.stagePlotDoc} folder="artists/stageplots"
+                      onChange={(doc) => setSelectedArtist(prev => ({ ...prev, stagePlotDoc: doc }))} />
+                  </div>
+                  <div className="field-hint">A feltöltött fájl a Mentés gombbal rögzül.</div>
                 </div>
 
                 <div>

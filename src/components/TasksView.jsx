@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, Check, X } from 'lucide-react';
+import { uid } from '../lib/store';
 
 export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'completed'
@@ -26,7 +27,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
   const handleToggleTask = (task) => {
     const isNowCompleted = !task.completed;
     const now = new Date();
-    const timeString = `${now.toISOString().slice(0, 10)} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;
+    const timeString = `${now.toLocaleDateString('sv-SE')} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;
 
     const updatedTask = {
       ...task,
@@ -51,7 +52,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
     e.preventDefault();
     const formData = new FormData(e.target);
     const newTask = {
-      id: 'tsk-' + Date.now(),
+      id: uid('tsk'),
       title: formData.get('title'),
       category: formData.get('category'),
       priority: formData.get('priority'),

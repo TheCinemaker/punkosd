@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { 
   Building2, Plus, Edit2, Trash2, Phone, Mail, FileText, 
-  Download, Upload, CheckCircle2, DollarSign, X
+  CheckCircle2, DollarSign, X
 } from 'lucide-react';
+import { uid } from '../lib/store';
+import { DocSlot } from './DocSlot';
+import { docName } from '../lib/files';
+import { telHref } from '../lib/artists';
 
 export function ContractorsView({ contractors, onUpdateContractors, onAddLog, currentUser, searchQuery }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -44,7 +48,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedContractor({
-      id: 'cnt-' + Date.now(),
+      id: uid('cnt'),
       code: `SZOLG-0${contractors.length + 1}`,
       companyName: '',
       category: 'Színpad- és Hangtechnika',
@@ -126,31 +130,16 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
     }
   };
 
-  const handleUploadDoc = (field) => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.pdf,.doc,.docx,.xls,.xlsx,.png,.jpg';
-    input.onchange = (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        setSelectedContractor(prev => ({
-          ...prev,
-          [field]: file.name
-        }));
-        onAddLog({
-          user: currentUser,
-          action: 'UPLOAD_DOC',
-          module: 'Szolgáltatói Dokumentumok',
-          description: `Dokumentumot csatolt (${file.name}) a partnerhez: "${selectedContractor.companyName}"`
-        });
-      }
-    };
-    input.click();
+  const handleDocUploaded = (label) => (doc) => {
+    onAddLog({
+      user: currentUser,
+      action: 'UPLOAD_DOC',
+      module: 'Szolgáltatói Dokumentumok',
+      description: `Feltöltötte: ${label} (${doc.name}) — "${selectedContractor.companyName || 'új partner'}"`
+    });
   };
 
-  const handleDownloadDoc = (fileName) => {
-    alert(`Letöltés előkészítve: ${fileName}`);
-  };
+  const setDoc = (field) => (doc) => setSelectedContractor(prev => ({ ...prev, [field]: doc }));
 
   return (
     <div>
@@ -299,7 +288,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                         {c.contactName}
                       </div>
                       <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}>
-                        {c.phone}
+                        <a href={telHref(c.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{c.phone}</a>
                       </div>
                     </td>
                     <td style={{ fontWeight: '800', color: '#b45309', textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -318,12 +307,12 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     <td>
                       <div style={{ display: 'flex', gap: '4px' }}>
                         {hasContract ? (
-                          <span className="badge badge-green" title={c.contractDoc}>Szerződés</span>
+                          <span className="badge badge-green" title={docName(c.contractDoc)}>Szerződés</span>
                         ) : (
                           <span className="badge badge-rose" title="Szerződés még nincs csatolva">Nincs szerz.</span>
                         )}
-                        {hasQuote && <span className="badge badge-blue" title={c.quoteDoc}>Ajánlat</span>}
-                        {hasInvoice && <span className="badge badge-amber" title={c.completionDoc}>Számla</span>}
+                        {hasQuote && <span className="badge badge-blue" title={docName(c.quoteDoc)}>Ajánlat</span>}
+                        {hasInvoice && <span className="badge badge-amber" title={docName(c.completionDoc)}>Számla</span>}
                       </div>
                     </td>
                     <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -471,114 +460,14 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                   </h4>
 
                   <div className="grid-3">
-                    {/* Contract PDF */}
-                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
-                        Hivatalos Szerződés
-                      </div>
-                      {selectedContractor.contractDoc ? (
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
-                            {selectedContractor.contractDoc}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDownloadDoc(selectedContractor.contractDoc)}
-                            className="btn-secondary"
-                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
-                          >
-                            <Download size={13} /> Letöltés
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#dc2626', marginBottom: '8px', fontWeight: '600' }}>
-                            Nincs feltöltve
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleUploadDoc('contractDoc')}
-                            className="btn-primary"
-                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
-                          >
-                            <Upload size={13} /> PDF Feltöltése
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Quote / Calculation PDF */}
-                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
-                        Árajánlat / Műszaki Terv
-                      </div>
-                      {selectedContractor.quoteDoc ? (
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
-                            {selectedContractor.quoteDoc}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDownloadDoc(selectedContractor.quoteDoc)}
-                            className="btn-secondary"
-                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
-                          >
-                            <Download size={13} /> Letöltés
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-                            Nincs csatolva
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleUploadDoc('quoteDoc')}
-                            className="btn-primary"
-                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
-                          >
-                            <Upload size={13} /> Feltöltés
-                          </button>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Invoice / Completion Certificate */}
-                    <div style={{ backgroundColor: '#ffffff', border: '1px solid #cbd5e1', borderRadius: '6px', padding: '12px' }}>
-                      <div style={{ fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '6px' }}>
-                        Számla / Teljesítésigazolás
-                      </div>
-                      {selectedContractor.completionDoc ? (
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#166534', marginBottom: '8px', wordBreak: 'break-all', fontWeight: '700' }}>
-                            {selectedContractor.completionDoc}
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleDownloadDoc(selectedContractor.completionDoc)}
-                            className="btn-secondary"
-                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
-                          >
-                            <Download size={13} /> Letöltés
-                          </button>
-                        </div>
-                      ) : (
-                        <div>
-                          <div style={{ fontSize: '12px', color: '#64748b', marginBottom: '8px' }}>
-                            Még nem érkezett be
-                          </div>
-                          <button
-                            type="button"
-                            onClick={() => handleUploadDoc('completionDoc')}
-                            className="btn-primary"
-                            style={{ fontSize: '12px', padding: '6px 10px', width: '100%', justifyContent: 'center' }}
-                          >
-                            <Upload size={13} /> Számla Csatolása
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <DocSlot label="Hivatalos szerződés" doc={selectedContractor.contractDoc} folder="contractors/contracts"
+                      emptyTone="danger" onChange={setDoc('contractDoc')} onUploaded={handleDocUploaded('szerződés')} />
+                    <DocSlot label="Árajánlat / műszaki terv" doc={selectedContractor.quoteDoc} folder="contractors/quotes"
+                      emptyText="Nincs csatolva" onChange={setDoc('quoteDoc')} onUploaded={handleDocUploaded('árajánlat')} />
+                    <DocSlot label="Számla / teljesítésigazolás" doc={selectedContractor.completionDoc} folder="contractors/invoices"
+                      emptyText="Még nem érkezett be" onChange={setDoc('completionDoc')} onUploaded={handleDocUploaded('számla')} />
                   </div>
+                  <div className="field-hint">A feltöltött fájl a Mentés gombbal rögzül.</div>
                 </div>
 
                 {/* Notes and Invoicing number */}

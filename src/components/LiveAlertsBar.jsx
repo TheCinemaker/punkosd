@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
-import { AlertCircle, AlertTriangle, CheckCircle2, Plus, Bell, X, Send, Radio } from 'lucide-react';
+import { AlertCircle, AlertTriangle, CheckCircle2, Plus, Bell, BellRing, X, Send, Radio } from 'lucide-react';
+import { uid } from '../lib/store';
+import { notificationsSupported, requestNotificationPermission } from '../lib/notify';
 
 export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentUser }) {
   const [isOpenPanel, setIsOpenPanel] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [notifPermission, setNotifPermission] = useState(() => (notificationsSupported() ? Notification.permission : 'unsupported'));
+
+  const enableNotifications = async () => {
+    setNotifPermission(await requestNotificationPermission());
+  };
 
   const activeIncidents = incidents.filter(i => !i.isResolved);
   const criticalCount = activeIncidents.filter(i => i.severity === 'critical').length;
@@ -38,7 +45,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
     const now = new Date().toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
 
     const newInc = {
-      id: 'inc-' + Date.now(),
+      id: uid('inc'),
       severity: formData.get('severity'),
       location: formData.get('location'),
       reporter: currentUser,
@@ -65,7 +72,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
   return (
     <>
       {/* Real-Time Alerts Ticker Bar (Light Mode) */}
-      <div style={{
+      <div className="alerts-bar" style={{
         backgroundColor: criticalCount > 0 ? '#fee2e2' : warningCount > 0 ? '#fef3c7' : '#ffffff',
         borderBottom: criticalCount > 0 ? '2px solid #ef4444' : warningCount > 0 ? '2px solid #f59e0b' : '1px solid #cbd5e1',
         padding: '8px 20px',
@@ -109,13 +116,13 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
             </span>
           ) : (
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#166534', fontWeight: '700' }}>
-              <CheckCircle2 size={16} color="#059669" /> Minden helyszín és stand zavartalanul üzemel
+              <CheckCircle2 size={16} color="#059669" /> Nincs nyitott probléma
             </span>
           )}
 
           {/* Latest Incident snippet */}
           {activeIncidents.length > 0 && (
-            <span style={{ color: '#0f172a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '650px', fontSize: '13px', fontWeight: '600' }}>
+            <span className="alerts-snippet" style={{ color: '#0f172a', whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', maxWidth: '650px', fontSize: '13px', fontWeight: '600' }}>
               <strong>{activeIncidents[0].location}:</strong> {activeIncidents[0].text} <span style={{ color: '#475569' }}>({activeIncidents[0].reporter}, {activeIncidents[0].time})</span>
             </span>
           )}
@@ -158,7 +165,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
               cursor: 'pointer'
             }}
           >
-            <Plus size={15} /> Helyszíni SOS / Észrevétel
+            <Plus size={15} /> SOS / Észrevétel
           </button>
         </div>
       </div>
@@ -169,7 +176,7 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
           <div style={{
             width: '100%',
             maxWidth: '540px',
-            height: '100vh',
+            height: '100%',
             backgroundColor: '#ffffff',
             borderLeft: '2px solid #cbd5e1',
             display: 'flex',
@@ -194,6 +201,17 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
               </div>
               <button onClick={() => setIsOpenPanel(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
+
+            {notifPermission === 'default' && (
+              <button onClick={enableNotifications} className="notif-banner">
+                <BellRing size={16} /> Értesítések bekapcsolása — új SOS esetén a telefonod is jelez
+              </button>
+            )}
+            {notifPermission === 'denied' && (
+              <div className="notif-banner muted">
+                Az értesítések le vannak tiltva ebben a böngészőben. A böngésző beállításaiban engedélyezheted.
+              </div>
+            )}
 
             {/* Panel Body: Incident Feed */}
             <div style={{ flex: 1, overflowY: 'auto', padding: '18px', display: 'flex', flexDirection: 'column', gap: '14px' }}>

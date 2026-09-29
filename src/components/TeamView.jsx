@@ -3,6 +3,7 @@ import {
   Users, UserPlus, Phone, Mail, Shield, Radio, Key, Edit2, 
   Trash2, CheckSquare, ShoppingCart, Check, X, Tag
 } from 'lucide-react';
+import { uid } from '../lib/store';
 
 export function TeamView({ 
   users, 
@@ -44,6 +45,12 @@ export function TeamView({
     return tasks.filter(t => t.assignedTo === userName && !t.completed).length;
   };
 
+  // PIN-t csak a saját profilnál és az elnökségnél látni
+  const me = users.find(u => u.name === currentUser);
+  const isAdmin = me?.badge === 'Elnökség';
+  const canSeePin = (user) => isAdmin || user.name === currentUser;
+  const randomPin = () => String(Math.floor(1000 + Math.random() * 9000));
+
   const getShoppingCount = (userName) => {
     return shoppingList.filter(s => s.responsible === userName && !s.isPurchased).length;
   };
@@ -51,13 +58,13 @@ export function TeamView({
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedUser({
-      id: 'usr-' + Date.now(),
+      id: uid('usr'),
       name: '',
       role: '',
       badge: 'Technika',
       phone: '+36 ',
       email: '',
-      pin: '1532',
+      pin: randomPin(),
       radio: 'URH Ch-1'
     });
     setIsModalOpen(true);
@@ -96,7 +103,7 @@ export function TeamView({
       badge: formData.get('badge'),
       phone: formData.get('phone').trim(),
       email: formData.get('email').trim(),
-      pin: formData.get('pin').trim() || '1532',
+      pin: formData.get('pin') !== null ? (formData.get('pin').trim() || selectedUser.pin) : selectedUser.pin,
       radio: formData.get('radio').trim()
     };
 
@@ -111,7 +118,7 @@ export function TeamView({
         user: currentUser,
         action: 'CREATE',
         module: 'Szervezők & Csapat',
-        description: `Új szervezőt rögzített a stábba: "${updated.name}" (${updated.role} • PIN: ${updated.pin})`
+        description: `Új szervezőt rögzített a stábba: "${updated.name}" (${updated.role})`
       });
     } else {
       onUpdateUsers(users.map(u => u.id === updated.id ? updated : u));
@@ -119,7 +126,7 @@ export function TeamView({
         user: currentUser,
         action: 'UPDATE',
         module: 'Szervezők & Csapat',
-        description: `Módosította "${updated.name}" szervezői adatait (PIN: ${updated.pin})`
+        description: `Módosította "${updated.name}" szervezői adatait${updated.pin !== selectedUser.pin ? ' (új PIN beállítva)' : ''}`
       });
     }
 
@@ -178,13 +185,13 @@ export function TeamView({
 
         <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
           <div style={{ fontSize: '11.5px', color: '#14532d', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Key size={15} color="#059669" /> Központi Mester PIN Kód
+            <Key size={15} color="#059669" /> Belépés
           </div>
-          <div style={{ fontSize: '24px', fontWeight: '800', color: '#047857', marginTop: '4px', letterSpacing: '0.05em' }}>
-            1532
+          <div style={{ fontSize: '24px', fontWeight: '800', color: users.some(u => String(u.pin) === '1532') ? '#b91c1c' : '#047857', marginTop: '4px' }}>
+            {users.filter(u => String(u.pin) === '1532').length} alap PIN
           </div>
           <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
-            + Egyedi személyes PIN is megadható
+            {users.some(u => String(u.pin) === '1532') ? 'Ennyi profil használja még az 1532-t — cseréld le!' : 'Mindenkinek egyedi PIN kódja van'}
           </div>
         </div>
       </div>
@@ -364,7 +371,7 @@ export function TeamView({
                         borderRadius: '4px',
                         border: '1px solid #86efac'
                       }}>
-                        {user.pin || '1532'}
+                        {canSeePin(user) ? user.pin : '••••'}
                       </span>
                     </td>
                     <td>
@@ -534,16 +541,26 @@ export function TeamView({
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Belépési PIN Kód (Ezzel léphet be a rendszerbe)
                     </label>
-                    <input
-                      name="pin"
-                      defaultValue={selectedUser.pin || '1532'}
-                      required
-                      placeholder="1532"
-                      style={{ width: '100%', fontFamily: 'JetBrains Mono, monospace' }}
-                    />
-                    <div style={{ fontSize: '11.5px', color: '#475569', marginTop: '3px' }}>
-                      Alapértelmezett: 1532, vagy adj meg egyedi kódot.
-                    </div>
+                    {canSeePin(selectedUser) || isNew ? (
+                      <>
+                        <input
+                          name="pin"
+                          defaultValue={selectedUser.pin}
+                          required
+                          inputMode="numeric"
+                          pattern="[0-9]{4,8}"
+                          title="4-8 számjegy"
+                          style={{ width: '100%', fontFamily: 'JetBrains Mono, monospace' }}
+                        />
+                        <div style={{ fontSize: '11.5px', color: '#475569', marginTop: '3px' }}>
+                          4–8 számjegy. Csak ő és az elnökség látja.
+                        </div>
+                      </>
+                    ) : (
+                      <div style={{ fontSize: '12.5px', color: '#475569', padding: '10px 0' }}>
+                        A PIN-t csak a profil tulajdonosa vagy az elnökség módosíthatja.
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>

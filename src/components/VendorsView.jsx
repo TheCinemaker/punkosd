@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, DollarSign, X } from 'lucide-react';
+import { uid } from '../lib/store';
+import { telHref } from '../lib/artists';
 
 export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, searchQuery }) {
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -32,7 +34,7 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedVendor({
-      id: 'ven-' + Date.now(),
+      id: uid('ven'),
       code: `BOR-0${vendors.length + 1}`,
       name: '',
       category: 'Borászat (Fő tér)',
@@ -276,7 +278,7 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
                   </td>
                   <td>
                     <div style={{ fontSize: '12.5px', color: '#0f172a', fontWeight: '600' }}>{v.contact}</div>
-                    <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}>{v.phone}</div>
+                    <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}><a href={telHref(v.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{v.phone}</a></div>
                   </td>
                   <td>
                     <span style={{

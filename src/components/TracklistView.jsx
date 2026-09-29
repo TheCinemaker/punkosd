@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Music, Plus, Edit2, Trash2, CheckCircle2, Clock, X } from 'lucide-react';
+import { uid } from '../lib/store';
 
 export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog, currentUser, searchQuery }) {
   const [selectedArtist, setSelectedArtist] = useState('all');
@@ -22,7 +23,7 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedTrack({
-      id: 'trk-' + Date.now(),
+      id: uid('trk'),
       artist: uniqueArtists[0] || 'Ocho Macho',
       order: tracklist.length + 1,
       title: '',

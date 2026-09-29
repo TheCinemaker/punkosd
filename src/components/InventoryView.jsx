@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Package, Plus, Edit2, Trash2, Tag, CheckCircle2, AlertTriangle, MapPin, UserCheck, X } from 'lucide-react';
+import { uid } from '../lib/store';
 
 export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentUser, searchQuery }) {
   const [selectedCat, setSelectedCat] = useState('all');
@@ -29,7 +30,7 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedItem({
-      id: 'inv-' + Date.now(),
+      id: uid('inv'),
       code: `ZSAK-0${inventory.length + 1}`,
       name: '',
       category: 'Higiénia & Szemét',

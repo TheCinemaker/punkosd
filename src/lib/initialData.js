@@ -1,4 +1,5 @@
 // Initial authentic dataset for KTSZE Világ- és Utcazenei Fesztivál 2026 (Pünkösd)
+import { FESTIVAL } from './config';
 
 export const DEFAULT_USERS = [
   { id: 'usr-1', name: 'Szilveszter', role: 'Nagyszínpad Koordinátor & Műszaki Vezető', badge: 'Technika', phone: '+36 30 987 6543', email: 'szilveszter@ktsze.hu', pin: '1532', radio: 'URH Ch-1' },
@@ -15,7 +16,7 @@ export const STAGES = [
   { id: 'street_points', name: 'Belvárosi Kapualjak', location: 'Kapualjak & Sétányok', type: 'Egyedi Zenészek', capacity: '200 fő' },
 ];
 
-export const DAYS = ['Péntek', 'Szombat', 'Vasárnap', 'Hétfő'];
+export const DAYS = FESTIVAL.days.map(d => d.name);
 
 export const INITIAL_SCHEDULE = [
   // PÉNTEK NAGYSZÍNPAD
@@ -95,6 +96,7 @@ export const INITIAL_SCHEDULE = [
     day: 'Péntek',
     time: '23:30 - 02:00',
     title: 'VÁRDISCO FINÁLÉ: TISZTAFAXXA LIVE',
+    featured: true,
     artist: 'TISZTAFAXXA (Szilveszter & Tesója)',
     genre: 'Heavy Festival EDM, Bass & All-out Party',
     soundcheck: '23:15 line-check',
@@ -153,6 +155,7 @@ export const INITIAL_SCHEDULE = [
     day: 'Szombat',
     time: '21:00 - 23:00',
     title: 'OCHO MACHO ÉLŐ NAGYKONCERT',
+    featured: true,
     artist: 'Ocho Macho Zenekar (Kőszeg)',
     genre: 'Reggae / Ska / Punk / Latin World',
     soundcheck: '19:30 - 20:15 (zárt)',
@@ -211,6 +214,7 @@ export const INITIAL_SCHEDULE = [
     day: 'Vasárnap',
     time: '20:30 - 22:15',
     title: 'ESTI SZTÁRFELLÉPŐ: G.w.M / MAJKA LIVE',
+    featured: true,
     artist: 'Sztárfellépő Produkció (Egyeztetés alatt)',
     genre: 'Urban Pop / Hip-hop Fesztivál Show',
     soundcheck: '19:30 - 20:00',
@@ -255,6 +259,7 @@ export const INITIAL_SCHEDULE = [
     day: 'Hétfő',
     time: '17:00 - 19:30',
     title: 'Parno Graszt & Fesztivál Zárókoncert',
+    featured: true,
     artist: 'Parno Graszt',
     genre: 'Autentikus Cigány Világzene',
     soundcheck: '16:30 - 16:55',

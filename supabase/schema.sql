@@ -280,3 +280,53 @@ CREATE INDEX IF NOT EXISTS idx_fest_contractors_code ON fest_contractors(code);
 CREATE INDEX IF NOT EXISTS idx_fest_shopping_purchased ON fest_shopping_list(is_purchased);
 CREATE INDEX IF NOT EXISTS idx_fest_artists_stage ON fest_artists(stage_id);
 CREATE INDEX IF NOT EXISTS idx_fest_inventory_code ON fest_inventory(item_code);
+
+-- ============================================================================
+-- 13. KOZOS ADATTAR (EZT HASZNALJA AZ APP)
+-- Minden modul (menetrend, fellepok, feladatok, SOS, terkep stb.) soronkent
+-- ide ment: collection = modul neve, id = tetel azonositoja, data = teljes tetel.
+-- Elo szinkron: Supabase Realtime (postgres_changes).
+-- Ez a blokk onmagaban is lefuttathato, tobbszor is (idempotens).
+-- ============================================================================
+CREATE TABLE IF NOT EXISTS fest_records (
+    collection TEXT NOT NULL,
+    id TEXT NOT NULL,
+    data JSONB NOT NULL,
+    updated_by TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    PRIMARY KEY (collection, id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_fest_records_collection ON fest_records(collection);
+
+ALTER TABLE fest_records ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS fest_records_app_access ON fest_records;
+CREATE POLICY fest_records_app_access ON fest_records
+    FOR ALL TO anon, authenticated
+    USING (true) WITH CHECK (true);
+
+-- Realtime bekapcsolasa a tablara
+DO $$
+BEGIN
+    ALTER PUBLICATION supabase_realtime ADD TABLE fest_records;
+EXCEPTION
+    WHEN duplicate_object THEN NULL;
+END $$;
+
+-- ============================================================================
+-- 14. DOKUMENTUMTAR (riderek, szerzodesek, stage plotok, szamlak)
+-- ============================================================================
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('fest-docs', 'fest-docs', true)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS fest_docs_read ON storage.objects;
+CREATE POLICY fest_docs_read ON storage.objects
+    FOR SELECT TO anon, authenticated
+    USING (bucket_id = 'fest-docs');
+
+DROP POLICY IF EXISTS fest_docs_upload ON storage.objects;
+CREATE POLICY fest_docs_upload ON storage.objects
+    FOR INSERT TO anon, authenticated
+    WITH CHECK (bucket_id = 'fest-docs');

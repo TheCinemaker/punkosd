@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { DollarSign, Plus, Edit2, Trash2, CheckCircle2, PieChart, X } from 'lucide-react';
+import { uid } from '../lib/store';
 
 export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, searchQuery }) {
   const [selectedCat, setSelectedCat] = useState('all');
@@ -36,7 +37,7 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
   const handleOpenAdd = () => {
     setIsNew(true);
     setSelectedItem({
-      id: 'bgt-' + Date.now(),
+      id: uid('bgt'),
       code: `KTG-0${budget.length + 1}`,
       category: 'Színpad- és Hangtechnika',
       name: '',
