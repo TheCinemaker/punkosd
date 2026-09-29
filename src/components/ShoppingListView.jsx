@@ -5,7 +5,7 @@ import {
   User, Check, Layers, Tag
 } from 'lucide-react';
 
-export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog, currentUser, searchQuery }) {
+export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'purchased'
   const [filterAssignee, setFilterAssignee] = useState('all');
@@ -42,11 +42,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
   const teamMembers = [
     'Összes felelős',
-    'Szilveszter',
-    'Gábor',
-    'Zoltán',
-    'Műszaki Stáb',
-    'Önkéntes Csapat'
+    ...(users.length > 0 ? users.map(u => u.name) : ['Szilveszter', 'Gábor', 'Zoltán', 'Műszaki Stáb', 'Önkéntes Csapat'])
   ];
 
   const filtered = shoppingList.filter(item => {
@@ -515,11 +511,9 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                       Kinek a dolga beszerezni / egyeztetni? (Felelős)
                     </label>
                     <select name="responsible" defaultValue={selectedItem.responsible} style={{ width: '100%', fontSize: '13.5px' }}>
-                      <option value="Szilveszter">Szilveszter</option>
-                      <option value="Gábor">Gábor</option>
-                      <option value="Zoltán">Zoltán</option>
-                      <option value="Műszaki Stáb">Műszaki Stáb</option>
-                      <option value="Önkéntes Csapat">Önkéntes Csapat</option>
+                      {teamMembers.slice(1).map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
                     </select>
                   </div>
                   <div>

@@ -4,23 +4,28 @@
 -- Prefix: fest_ (Teljes szeparalas a meglevo KTSZE tablakhoz kepest)
 -- ============================================================================
 
--- 1. Felhasznalok / Csapattagok
+-- 1. Felhasznalok / Csapattagok & Szervezok
 CREATE TABLE IF NOT EXISTS fest_team (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL UNIQUE,
-    role TEXT NOT NULL DEFAULT 'Szervezo',
+    role TEXT NOT NULL DEFAULT 'Szervező',
+    badge TEXT NOT NULL DEFAULT 'Technika', -- 'Technika', 'Helyszín', 'Elnökség', 'Pénzügy', 'Biztonság', 'Önkéntes'
     phone TEXT,
+    email TEXT,
+    pin TEXT DEFAULT '1532', -- Belepesi PIN kod (barki belephet, akinek kodot adsz)
+    radio TEXT DEFAULT 'URH Ch-1',
     is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT NOW()
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- Alaperelmezett KTSZE csapattagok
-INSERT INTO fest_team (name, role, phone) VALUES
-('Szilveszter', 'Nagyszinpad Koordinator & Muszaki vezeto', '+36 30 123 4567'),
-('Gabor', 'KTSZE Elnok & Foszervezo', '+36 30 234 5678'),
-('Zoltan', 'Penzugyi & Palyazati Felelos', '+36 30 345 6789'),
-('Muszaki Stab', 'Hang & Fenytechnikai Felelos', '+36 30 456 7890'),
-('Onkentes Csapat', 'Helyszini Koordinacio', '+36 30 567 8901')
+INSERT INTO fest_team (name, role, badge, phone, email, pin, radio) VALUES
+('Szilveszter', 'Nagyszínpad Koordinátor & Műszaki vezető', 'Technika', '+36 30 987 6543', 'szilveszter@ktsze.hu', '1532', 'URH Ch-1'),
+('Gábor', 'KTSZE Elnök & Főszervező', 'Elnökség', '+36 30 876 5432', 'gabor@ktsze.hu', '1532', 'URH Ch-1'),
+('Zoltán', 'Pénzügyi & Pályázati Felelős', 'Pénzügy', '+36 30 765 4321', 'zoltan@ktsze.hu', '1532', 'URH Ch-3'),
+('Műszaki Stáb', 'Hang & Fénytechnikai Csapat', 'Technika', '+36 30 654 3210', 'technika@ktsze.hu', '1532', 'URH Ch-2'),
+('Önkéntes Csapat', 'Helyszíni Koordináció & Zsákos Ügyelet', 'Helyszín', '+36 30 543 2109', 'onkentes@ktsze.hu', '1532', 'URH Ch-4')
 ON CONFLICT (name) DO NOTHING;
 
 -- 2. Aktivitasi Naplo / Audit Trail (Ki mit csinalt, ki pipalta ki, ki szerkesztette)

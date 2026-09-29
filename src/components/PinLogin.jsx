@@ -2,19 +2,23 @@ import React, { useState } from 'react';
 import { Lock, Shield, Sparkles, AlertCircle, Key, Check } from 'lucide-react';
 import { DEFAULT_USERS } from '../lib/initialData';
 
-export function PinLogin({ onLogin }) {
+export function PinLogin({ onLogin, users = DEFAULT_USERS }) {
   const [pin, setPin] = useState('');
-  const [selectedUser, setSelectedUser] = useState(DEFAULT_USERS[0].name);
+  const [selectedUser, setSelectedUser] = useState(users[0]?.name || 'Szilveszter');
   const [customUser, setCustomUser] = useState('');
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (pin.trim() !== '1532') {
-      setError('Hibás PIN kód! A kőszegi ostrom éve a helyes belépési kód (1532).');
+    const finalUserName = customUser.trim() ? customUser.trim() : selectedUser;
+    const targetUserObj = users.find(u => u.name.toLowerCase() === finalUserName.toLowerCase());
+    const validPin = targetUserObj?.pin ? targetUserObj.pin : '1532';
+
+    // Bárki beléphet a 1532 mesterkóddal VAGY a szervező saját egyedi PIN-jével
+    if (pin.trim() !== '1532' && pin.trim() !== validPin) {
+      setError('Hibás PIN kód! A megadott szervezői kód vagy a mesterkód (1532) szükséges.');
       return;
     }
-    const finalUserName = customUser.trim() ? customUser.trim() : selectedUser;
     onLogin(finalUserName);
   };
 
@@ -28,7 +32,7 @@ export function PinLogin({ onLogin }) {
       background: '#0b0f19'
     }}>
       <div style={{
-        maxWidth: '460px',
+        maxWidth: '480px',
         width: '100%',
         backgroundColor: '#111827',
         border: '1.5px solid #334155',
@@ -65,8 +69,16 @@ export function PinLogin({ onLogin }) {
             <label style={{ display: 'block', fontSize: '12.5px', fontWeight: '700', color: '#ffffff', marginBottom: '10px' }}>
               Válassz csapattag profilt (Módosítások naplózása):
             </label>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px', marginBottom: '10px' }}>
-              {DEFAULT_USERS.map(u => {
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              gap: '8px',
+              maxHeight: '220px',
+              overflowY: 'auto',
+              marginBottom: '10px',
+              paddingRight: '4px'
+            }}>
+              {users.map(u => {
                 const isSelected = selectedUser === u.name && !customUser;
                 return (
                   <button
@@ -74,7 +86,7 @@ export function PinLogin({ onLogin }) {
                     key={u.id}
                     onClick={() => { setSelectedUser(u.name); setCustomUser(''); }}
                     style={{
-                      padding: '10px 12px',
+                      padding: '9px 12px',
                       borderRadius: '6px',
                       textAlign: 'left',
                       fontSize: '13px',
@@ -88,7 +100,10 @@ export function PinLogin({ onLogin }) {
                       cursor: 'pointer'
                     }}
                   >
-                    <span>{u.name}</span>
+                    <div>
+                      <div style={{ fontWeight: '700', fontSize: '13px', color: '#ffffff' }}>{u.name}</div>
+                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>{u.badge || u.role}</div>
+                    </div>
                     {isSelected && <Check size={14} color="#60a5fa" />}
                   </button>
                 );

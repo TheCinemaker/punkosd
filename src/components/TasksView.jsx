@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
 import { CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, AlertCircle, Filter, CheckCircle2, Check, X } from 'lucide-react';
 
-export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQuery }) {
+export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'completed'
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterAssignee, setFilterAssignee] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const teamMembers = users.length > 0 
+    ? users.map(u => u.name) 
+    : ['Szilveszter', 'Gábor', 'Zoltán', 'Műszaki Stáb', 'Önkéntes Csapat'];
 
   const categories = [
     'Összes kategória',
@@ -177,11 +181,9 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
             style={{ fontSize: '12.5px', padding: '6px 10px' }}
           >
             <option value="all">Minden felelős</option>
-            <option value="Szilveszter">Szilveszter</option>
-            <option value="Gábor">Gábor</option>
-            <option value="Zoltán">Zoltán</option>
-            <option value="Műszaki Stáb">Műszaki Stáb</option>
-            <option value="Önkéntes Csapat">Önkéntes Csapat</option>
+            {teamMembers.map(m => (
+              <option key={m} value={m}>{m}</option>
+            ))}
           </select>
 
           <button
@@ -368,11 +370,9 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                       Felelős Személy
                     </label>
                     <select name="assignedTo" defaultValue={currentUser} style={{ width: '100%' }}>
-                      <option value="Szilveszter">Szilveszter</option>
-                      <option value="Gábor">Gábor</option>
-                      <option value="Zoltán">Zoltán</option>
-                      <option value="Műszaki Stáb">Műszaki Stáb</option>
-                      <option value="Önkéntes Csapat">Önkéntes Csapat</option>
+                      {teamMembers.map(m => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
                     </select>
                   </div>
                   <div>

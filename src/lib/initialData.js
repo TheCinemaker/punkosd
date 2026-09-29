@@ -1,11 +1,11 @@
 // Initial authentic dataset for KTSZE Világ- és Utcazenei Fesztivál 2026 (Pünkösd)
 
 export const DEFAULT_USERS = [
-  { id: 'usr-1', name: 'Szilveszter', role: 'Nagyszínpad Koordinátor & Műszaki Vezető', badge: 'Admin' },
-  { id: 'usr-2', name: 'Gábor', role: 'KTSZE Elnök & Főszervező', badge: 'Elnökség' },
-  { id: 'usr-3', name: 'Zoltán', role: 'Pénzügyi & Pályázati Felelős', badge: 'Pénzügy' },
-  { id: 'usr-4', name: 'Műszaki Stáb', role: 'Hang- és Fénytechnikus Felelős', badge: 'Technika' },
-  { id: 'usr-5', name: 'Önkéntes Csapat', role: 'Helyszíni Koordináció & Zsákos Ügyelet', badge: 'Helyszín' },
+  { id: 'usr-1', name: 'Szilveszter', role: 'Nagyszínpad Koordinátor & Műszaki Vezető', badge: 'Technika', phone: '+36 30 987 6543', email: 'szilveszter@ktsze.hu', pin: '1532', radio: 'URH Ch-1' },
+  { id: 'usr-2', name: 'Gábor', role: 'KTSZE Elnök & Főszervező', badge: 'Elnökség', phone: '+36 30 876 5432', email: 'gabor@ktsze.hu', pin: '1532', radio: 'URH Ch-1' },
+  { id: 'usr-3', name: 'Zoltán', role: 'Pénzügyi & Pályázati Felelős', badge: 'Pénzügy', phone: '+36 30 765 4321', email: 'zoltan@ktsze.hu', pin: '1532', radio: 'URH Ch-3' },
+  { id: 'usr-4', name: 'Műszaki Stáb', role: 'Hang- és Fénytechnikus Csapat', badge: 'Technika', phone: '+36 30 654 3210', email: 'technika@ktsze.hu', pin: '1532', radio: 'URH Ch-2' },
+  { id: 'usr-5', name: 'Önkéntes Csapat', role: 'Helyszíni Koordináció & Zsákos Ügyelet', badge: 'Helyszín', phone: '+36 30 543 2109', email: 'onkentes@ktsze.hu', pin: '1532', radio: 'URH Ch-4' },
 ];
 
 export const STAGES = [

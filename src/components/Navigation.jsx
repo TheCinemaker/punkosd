@@ -1,11 +1,12 @@
 import React from 'react';
-import { Calendar, Users, Building2, MapPin, CheckSquare, ShoppingCart, Wine, Package, Music, DollarSign, History } from 'lucide-react';
+import { Calendar, Users, Building2, MapPin, CheckSquare, ShoppingCart, Wine, Package, Music, DollarSign, History, UserCheck } from 'lucide-react';
 
 export function Navigation({ activeTab, onTabChange, counts }) {
   const tabs = [
     { id: 'schedule', label: 'Menetrend & Színpadok', icon: Calendar, badge: counts.schedule, color: '#3b82f6' },
     { id: 'artists', label: 'Fellépők & Riderek', icon: Users, badge: counts.artists, color: '#8b5cf6' },
     { id: 'contractors', label: 'Szolgáltatók & Szerződések', icon: Building2, badge: counts.contractors, color: '#38bdf8' },
+    { id: 'team', label: 'Szervezők & Stáb', icon: UserCheck, badge: counts.users, color: '#10b981' },
     { id: 'map', label: 'Helyszínrajz & Standok', icon: MapPin, badge: counts.mapPoints, color: '#10b981' },
     { id: 'tasks', label: 'To-Do & Ki csinálta', icon: CheckSquare, badge: counts.pendingTasks, color: '#f59e0b', alertBadge: counts.pendingTasks > 0 },
     { id: 'shopping', label: 'Beszerzés & Anyagigény', icon: ShoppingCart, badge: counts.pendingShopping, color: '#ec4899', alertBadge: counts.pendingShopping > 0 },

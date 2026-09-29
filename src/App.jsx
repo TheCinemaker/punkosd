@@ -15,8 +15,10 @@ import { InventoryView } from './components/InventoryView';
 import { TracklistView } from './components/TracklistView';
 import { BudgetView } from './components/BudgetView';
 import { AuditLogView } from './components/AuditLogView';
+import { TeamView } from './components/TeamView';
 
 import {
+  DEFAULT_USERS,
   INITIAL_SCHEDULE,
   INITIAL_ARTISTS,
   INITIAL_CONTRACTORS,
@@ -40,6 +42,7 @@ export function App() {
   const [currentUser, setCurrentUser] = useState(() => getLocalData('currentUser', null));
 
   // Core Data states
+  const [users, setUsers] = useState(() => getLocalData('users', DEFAULT_USERS));
   const [schedule, setSchedule] = useState(() => getLocalData('schedule', INITIAL_SCHEDULE));
   const [artists, setArtists] = useState(() => getLocalData('artists', INITIAL_ARTISTS));
   const [contractors, setContractors] = useState(() => getLocalData('contractors', INITIAL_CONTRACTORS));
@@ -58,6 +61,7 @@ export function App() {
 
   // Persist states to local storage
   useEffect(() => { setLocalData('currentUser', currentUser); }, [currentUser]);
+  useEffect(() => { setLocalData('users', users); }, [users]);
   useEffect(() => { setLocalData('schedule', schedule); }, [schedule]);
   useEffect(() => { setLocalData('artists', artists); }, [artists]);
   useEffect(() => { setLocalData('contractors', contractors); }, [contractors]);
@@ -76,6 +80,7 @@ export function App() {
       console.log('Realtime broadcast received:', message);
       if (message.type === 'SYNC_DATA') {
         const { key, data } = message.payload;
+        if (key === 'users') setUsers(data);
         if (key === 'schedule') setSchedule(data);
         if (key === 'artists') setArtists(data);
         if (key === 'contractors') setContractors(data);
@@ -114,6 +119,7 @@ export function App() {
 
   // Handlers with Broadcast
   const handleUpdateSchedule = (newSchedule) => updateAndBroadcast('schedule', newSchedule, setSchedule);
+  const handleUpdateUsers = (newUsers) => updateAndBroadcast('users', newUsers, setUsers);
   const handleUpdateArtists = (newArtists) => updateAndBroadcast('artists', newArtists, setArtists);
   const handleUpdateContractors = (newContractors) => updateAndBroadcast('contractors', newContractors, setContractors);
   const handleUpdateVendors = (newVendors) => updateAndBroadcast('vendors', newVendors, setVendors);
@@ -148,7 +154,7 @@ export function App() {
 
   // If not logged in with 1532 PIN, show Login
   if (!currentUser) {
-    return <PinLogin onLogin={(userName) => setCurrentUser(userName)} />;
+    return <PinLogin onLogin={(userName) => setCurrentUser(userName)} users={users} />;
   }
 
   // Calculate live badge counts
@@ -161,6 +167,7 @@ export function App() {
     schedule: schedule.length,
     artists: artists.length,
     contractors: contractors.length,
+    users: users.length,
     mapPoints: MAP_POINTS.length,
     pendingTasks: pendingTasksCount,
     pendingShopping: pendingShoppingCount,
@@ -232,6 +239,18 @@ export function App() {
           />
         )}
 
+        {activeTab === 'team' && (
+          <TeamView
+            users={users}
+            onUpdateUsers={handleUpdateUsers}
+            tasks={tasks}
+            shoppingList={shoppingList}
+            onAddLog={handleAddLog}
+            currentUser={currentUser}
+            searchQuery={searchQuery}
+          />
+        )}
+
         {activeTab === 'map' && (
           <SiteMapView
             onAddLog={handleAddLog}
@@ -247,6 +266,7 @@ export function App() {
             onAddLog={handleAddLog}
             currentUser={currentUser}
             searchQuery={searchQuery}
+            users={users}
           />
         )}
 
@@ -257,6 +277,7 @@ export function App() {
             onAddLog={handleAddLog}
             currentUser={currentUser}
             searchQuery={searchQuery}
+            users={users}
           />
         )}
 
