@@ -88,3 +88,9 @@ export function getFestivalClock(now = new Date()) {
   }
   return { status: 'after', day: null, minutes, daysUntil: 0 };
 }
+
+// Minden időpontot eltol a szövegben ("18:00 - 19:30", "23:15 line-check"), a többi szöveg marad
+export function shiftClockString(str, deltaMinutes) {
+  if (!str) return str;
+  return str.replace(/(\d{1,2})[:.](\d{2})/g, (_, h, m) => formatClock(Number(h) * 60 + Number(m) + deltaMinutes));
+}

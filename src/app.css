@@ -161,6 +161,42 @@ a { color: #1d4ed8; }
 
 .row-conflict td { background: #fff1f2; }
 
+/* Zöld hívógomb a táblázatokban */
+.call-icon {
+  display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;
+  width: 30px; height: 30px; border-radius: 50%; background: #059669; color: #fff !important;
+  margin-right: 6px; flex-shrink: 0;
+}
+.call-icon:hover { background: #047857; }
+
+/* Csúszás-gombok a színpad fejlécében */
+.stage-shift {
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+  padding: 8px 14px; border-bottom: 1px solid #e2e8f0; background: #fff; font-size: 12px; font-weight: 700; color: #475569;
+}
+.stage-shift button {
+  min-width: 44px; min-height: 34px; padding: 4px 10px; border-radius: 6px;
+  background: #fef3c7; border: 1.5px solid #fcd34d; color: #78350f; font-weight: 800; font-size: 13px;
+}
+.stage-shift button.minus { background: #dcfce7; border-color: #86efac; color: #14532d; }
+.stage-shift button.print { margin-left: auto; background: #fff; border-color: #cbd5e1; color: #0f172a; display: inline-flex; align-items: center; justify-content: center; }
+.act-delay {
+  display: inline-flex; align-items: center; gap: 4px; margin-top: 6px;
+  font-size: 12px; font-weight: 800; color: #92400e; background: #fef3c7; border-radius: 4px; padding: 2px 6px;
+}
+.act-delay.early { color: #14532d; background: #dcfce7; }
+
+/* Értesítő sáv (visszavonással) */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1200;
+  display: flex; align-items: center; gap: 10px; max-width: calc(100vw - 24px);
+  background: #0f172a; color: #fff; border-radius: 10px; padding: 10px 12px 10px 16px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.25); font-size: 14px; font-weight: 600; animation: slideUp .18s ease-out;
+}
+.toast button { color: #fff; display: inline-flex; align-items: center; gap: 4px; font-weight: 800; padding: 6px 8px; border-radius: 6px; }
+.toast button:first-of-type { background: #2563eb; }
+.toast button:last-of-type:not(:first-of-type) { background: transparent; }
+
 /* Globális keresés találatai */
 .global-search {
   display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
@@ -447,6 +483,16 @@ button.map-list-item:hover { border-color: #2563eb; background: #f8fafc; }
 }
 .map-placing span { flex: 1; min-width: 200px; }
 
+.map-calls { display: flex; flex-direction: column; gap: 6px; margin-top: 12px; }
+.call-row {
+  display: flex; align-items: center; gap: 10px; text-decoration: none;
+  background: #059669; color: #fff; border-radius: 10px; padding: 10px 12px; min-height: 52px;
+}
+.call-row:hover { background: #047857; }
+.call-row span { display: flex; flex-direction: column; line-height: 1.25; }
+.call-row strong { font-size: 14px; }
+.call-row small { font-size: 12px; opacity: .9; }
+
 /* Jelölők */
 .map-pin-anchor { background: none; border: none; }
 .map-pin {
@@ -519,6 +565,9 @@ button.map-list-item:hover { border-color: #2563eb; background: #f8fafc; }
     text-transform: none; letter-spacing: 0; white-space: normal;
   }
   .print-sheet th { background: #e5e5e5 !important; font-size: 9pt; }
+  .print-sheet .print-time { font-size: 14pt; font-weight: 800; white-space: nowrap; }
+  .print-sheet .print-artist { font-size: 13pt; }
+  .print-sheet, .print-sheet * { color: #000 !important; }
 }
 
 /* ==========================================================================
@@ -601,6 +650,7 @@ button.map-list-item:hover { border-color: #2563eb; background: #f8fafc; }
   .ops-table th:first-child { background: #f1f5f9; }
 
   .dash-incident { flex-direction: column; align-items: stretch; }
+  .toast { bottom: calc(76px + env(safe-area-inset-bottom)); }
   .leaflet-box { height: 62dvh; min-height: 360px; }
   .contact-card { padding: 12px; }
 }

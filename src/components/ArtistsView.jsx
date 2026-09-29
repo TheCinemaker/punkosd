@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
-import { Users, Plus, Edit2, Trash2, Phone, Mail, FileText, CheckCircle2, DollarSign, Utensils, Hotel, Car, X, Tag } from 'lucide-react';
+import { Copy, Users, Plus, Edit2, Trash2, Phone, Mail, FileText, CheckCircle2, DollarSign, Utensils, Hotel, Car, X, Tag } from 'lucide-react';
 import { telHref, hasRider as artistHasRider } from '../lib/artists';
 import { docUrl } from '../lib/files';
 import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
+import { buildArtistInfo } from '../lib/callsheet';
+import { copyText } from '../lib/contacts';
 
-export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, searchQuery }) {
+export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [], onAddLog, currentUser, searchQuery }) {
+  const [copyMsg, setCopyMsg] = useState('');
+
+  const handleCopyInfo = async (artist) => {
+    const text = buildArtistInfo(artist, schedule, users);
+    if (navigator.share && window.matchMedia('(max-width: 768px)').matches) {
+      try { await navigator.share({ text }); return; } catch { /* mégse: másolás */ }
+    }
+    const ok = await copyText(text);
+    setCopyMsg(ok ? 'Zenekari infó a vágólapon — illeszd be WhatsAppba / SMS-be.' : 'Nem sikerült a másolás.');
+    setTimeout(() => setCopyMsg(''), 4000);
+  };
+
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNew, setIsNew] = useState(false);
@@ -65,7 +79,8 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
       hospitality: formData.get('hospitality'),
       diet: formData.get('diet'),
       accommodation: formData.get('accommodation'),
-      passes: Number(formData.get('passes')) || 1
+      passes: Number(formData.get('passes')) || 1,
+      parkingInfo: (formData.get('parkingInfo') || '').trim()
     };
 
     if (!updated.name) {
@@ -175,7 +190,7 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                       {a.contact}
                     </td>
                     <td style={{ fontSize: '12px' }}>
-                      <div style={{ color: '#1d4ed8', fontWeight: '700' }}><a href={telHref(a.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{a.phone}</a></div>
+                      <div style={{ color: '#1d4ed8', fontWeight: '700' }}>{telHref(a.phone) && <a href={telHref(a.phone)} onClick={(e) => e.stopPropagation()} className="call-icon" title="Hívás" aria-label="Hívás"><Phone size={14} /></a>}<a href={telHref(a.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{a.phone}</a></div>
                       <div style={{ fontSize: '11.5px', color: '#0f172a', fontWeight: '500' }}>{a.email}</div>
                     </td>
                     <td style={{ fontWeight: '800', color: '#000000', textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -398,9 +413,18 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
                   </label>
                   <input name="accommodation" defaultValue={selectedArtist.accommodation} placeholder="pl. Hotel Írottkő 4 db 2 ágyas szoba" style={{ width: '100%' }} />
                 </div>
+                <div>
+                  <label className="field-label">Parkolás / behajtás (bekerül a zenekari infóba)</label>
+                  <input name="parkingInfo" defaultValue={selectedArtist.parkingInfo} placeholder="pl. Jurisics várárok védett zóna, a Hősök kapunál be" style={{ width: '100%' }} />
+                </div>
               </div>
 
               <div className="modal-footer">
+                {!isNew && (
+                  <button type="button" onClick={() => handleCopyInfo(selectedArtist)} className="btn-secondary" style={{ marginRight: 'auto' }} title="Érkezés, beállás, koncert, színpadmester — WhatsAppba / SMS-be">
+                    <Copy size={15} /> Zenekari infó
+                  </button>
+                )}
                 <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">
                   Mégse
                 </button>
@@ -412,6 +436,8 @@ export function ArtistsView({ artists, onUpdateArtists, onAddLog, currentUser, s
           </div>
         </div>
       )}
+
+      {copyMsg && <div className="toast" role="status"><span>{copyMsg}</span></div>}
     </div>
   );
 }

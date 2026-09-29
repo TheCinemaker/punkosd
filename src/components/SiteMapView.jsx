@@ -9,6 +9,7 @@ import { STAGES } from '../lib/initialData';
 import { FESTIVAL, MAP_ZONES, STAGE_POSITIONS } from '../lib/config';
 import { uid } from '../lib/store';
 import { telHref } from '../lib/artists';
+import { responsibleCalls } from '../lib/contacts';
 import { getFestivalClock, parseRange, sortByTime, formatClock } from '../lib/time';
 
 const TYPES = {
@@ -42,7 +43,7 @@ function getCurrentPosition() {
 }
 
 export function SiteMapView({
-  points, onUpdatePoints, vendors, onUpdateVendors, schedule, incidents, onUpdateIncidents,
+  points, onUpdatePoints, vendors, onUpdateVendors, schedule, contractors = [], incidents, onUpdateIncidents,
   onAddLog, currentUser, searchQuery
 }) {
   const [typeFilter, setTypeFilter] = useState('all');
@@ -244,6 +245,7 @@ export function SiteMapView({
       name: f.get('name').trim(),
       type: f.get('type'),
       contact: f.get('contact').trim(),
+      phone: f.get('phone').trim(),
       power: f.get('power').trim(),
       status: 'Üzemel',
       hasProblem: false,
@@ -252,6 +254,22 @@ export function SiteMapView({
     onAddLog({ user: currentUser, action: 'CREATE', module: 'Helyszínrajz & Térkép', description: `Új térképpont: ${f.get('name')}` });
     setNewPointOpen(false);
     setPlacingKey(`point:${id}`);
+  };
+
+  const savePointDetails = (e, it) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const patch = {
+      name: f.get('name').trim(),
+      code: f.get('code').trim(),
+      type: f.get('type'),
+      contact: f.get('contact').trim(),
+      phone: f.get('phone').trim(),
+      power: f.get('power').trim()
+    };
+    onUpdatePoints(points.map(p => (p.id === it.id ? { ...p, ...patch } : p)));
+    onAddLog({ user: currentUser, action: 'UPDATE', module: 'Helyszínrajz & Térkép', description: `Módosította a térképpontot: ${patch.code} (${patch.name})` });
+    setMessage('Pont adatai mentve.');
   };
 
   const deletePoint = (it) => {
@@ -270,6 +288,7 @@ export function SiteMapView({
     const color = TYPES[it.type]?.color;
     const href = telHref(it.phone || ((it.contact || '').match(/\+?\d[\d\s-]{6,}/) || [])[0]);
     const acts = it.kind === 'stage' ? stageActs(it.id) : [];
+    const helpers = responsibleCalls(contractors, it.type);
     return (
       <div className="map-detail">
         <div className="map-detail-head">
@@ -309,8 +328,19 @@ export function SiteMapView({
           </div>
         )}
 
+        {helpers.length > 0 && (
+          <div className="map-calls">
+            {helpers.map(h => (
+              <a key={h.name} href={telHref(h.phone)} className="call-row">
+                <Phone size={18} />
+                <span><strong>{h.label}</strong><small>{h.name}{h.person ? ` · ${h.person}` : ''}</small></span>
+              </a>
+            ))}
+          </div>
+        )}
+
         <div className="map-actions">
-          {href && <a href={href} className="call-pill"><Phone size={14} /> Hívás</a>}
+          {href && <a href={href} className="call-pill"><Phone size={14} /> {it.kind === 'vendor' ? 'Árus hívása' : 'Hívás'}</a>}
           {hasPos(it) && (
             <a
               className="btn-secondary"
@@ -335,6 +365,24 @@ export function SiteMapView({
             {hasPos(it) && <button className="btn-secondary" onClick={() => savePosition(it, null, null)}>Levétel a térképről</button>}
             {it.kind === 'point' && <button className="text-danger-btn" onClick={() => deletePoint(it)}><Trash2 size={14} /> Pont törlése</button>}
           </div>
+        )}
+        {editMode && it.kind === 'point' && (
+          <form key={it.key} onSubmit={(e) => savePointDetails(e, it)} className="map-new-point" style={{ marginTop: '12px', borderBottom: 'none', paddingBottom: 0 }}>
+            <div className="field-label">Pont adatai</div>
+            <input name="name" defaultValue={it.name} placeholder="Megnevezés" required />
+            <div className="grid-2">
+              <input name="code" defaultValue={it.code} placeholder="Kód" />
+              <select name="type" defaultValue={it.type}>
+                {POINT_TYPES.map(t => <option key={t} value={t}>{TYPES[t].label}</option>)}
+              </select>
+            </div>
+            <div className="grid-2">
+              <input name="contact" defaultValue={it.contact} placeholder="Felelős / kapcsolattartó" />
+              <input name="phone" type="tel" defaultValue={it.phone} placeholder="Telefon" />
+            </div>
+            <input name="power" defaultValue={it.power} placeholder="Áram (pl. 3x32A)" />
+            <button type="submit" className="btn-primary">Adatok mentése</button>
+          </form>
         )}
         {editMode && it.kind === 'stage' && (
           <div className="field-hint" style={{ marginTop: '10px' }}>A színpadok helye rögzített (config.js).</div>
@@ -449,8 +497,9 @@ export function SiteMapView({
                   </div>
                   <div className="grid-2">
                     <input name="contact" placeholder="Kapcsolattartó" />
-                    <input name="power" placeholder="Áram (pl. 1x16A)" />
+                    <input name="phone" type="tel" placeholder="Telefon" />
                   </div>
+                  <input name="power" placeholder="Áram (pl. 1x16A)" />
                   <button type="submit" className="btn-primary"><Plus size={14} /> Létrehozás és elhelyezés</button>
                   <div className="field-hint" style={{ marginTop: 0 }}>Árust az Árusok menüben vegyél fel — itt csak elhelyezed.</div>
                 </form>

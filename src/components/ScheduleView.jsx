@@ -1,10 +1,12 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Plus, Trash2, Clock, Volume2, UserCheck, AlertTriangle, FileText, CheckCircle2,
-  Eye, Radio, X, Printer, Star, LayoutGrid, List, GanttChartSquare
+  Eye, Radio, X, Printer, Star, LayoutGrid, List, GanttChartSquare, Copy, Undo2
 } from 'lucide-react';
+import { buildArtistInfo } from '../lib/callsheet';
+import { copyText } from '../lib/contacts';
 import { DAYS, STAGES } from '../lib/initialData';
-import { getFestivalClock, parseRange, sortByTime, findOverlaps, formatClock } from '../lib/time';
+import { getFestivalClock, parseRange, sortByTime, findOverlaps, formatClock, shiftClockString } from '../lib/time';
 import { findArtist, hasRider, isContractSigned } from '../lib/artists';
 import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
@@ -57,6 +59,16 @@ export function ScheduleView({
   const [formKey, setFormKey] = useState(0);
   const [formError, setFormError] = useState('');
   const formRef = useRef(null);
+  const [toast, setToast] = useState(null);
+  const [printStageId, setPrintStageId] = useState(null);
+  const scheduleRef = useRef(schedule);
+  scheduleRef.current = schedule;
+
+  useEffect(() => {
+    if (!toast) return undefined;
+    const t = setTimeout(() => setToast(null), toast.undo ? 12000 : 4000);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const q = (searchQuery || '').toLowerCase();
   const daySchedule = schedule.filter(item => item.day === selectedDay);
@@ -276,6 +288,63 @@ export function ScheduleView({
     });
   };
 
+  // Csúszás: élőben az adott színpad még hátralévő műsorai, egyébként a nap összes műsora tolódik
+  const handleShiftStage = (stageId, delta) => {
+    const clock = getFestivalClock();
+    const live = clock.status === 'during' && clock.day === selectedDay;
+    const affected = schedule.filter(s => {
+      if (s.day !== selectedDay || s.stageId !== stageId) return false;
+      if (!live) return true;
+      const r = parseRange(s.time);
+      return r && r.end > clock.minutes;
+    });
+    const stageName = stageShortName(stageId);
+    if (affected.length === 0) {
+      setToast({ text: `${stageName}: nincs hátralévő műsor, amit el lehetne tolni.` });
+      return;
+    }
+    const before = new Map(affected.map(a => [a.id, a]));
+    onUpdateSchedule(schedule.map(s => (before.has(s.id) ? {
+      ...s,
+      time: shiftClockString(s.time, delta),
+      soundcheck: shiftClockString(s.soundcheck, delta),
+      delay: (s.delay || 0) + delta
+    } : s)));
+    const sign = delta > 0 ? '+' : '−';
+    onAddLog({
+      user: currentUser,
+      action: 'SCHEDULE_SHIFT',
+      module: 'Menetrend & Lineup',
+      description: `${stageName} (${selectedDay}): ${affected.length} műsor ${sign}${Math.abs(delta)} perccel eltolva`
+    });
+    setToast({
+      text: `${stageName}: ${affected.length} műsor ${sign}${Math.abs(delta)} perc`,
+      undo: () => {
+        onUpdateSchedule(scheduleRef.current.map(s => (before.has(s.id) ? before.get(s.id) : s)));
+        onAddLog({ user: currentUser, action: 'SCHEDULE_SHIFT_UNDO', module: 'Menetrend & Lineup', description: `Visszavonta a csúszást: ${stageName} (${selectedDay})` });
+        setToast({ text: 'Csúszás visszavonva.' });
+      }
+    });
+  };
+
+  const handlePrint = (stageId = null) => {
+    setPrintStageId(stageId);
+    setTimeout(() => {
+      window.print();
+      setPrintStageId(null);
+    }, 80);
+  };
+
+  const handleCopyInfo = async (item) => {
+    const a = findArtist(artists, item);
+    const text = buildArtistInfo(a || { name: item.artist }, schedule, users);
+    if (navigator.share && window.matchMedia('(max-width: 768px)').matches) {
+      try { await navigator.share({ text }); return; } catch { /* mégse vagy nem támogatott: másolás */ }
+    }
+    const ok = await copyText(text);
+    setToast({ text: ok ? 'Zenekari infó a vágólapon — illeszd be WhatsAppba / SMS-be.' : 'Nem sikerült a másolás.' });
+  };
+
   // ---------- Megjelenítés ----------
 
   const renderDocBadges = (item) => {
@@ -304,6 +373,17 @@ export function ScheduleView({
                 <Plus size={16} />
               </button>
             </div>
+            {stageItems.length > 0 && (
+              <div className="stage-shift">
+                <span>Csúszás:</span>
+                <button onClick={() => handleShiftStage(stage.id, 15)} title="A hátralévő műsorok +15 perc">+15</button>
+                <button onClick={() => handleShiftStage(stage.id, 30)} title="A hátralévő műsorok +30 perc">+30</button>
+                <button onClick={() => handleShiftStage(stage.id, -10)} className="minus" title="Behozott csúszás: −10 perc">−10</button>
+                <button onClick={() => handlePrint(stage.id)} className="print" title="A4 beosztás nyomtatása ehhez a színpadhoz" aria-label="Nyomtatás">
+                  <Printer size={14} />
+                </button>
+              </div>
+            )}
             <div className="stage-col-body">
               {stageItems.length === 0 ? (
                 <div className="stage-empty">
@@ -332,6 +412,11 @@ export function ScheduleView({
                       </div>
                     ) : null}
                     {conflict && <div className="act-conflict"><AlertTriangle size={13} /> Időpont-ütközés!</div>}
+                    {item.delay ? (
+                      <div className={`act-delay${item.delay < 0 ? ' early' : ''}`}>
+                        <Clock size={13} /> Módosítva: {item.delay > 0 ? '+' : '−'}{Math.abs(item.delay)} perc
+                      </div>
+                    ) : null}
                     <div className="act-meta">
                       <span className="act-soundcheck"><Volume2 size={13} /> Beállás: {item.soundcheck || '—'}</span>
                       <span><UserCheck size={13} color="#2563eb" /> {item.stageManager}</span>
@@ -462,7 +547,7 @@ export function ScheduleView({
   // Nyomtatható napi lap színpadonként (stage managernek papíron)
   const renderPrintSheet = () => (
     <div className="print-only">
-      {STAGES.map(stage => {
+      {STAGES.filter(st => !printStageId || st.id === printStageId).map(stage => {
         const items = sortByTime(daySchedule.filter(s => s.stageId === stage.id));
         if (items.length === 0) return null;
         return (
@@ -471,17 +556,17 @@ export function ScheduleView({
             <p>{stage.location} · Nyomtatva: {new Date().toLocaleString('hu-HU')}</p>
             <table>
               <thead>
-                <tr><th>Érkezés</th><th>Beállás</th><th>Műsor</th><th>Fellépő</th><th>Kapcsolat</th><th>Felelős</th><th>Megjegyzés / hospitality</th></tr>
+                <tr><th>Koncert</th><th>Fellépő</th><th>Beállás</th><th>Érkezés</th><th>Kapcsolat</th><th>Felelős</th><th>Megjegyzés / hospitality</th></tr>
               </thead>
               <tbody>
                 {items.map(item => {
                   const a = findArtist(artists, item);
                   return (
                     <tr key={item.id}>
-                      <td>{item.loadIn}</td>
+                      <td className="print-time">{item.time}</td>
+                      <td><strong className="print-artist">{item.artist}</strong>{item.title && item.title !== item.artist ? <div>{item.title}</div> : null}</td>
                       <td>{item.soundcheck}</td>
-                      <td><strong>{item.time}</strong></td>
-                      <td><strong>{item.artist}</strong>{item.title && item.title !== item.artist ? <div>{item.title}</div> : null}</td>
+                      <td>{item.loadIn}</td>
                       <td>{a?.contact}<div>{a?.phone}</div></td>
                       <td>{item.stageManager}</td>
                       <td>{item.notes}{a?.hospitality ? <div>Hospitality: {a.hospitality}</div> : null}{a?.diet ? <div>Diéta: {a.diet}</div> : null}</td>
@@ -516,8 +601,8 @@ export function ScheduleView({
               <button onClick={() => setViewMode('timeline')} className={viewMode === 'timeline' ? 'active' : ''}><GanttChartSquare size={14} /> Idővonal</button>
               <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}><List size={14} /> Lista</button>
             </div>
-            <button onClick={() => window.print()} className="btn-secondary" title="Napi lap nyomtatása színpadonként">
-              <Printer size={15} /> Nyomtatás
+            <button onClick={() => handlePrint(null)} className="btn-secondary" title="A4 napi beosztás, színpadonként külön lapon">
+              <Printer size={15} /> Napi beosztás (A4)
             </button>
             <button onClick={() => handleAddNew('main_stage')} className="btn-primary">
               <Plus size={16} /> Új műsor
@@ -557,6 +642,14 @@ export function ScheduleView({
       </div>
 
       {renderPrintSheet()}
+
+      {toast && (
+        <div className="toast no-print" role="status">
+          <span>{toast.text}</span>
+          {toast.undo && <button onClick={toast.undo}><Undo2 size={15} /> Visszavonás</button>}
+          <button onClick={() => setToast(null)} aria-label="Bezárás"><X size={15} /></button>
+        </div>
+      )}
 
       {selectedItem && (
         <div className="modal-overlay">
@@ -762,9 +855,14 @@ export function ScheduleView({
               <div className="modal-footer" style={{ justifyContent: 'space-between' }}>
                 <div>
                   {!isNewItem && (
-                    <button type="button" onClick={() => handleDelete(selectedItem)} className="text-danger-btn">
-                      <Trash2 size={15} /> Törlés
-                    </button>
+                    <div style={{ display: 'flex', gap: '14px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <button type="button" onClick={() => handleCopyInfo(selectedItem)} className="btn-secondary" title="Érkezés, beállás, koncert, színpadmester — WhatsAppba / SMS-be">
+                        <Copy size={15} /> Zenekari infó
+                      </button>
+                      <button type="button" onClick={() => handleDelete(selectedItem)} className="text-danger-btn">
+                        <Trash2 size={15} /> Törlés
+                      </button>
+                    </div>
                   )}
                 </div>
                 <div style={{ display: 'flex', gap: '10px' }}>

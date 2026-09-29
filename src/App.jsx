@@ -217,7 +217,7 @@ export function App() {
         )}
 
         {activeTab === 'artists' && (
-          <ArtistsView artists={artists} onUpdateArtists={setter('artists')} {...common} />
+          <ArtistsView artists={artists} onUpdateArtists={setter('artists')} schedule={schedule} users={users} {...common} />
         )}
 
         {activeTab === 'contractors' && (
@@ -241,6 +241,7 @@ export function App() {
             vendors={vendors}
             onUpdateVendors={setter('vendors')}
             schedule={schedule}
+            contractors={contractors}
             incidents={incidents}
             onUpdateIncidents={handleUpdateIncidents}
             {...common}
@@ -256,7 +257,7 @@ export function App() {
         )}
 
         {activeTab === 'vendors' && (
-          <VendorsView vendors={vendors} onUpdateVendors={setter('vendors')} {...common} />
+          <VendorsView vendors={vendors} onUpdateVendors={setter('vendors')} contractors={contractors} {...common} />
         )}
 
         {activeTab === 'inventory' && (

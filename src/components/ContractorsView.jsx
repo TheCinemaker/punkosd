@@ -288,7 +288,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                         {c.contactName}
                       </div>
                       <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}>
-                        <a href={telHref(c.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{c.phone}</a>
+                        {telHref(c.phone) && <a href={telHref(c.phone)} onClick={(e) => e.stopPropagation()} className="call-icon" title="Hívás" aria-label="Hívás"><Phone size={14} /></a>}<a href={telHref(c.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{c.phone}</a>
                       </div>
                     </td>
                     <td style={{ fontWeight: '800', color: '#b45309', textAlign: 'right', whiteSpace: 'nowrap' }}>

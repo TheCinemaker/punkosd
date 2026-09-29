@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, DollarSign, X } from 'lucide-react';
+import { Phone, Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, DollarSign, X } from 'lucide-react';
 import { uid } from '../lib/store';
 import { telHref } from '../lib/artists';
+import { responsibleCalls } from '../lib/contacts';
 
-export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, searchQuery }) {
+export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddLog, currentUser, searchQuery }) {
   const [selectedLocation, setSelectedLocation] = useState('all');
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -278,7 +279,7 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
                   </td>
                   <td>
                     <div style={{ fontSize: '12.5px', color: '#0f172a', fontWeight: '600' }}>{v.contact}</div>
-                    <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}><a href={telHref(v.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{v.phone}</a></div>
+                    <div style={{ fontSize: '11.5px', color: '#1d4ed8', fontWeight: '600' }}>{telHref(v.phone) && <a href={telHref(v.phone)} onClick={(e) => e.stopPropagation()} className="call-icon" title="Hívás" aria-label="Hívás"><Phone size={14} /></a>}<a href={telHref(v.phone) || undefined} onClick={(e) => e.stopPropagation()} className="phone-link">{v.phone}</a></div>
                   </td>
                   <td>
                     <span style={{
@@ -351,6 +352,22 @@ export function VendorsView({ vendors, onUpdateVendors, onAddLog, currentUser, s
             </div>
             <form onSubmit={handleSaveModal}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {!isNew && (telHref(selectedVendor.phone) || responsibleCalls(contractors, 'food').length > 0) && (
+                  <div className="map-calls" style={{ marginTop: 0 }}>
+                    {telHref(selectedVendor.phone) && (
+                      <a href={telHref(selectedVendor.phone)} className="call-row">
+                        <Phone size={18} />
+                        <span><strong>Árus hívása</strong><small>{selectedVendor.contact} · {selectedVendor.phone}</small></span>
+                      </a>
+                    )}
+                    {responsibleCalls(contractors, 'food').map(h => (
+                      <a key={h.name} href={telHref(h.phone)} className="call-row">
+                        <Phone size={18} />
+                        <span><strong>{h.label}</strong><small>{h.name}{h.person ? ` · ${h.person}` : ''}</small></span>
+                      </a>
+                    ))}
+                  </div>
+                )}
                 <div className="grid-2">
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Stand Kód</label>
