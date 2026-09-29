@@ -110,9 +110,9 @@ export function App() {
       .filter(i => i.pointId && i.isResolved && prevById.get(i.id) && !prevById.get(i.id).isResolved)
       .map(i => i.pointId);
     if (resolvedPointIds.length) {
-      update('mapPoints', get('mapPoints').map(p => (
-        resolvedPointIds.includes(p.id) ? { ...p, hasProblem: false, status: 'Üzemel (Rendben)', problemText: '' } : p
-      )));
+      const clear = (item) => (resolvedPointIds.includes(item.id) && item.hasProblem ? { ...item, hasProblem: false, problemText: '' } : item);
+      if (get('mapPoints').some(p => resolvedPointIds.includes(p.id) && p.hasProblem)) update('mapPoints', get('mapPoints').map(clear));
+      if (get('vendors').some(v => resolvedPointIds.includes(v.id) && v.hasProblem)) update('vendors', get('vendors').map(clear));
     }
   }, [update, get]);
 
@@ -132,8 +132,8 @@ export function App() {
     artists: artists.length,
     contractors: contractors.length,
     team: users.length,
-    map: mapPoints.filter(p => p.hasProblem).length || mapPoints.length,
-    mapAlert: mapPoints.some(p => p.hasProblem),
+    map: [...mapPoints, ...vendors].filter(p => p.hasProblem).length || undefined,
+    mapAlert: [...mapPoints, ...vendors].some(p => p.hasProblem),
     tasks: tasks.filter(t => !t.completed).length,
     tasksAlert: myOpenTasks > 0,
     shopping: shoppingList.filter(s => !s.isPurchased).length,
@@ -238,6 +238,9 @@ export function App() {
           <SiteMapView
             points={mapPoints}
             onUpdatePoints={setter('mapPoints')}
+            vendors={vendors}
+            onUpdateVendors={setter('vendors')}
+            schedule={schedule}
             incidents={incidents}
             onUpdateIncidents={handleUpdateIncidents}
             {...common}

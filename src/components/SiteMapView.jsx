@@ -1,388 +1,488 @@
-import React, { useState } from 'react';
-import { 
-  MapPin, Wine, Utensils, Zap, Droplets, Trash2, 
-  AlertCircle, CheckCircle2, Phone, Eye, ShieldCheck, HeartPulse, Radio, Music
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import {
+  MapPin, AlertCircle, CheckCircle2, Phone, Navigation, Crosshair, Pencil, Plus,
+  Trash2, X, Search, LocateFixed, Radio, Clock
 } from 'lucide-react';
-import { MAP_ZONES } from '../lib/initialData';
+import { STAGES } from '../lib/initialData';
+import { FESTIVAL, MAP_ZONES, STAGE_POSITIONS } from '../lib/config';
 import { uid } from '../lib/store';
+import { telHref } from '../lib/artists';
+import { getFestivalClock, parseRange, sortByTime, formatClock } from '../lib/time';
 
-export function SiteMapView({ points, onUpdatePoints, incidents, onUpdateIncidents, onAddLog, currentUser, searchQuery }) {
-  const [selectedZone, setSelectedZone] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [activeId, setActiveId] = useState(() => points.find(p => p.hasProblem)?.id || points[0]?.id);
-  const activePoint = points.find(p => p.id === activeId) || null;
+const TYPES = {
+  stage: { label: 'Színpad', color: '#2563eb' },
+  wine: { label: 'Borászat', color: '#7c3aed' },
+  food: { label: 'Étel / ital', color: '#d97706' },
+  power: { label: 'Áram', color: '#ca8a04' },
+  water: { label: 'Víz', color: '#0891b2' },
+  toilet: { label: 'WC', color: '#059669' },
+  medical: { label: 'Mentő / EÜ', color: '#db2777' },
+  info: { label: 'Info', color: '#0f172a' },
+  waste: { label: 'Hulladék', color: '#64748b' },
+  backstage: { label: 'Backstage', color: '#475569' },
+  street: { label: 'Utcazene', color: '#9333ea' }
+};
+const POINT_TYPES = ['power', 'water', 'toilet', 'medical', 'info', 'waste', 'backstage', 'street'];
 
-  const q = (searchQuery || '').toLowerCase();
-  const filteredPoints = points.filter(p => {
-    const matchesZone = selectedZone === 'all' || p.zoneId === selectedZone;
-    const matchesType = selectedType === 'all' || p.type === selectedType;
-    const matchesSearch = !q ||
-      p.code.toLowerCase().includes(q) ||
-      p.name.toLowerCase().includes(q) ||
-      (p.contact || '').toLowerCase().includes(q);
-    return matchesZone && matchesType && matchesSearch;
+const hasPos = (it) => typeof it.lat === 'number' && typeof it.lng === 'number';
+const round = (n) => Math.round(n * 1e7) / 1e7;
+const esc = (str) => String(str || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function getCurrentPosition() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) { reject(new Error('Ez az eszköz nem ad helyadatot.')); return; }
+    navigator.geolocation.getCurrentPosition(
+      pos => resolve(pos.coords),
+      err => reject(new Error(err.code === 1 ? 'A helyhozzáférés le van tiltva. Engedélyezd a böngészőben!' : 'Nem sikerült meghatározni a helyzetet.')),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 5000 }
+    );
   });
-  const problemPoints = points.filter(p => p.hasProblem);
+}
 
-  // A térképen jelzett hiba egyben SOS-bejelentés is (mindenkinél megjelenik)
-  const handleToggleProblem = (point) => {
-    const time = new Date().toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+export function SiteMapView({
+  points, onUpdatePoints, vendors, onUpdateVendors, schedule, incidents, onUpdateIncidents,
+  onAddLog, currentUser, searchQuery
+}) {
+  const [typeFilter, setTypeFilter] = useState('all');
+  const [localQuery, setLocalQuery] = useState('');
+  const [selectedKey, setSelectedKey] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [placingKey, setPlacingKey] = useState(null);
+  const [message, setMessage] = useState('');
+  const [newPointOpen, setNewPointOpen] = useState(false);
 
-    if (!point.hasProblem) {
-      const text = window.prompt(`Mi a probléma itt: ${point.code} (${point.name})?`, '');
-      if (text === null) return;
-      const problemText = text.trim() || 'Azonnali beavatkozás szükséges a helyszínen!';
-      onUpdatePoints(points.map(p => (p.id === point.id ? { ...p, hasProblem: true, status: 'HIBA JELENTVE', problemText } : p)));
-      onUpdateIncidents([{
-        id: uid('inc'),
-        severity: 'critical',
-        location: `${point.code} — ${point.name}`,
-        pointId: point.id,
-        reporter: currentUser,
-        time,
-        text: problemText,
-        isResolved: false,
-        resolvedBy: null,
-        resolvedAt: null
-      }, ...incidents]);
-      onAddLog({
-        user: currentUser,
-        action: 'FLAG_ISSUE',
-        module: 'Helyszínrajz & Térkép',
-        description: `[PROBLÉMA] ${point.code} (${point.name}): ${problemText}`
-      });
-      return;
-    }
+  const mapEl = useRef(null);
+  const mapRef = useRef(null);
+  const layerRef = useRef(null);
+  const meMarkerRef = useRef(null);
+  const mapClickRef = useRef(null);
 
-    onUpdatePoints(points.map(p => (p.id === point.id ? { ...p, hasProblem: false, status: 'Üzemel (Rendben)', problemText: '' } : p)));
-    if (incidents.some(i => i.pointId === point.id && !i.isResolved)) {
-      onUpdateIncidents(incidents.map(i => (
-        i.pointId === point.id && !i.isResolved ? { ...i, isResolved: true, resolvedBy: currentUser, resolvedAt: time } : i
-      )));
-    }
+  // ---------- Minden térképi elem egy listában ----------
+  const items = useMemo(() => [
+    ...STAGES.filter(s => STAGE_POSITIONS[s.id]).map(s => ({
+      key: `stage:${s.id}`, kind: 'stage', id: s.id, type: 'stage',
+      code: s.name.split('(')[0].trim(), name: s.name, location: s.location,
+      lat: STAGE_POSITIONS[s.id][0], lng: STAGE_POSITIONS[s.id][1]
+    })),
+    ...vendors.map(v => ({
+      key: `vendor:${v.id}`, kind: 'vendor', id: v.id,
+      type: (v.category || '').includes('Bor') ? 'wine' : 'food',
+      code: v.code, name: v.name, location: v.location, contact: v.contact, phone: v.phone,
+      power: v.power, status: v.status, lat: v.lat, lng: v.lng,
+      hasProblem: v.hasProblem, problemText: v.problemText
+    })),
+    ...points.filter(p => POINT_TYPES.includes(p.type)).map(p => ({
+      key: `point:${p.id}`, kind: 'point', id: p.id, type: p.type,
+      code: p.code, name: p.name, contact: p.contact, phone: p.phone,
+      power: p.power, status: p.status, lat: p.lat, lng: p.lng,
+      hasProblem: p.hasProblem, problemText: p.problemText
+    }))
+  ], [points, vendors]);
+
+  const q = `${searchQuery || ''} ${localQuery}`.trim().toLowerCase();
+  const matches = (it) => !q || q.split(/\s+/).every(w =>
+    [it.code, it.name, it.contact, it.location, TYPES[it.type]?.label].some(v => v && v.toLowerCase().includes(w))
+  );
+  const filtered = items.filter(it => (typeFilter === 'all' || it.type === typeFilter) && matches(it));
+  const placed = filtered.filter(hasPos);
+  const unplaced = items.filter(it => !hasPos(it));
+  const problems = items.filter(it => it.hasProblem);
+  const selected = items.find(it => it.key === selectedKey) || null;
+  const placingItem = items.find(it => it.key === placingKey) || null;
+
+  // ---------- Mentések ----------
+  const savePosition = (it, lat, lng) => {
+    const pos = lat == null ? { lat: null, lng: null } : { lat: round(lat), lng: round(lng) };
+    if (it.kind === 'vendor') onUpdateVendors(vendors.map(v => (v.id === it.id ? { ...v, ...pos } : v)));
+    else if (it.kind === 'point') onUpdatePoints(points.map(p => (p.id === it.id ? { ...p, ...pos } : p)));
+    else return;
     onAddLog({
       user: currentUser,
-      action: 'RESOLVE_ISSUE',
+      action: 'MAP_POSITION',
       module: 'Helyszínrajz & Térkép',
-      description: `[MEGOLDVA] ${point.code} (${point.name})`
+      description: lat == null ? `Levette a térképről: ${it.code} (${it.name})` : `Elhelyezte a térképen: ${it.code} (${it.name})`
     });
   };
 
-  const getPointColor = (p) => {
-    if (p.hasProblem) return '#dc2626';
-    if (p.type === 'stage') return '#2563eb';
-    if (p.type === 'wine') return '#7c3aed';
-    if (p.type === 'food') return '#d97706';
-    if (p.type === 'power') return '#b45309';
-    if (p.type === 'water') return '#0284c7';
-    if (p.type === 'toilet') return '#059669';
-    if (p.type === 'medical') return '#db2777';
-    return '#64748b';
+  const flyTo = (lat, lng, zoom = 19) => {
+    mapRef.current?.flyTo([lat, lng], Math.max(zoom, mapRef.current.getZoom()), { duration: 0.6 });
   };
 
-  const renderIcon = (type) => {
-    switch (type) {
-      case 'wine': return <Wine size={13} />;
-      case 'food': return <Utensils size={13} />;
-      case 'stage': return <Radio size={13} />;
-      case 'power': return <Zap size={13} />;
-      case 'water': return <Droplets size={13} />;
-      case 'toilet': return <CheckCircle2 size={13} />;
-      case 'medical': return <HeartPulse size={13} />;
-      case 'waste': return <Trash2 size={13} />;
-      case 'street': return <Music size={13} />;
-      default: return <MapPin size={13} />;
+  const selectItem = (it) => {
+    setSelectedKey(it.key);
+    if (hasPos(it)) flyTo(it.lat, it.lng);
+  };
+
+  // ---------- Térkép létrehozása ----------
+  useEffect(() => {
+    const map = L.map(mapEl.current, { maxZoom: 20, zoomControl: true, tap: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 20,
+      maxNativeZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(map);
+
+    MAP_ZONES.filter(z => z.area).forEach(z => {
+      L.polygon(z.area, { color: '#2563eb', weight: 2, dashArray: '6 6', fillOpacity: 0.06, interactive: false }).addTo(map);
+    });
+    map.fitBounds(L.latLngBounds(MAP_ZONES.map(z => z.center)).pad(0.4));
+    map.on('click', (e) => mapClickRef.current?.(e.latlng));
+
+    layerRef.current = L.layerGroup().addTo(map);
+    mapRef.current = map;
+    const t = setTimeout(() => map.invalidateSize(), 200);
+    return () => { clearTimeout(t); map.remove(); mapRef.current = null; };
+  }, []);
+
+  // Koppintás a térképen = a kiválasztott elem ide kerül
+  mapClickRef.current = placingItem
+    ? (latlng) => {
+      savePosition(placingItem, latlng.lat, latlng.lng);
+      setSelectedKey(placingItem.key);
+      setPlacingKey(null);
     }
+    : null;
+
+  // ---------- Jelölők ----------
+  useEffect(() => {
+    const layer = layerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    placed.forEach(it => {
+      const color = TYPES[it.type]?.color || '#334155';
+      const isSel = it.key === selectedKey;
+      const icon = L.divIcon({
+        className: 'map-pin-anchor',
+        iconSize: [0, 0],
+        html: `<div class="map-pin${it.hasProblem ? ' problem' : ''}${isSel ? ' selected' : ''}${it.kind === 'stage' ? ' stage' : ''}" style="--pin:${color}"><span>${esc(it.code)}</span>${it.hasProblem ? '<b>!</b>' : ''}</div>`
+      });
+      const marker = L.marker([it.lat, it.lng], {
+        icon,
+        draggable: editMode && it.kind !== 'stage',
+        zIndexOffset: isSel ? 1000 : it.hasProblem ? 500 : it.kind === 'stage' ? 300 : 0,
+        keyboard: false
+      });
+      marker.on('click', () => setSelectedKey(it.key));
+      marker.on('dragend', () => {
+        const { lat, lng } = marker.getLatLng();
+        savePosition(it, lat, lng);
+        setSelectedKey(it.key);
+      });
+      marker.addTo(layer);
+    });
+  }); // minden rendernél frissül (kevés jelölő, így olcsó)
+
+  // ---------- Helymeghatározás ----------
+  const showMyLocation = async () => {
+    setMessage('Helyzet meghatározása...');
+    try {
+      const c = await getCurrentPosition();
+      if (meMarkerRef.current) meMarkerRef.current.remove();
+      meMarkerRef.current = L.circleMarker([c.latitude, c.longitude], {
+        radius: 9, color: '#fff', weight: 3, fillColor: '#2563eb', fillOpacity: 1
+      }).addTo(mapRef.current);
+      flyTo(c.latitude, c.longitude, 18);
+      setMessage(`Itt vagy (pontosság kb. ${Math.round(c.accuracy)} m).`);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  const placeHereByGps = async (it) => {
+    setMessage('Helyzet meghatározása...');
+    try {
+      const c = await getCurrentPosition();
+      savePosition(it, c.latitude, c.longitude);
+      setSelectedKey(it.key);
+      flyTo(c.latitude, c.longitude);
+      setMessage(`${it.code} a jelenlegi helyedre került (pontosság kb. ${Math.round(c.accuracy)} m).`);
+    } catch (err) {
+      setMessage(err.message);
+    }
+  };
+
+  // ---------- Hibajelzés (SOS-t is küld) ----------
+  const toggleProblem = (it) => {
+    const time = new Date().toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+    const apply = (patch) => {
+      if (it.kind === 'vendor') onUpdateVendors(vendors.map(v => (v.id === it.id ? { ...v, ...patch } : v)));
+      else onUpdatePoints(points.map(p => (p.id === it.id ? { ...p, ...patch } : p)));
+    };
+
+    if (!it.hasProblem) {
+      const text = window.prompt(`Mi a probléma itt: ${it.code} (${it.name})?`, '');
+      if (text === null) return;
+      const problemText = text.trim() || 'Azonnali beavatkozás szükséges a helyszínen!';
+      apply({ hasProblem: true, problemText });
+      onUpdateIncidents([{
+        id: uid('inc'), severity: 'critical', location: `${it.code} — ${it.name}`, pointId: it.id,
+        reporter: currentUser, time, text: problemText, isResolved: false, resolvedBy: null, resolvedAt: null
+      }, ...incidents]);
+      onAddLog({ user: currentUser, action: 'FLAG_ISSUE', module: 'Helyszínrajz & Térkép', description: `[PROBLÉMA] ${it.code} (${it.name}): ${problemText}` });
+      return;
+    }
+
+    apply({ hasProblem: false, problemText: '' });
+    if (incidents.some(i => i.pointId === it.id && !i.isResolved)) {
+      onUpdateIncidents(incidents.map(i => (
+        i.pointId === it.id && !i.isResolved ? { ...i, isResolved: true, resolvedBy: currentUser, resolvedAt: time } : i
+      )));
+    }
+    onAddLog({ user: currentUser, action: 'RESOLVE_ISSUE', module: 'Helyszínrajz & Térkép', description: `[MEGOLDVA] ${it.code} (${it.name})` });
+  };
+
+  // ---------- Új / törölt infrastruktúra-pont ----------
+  const createPoint = (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    const id = uid('pt');
+    onUpdatePoints([...points, {
+      id,
+      code: f.get('code').trim() || f.get('name').trim().slice(0, 12).toUpperCase(),
+      name: f.get('name').trim(),
+      type: f.get('type'),
+      contact: f.get('contact').trim(),
+      power: f.get('power').trim(),
+      status: 'Üzemel',
+      hasProblem: false,
+      problemText: ''
+    }]);
+    onAddLog({ user: currentUser, action: 'CREATE', module: 'Helyszínrajz & Térkép', description: `Új térképpont: ${f.get('name')}` });
+    setNewPointOpen(false);
+    setPlacingKey(`point:${id}`);
+  };
+
+  const deletePoint = (it) => {
+    if (!window.confirm(`Biztosan törlöd a pontot: ${it.code} (${it.name})?`)) return;
+    onUpdatePoints(points.filter(p => p.id !== it.id));
+    onAddLog({ user: currentUser, action: 'DELETE', module: 'Helyszínrajz & Térkép', description: `Törölte a térképpontot: ${it.code} (${it.name})` });
+    setSelectedKey(null);
+  };
+
+  // ---------- Színpad műsora ----------
+  const clock = getFestivalClock();
+  const stageDay = clock.day || FESTIVAL.days[0].name;
+  const stageActs = (stageId) => sortByTime(schedule.filter(s => s.stageId === stageId && s.day === stageDay));
+
+  const renderDetail = (it) => {
+    const color = TYPES[it.type]?.color;
+    const href = telHref(it.phone || ((it.contact || '').match(/\+?\d[\d\s-]{6,}/) || [])[0]);
+    const acts = it.kind === 'stage' ? stageActs(it.id) : [];
+    return (
+      <div className="map-detail">
+        <div className="map-detail-head">
+          <span className="map-type" style={{ background: color }}>{TYPES[it.type]?.label}</span>
+          <span className="map-code">{it.code}</span>
+          <button className="icon-btn" onClick={() => setSelectedKey(null)} aria-label="Bezárás"><X size={18} /></button>
+        </div>
+        <h3>{it.name}</h3>
+        {it.location && <div className="dash-sub">{it.location}</div>}
+
+        {it.hasProblem && (
+          <div className="alert-box rose" style={{ margin: '10px 0 0' }}>
+            <AlertCircle size={16} /> <div><strong>Jelzett probléma:</strong> {it.problemText}</div>
+          </div>
+        )}
+
+        <div className="map-facts">
+          {it.contact && <div><span>Kapcsolat</span><strong>{it.contact}</strong></div>}
+          {it.power && <div><span>Áram</span><strong>{it.power}</strong></div>}
+          {it.status && <div><span>Állapot</span><strong>{it.status}</strong></div>}
+          {!hasPos(it) && <div><span>Térkép</span><strong style={{ color: '#b45309' }}>Még nincs elhelyezve</strong></div>}
+        </div>
+
+        {it.kind === 'stage' && (
+          <div className="map-acts">
+            <div className="field-label"><Radio size={13} /> {stageDay} műsora</div>
+            {acts.length === 0 ? <div className="dash-muted">Nincs műsor.</div> : acts.map(a => {
+              const r = parseRange(a.time);
+              const live = clock.status === 'during' && r && r.start <= clock.minutes && clock.minutes < r.end;
+              return (
+                <div key={a.id} className={`map-act${live ? ' live' : ''}`}>
+                  <span><Clock size={12} /> {r ? `${formatClock(r.start)}–${formatClock(r.end)}` : a.time}</span>
+                  <strong>{live && <span className="live-dot" />} {a.artist}</strong>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="map-actions">
+          {href && <a href={href} className="call-pill"><Phone size={14} /> Hívás</a>}
+          {hasPos(it) && (
+            <a
+              className="btn-secondary"
+              href={`https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lng}&travelmode=walking`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Navigation size={14} /> Útvonal
+            </a>
+          )}
+          {it.kind !== 'stage' && (
+            <button onClick={() => toggleProblem(it)} className={it.hasProblem ? 'btn-success' : 'btn-danger'}>
+              {it.hasProblem ? <><CheckCircle2 size={15} /> Megoldva</> : <><AlertCircle size={15} /> Hiba jelzése</>}
+            </button>
+          )}
+        </div>
+
+        {editMode && it.kind !== 'stage' && (
+          <div className="map-edit-actions">
+            <button className="btn-secondary" onClick={() => setPlacingKey(it.key)}><Crosshair size={14} /> Elhelyezés koppintással</button>
+            <button className="btn-secondary" onClick={() => placeHereByGps(it)}><LocateFixed size={14} /> Ide, ahol állok</button>
+            {hasPos(it) && <button className="btn-secondary" onClick={() => savePosition(it, null, null)}>Levétel a térképről</button>}
+            {it.kind === 'point' && <button className="text-danger-btn" onClick={() => deletePoint(it)}><Trash2 size={14} /> Pont törlése</button>}
+          </div>
+        )}
+        {editMode && it.kind === 'stage' && (
+          <div className="field-hint" style={{ marginTop: '10px' }}>A színpadok helye rögzített (config.js).</div>
+        )}
+      </div>
+    );
   };
 
   return (
     <div>
-      {/* Top Header & Filter Controls */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        flexWrap: 'wrap',
-        gap: '12px',
-        marginBottom: '16px'
-      }}>
+      <div className="view-head">
         <div>
-          <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <MapPin size={20} color="#2563eb" /> Kőszeg Belváros Helyszínrajz & Stand Térkép
-          </h2>
-          <p style={{ fontSize: '13px', color: '#475569' }}>
-            Minden boros pavilon, kajás food truck, színpad és közmű pont pontos elhelyezkedése
-          </p>
+          <h2 className="view-title"><MapPin size={20} color="#2563eb" /> Helyszínrajz</h2>
+          <p className="view-subtitle">Színpadok, árusok és infrastruktúra — koppints egy pontra a részletekért</p>
         </div>
-
-        {/* Filters */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-          <select
-            value={selectedZone}
-            onChange={(e) => setSelectedZone(e.target.value)}
-            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
-          >
-            <option value="all">Minden Zóna</option>
-            {MAP_ZONES.map(z => <option key={z.id} value={z.id}>{z.name}</option>)}
-          </select>
-
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            style={{ fontSize: '13px', padding: '7px 12px', fontWeight: '600' }}
-          >
-            <option value="all">Minden típus</option>
-            <option value="wine">Borászatok (Fő tér)</option>
-            <option value="food">Ételek Utcája (Kajások)</option>
-            <option value="stage">Színpadok</option>
-            <option value="power">Áramelosztók</option>
-            <option value="water">Vízvételi pontok</option>
-            <option value="toilet">Mobil WC-k</option>
-            <option value="medical">Mentő & EÜ</option>
-          </select>
-        </div>
+        <button onClick={() => { setEditMode(m => !m); setPlacingKey(null); }} className={editMode ? 'btn-primary' : 'btn-secondary'}>
+          <Pencil size={15} /> {editMode ? 'Szerkesztés vége' : 'Pontok szerkesztése'}
+        </button>
       </div>
 
-      {/* Main Map Viewport + Side Inspector Card */}
-      {problemPoints.length > 0 && (
+      {problems.length > 0 && (
         <div className="alert-box rose">
           <AlertCircle size={18} />
           <div>
-            <strong>{problemPoints.length} helyszínen van jelzett probléma:</strong>{' '}
-            {problemPoints.map((p, i) => (
-              <button key={p.id} className="link-btn" onClick={() => setActiveId(p.id)}>
-                {i > 0 && ' · '}{p.code}
-              </button>
+            <strong>{problems.length} helyen van jelzett probléma:</strong>{' '}
+            {problems.map((p, i) => (
+              <button key={p.key} className="link-btn" onClick={() => selectItem(p)}>{i > 0 && ' · '}{p.code}</button>
             ))}
           </div>
         </div>
       )}
 
+      <div className="map-toolbar">
+        <div className="chip-row">
+          {MAP_ZONES.map(z => (
+            <button key={z.id} className="chip" onClick={() => flyTo(z.center[0], z.center[1], z.zoom)}>{z.name}</button>
+          ))}
+          <button className="chip" onClick={() => mapRef.current?.fitBounds(L.latLngBounds(MAP_ZONES.map(z => z.center)).pad(0.4))}>Mind</button>
+          <button className="chip locate" onClick={showMyLocation}><LocateFixed size={14} /> Hol vagyok?</button>
+        </div>
+        <div className="contacts-search">
+          <Search size={16} />
+          <input type="search" placeholder="Keresés: lángos, BOR-04, WC..." value={localQuery} onChange={(e) => setLocalQuery(e.target.value)} />
+        </div>
+        <div className="chip-row">
+          <button className={`chip small${typeFilter === 'all' ? ' active' : ''}`} onClick={() => setTypeFilter('all')}>Minden</button>
+          {Object.entries(TYPES).map(([t, meta]) => (
+            <button
+              key={t}
+              className={`chip small${typeFilter === t ? ' active' : ''}`}
+              onClick={() => setTypeFilter(typeFilter === t ? 'all' : t)}
+            >
+              <span className="type-dot" style={{ background: meta.color }} /> {meta.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {message && (
+        <div className="map-message">
+          {message} <button className="icon-btn" onClick={() => setMessage('')} aria-label="Bezárás"><X size={14} /></button>
+        </div>
+      )}
+
+      {placingItem && (
+        <div className="map-placing">
+          <Crosshair size={18} />
+          <span>Koppints a térképen oda, ahol <strong>{placingItem.code} — {placingItem.name}</strong> lesz.</span>
+          <button className="btn-secondary" onClick={() => placeHereByGps(placingItem).then(() => setPlacingKey(null))}>
+            <LocateFixed size={14} /> Ide, ahol állok
+          </button>
+          <button className="btn-secondary" onClick={() => setPlacingKey(null)}>Mégse</button>
+        </div>
+      )}
+
       <div className="map-layout">
-        
-        {/* Visual Interactive Map Canvas (Light Mode) */}
-        <div className="map-scroll">
-        <div style={{
-          backgroundColor: '#f8fafc',
-          border: '1.5px solid #cbd5e1',
-          borderRadius: '12px',
-          padding: '24px',
-          minHeight: '640px',
-          minWidth: '760px',
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
-        }}>
-          {/* Grid lines */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            backgroundImage: 'radial-gradient(#cbd5e1 1.5px, transparent 1.5px)',
-            backgroundSize: '28px 28px',
-            opacity: 0.6
-          }} />
+        <div className={`leaflet-box${placingItem ? ' placing' : ''}`} ref={mapEl} />
 
-          {/* Zone 1 Outline: FŐ TÉR */}
-          <div style={{
-            position: 'absolute',
-            left: '20px',
-            top: '20px',
-            width: '92%',
-            height: '42%',
-            border: '2px dashed #93c5fd',
-            borderRadius: '12px',
-            backgroundColor: '#eff6ff',
-            padding: '12px'
-          }}>
-            <span style={{ fontSize: '13px', fontWeight: '800', color: '#1e40af', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              KŐSZEG FŐ TÉR — BOROK HELYSZÍNE & NAGYSZÍNPAD
-            </span>
-          </div>
+        <aside className="map-side">
+          {selected && renderDetail(selected)}
 
-          {/* Zone 2 Outline: JURISICS TÉR */}
-          <div style={{
-            position: 'absolute',
-            left: '20px',
-            bottom: '20px',
-            width: '92%',
-            height: '48%',
-            border: '2px dashed #fde68a',
-            borderRadius: '12px',
-            backgroundColor: '#fffbeb',
-            padding: '12px'
-          }}>
-            <span style={{ fontSize: '13px', fontWeight: '800', color: '#92400e', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              JURISICS TÉR — ÉTELEK UTCÁJA (GASZTRO SOR) & KISSZÍNPAD 1
-            </span>
-          </div>
-
-          {/* Render All Map Pins */}
-          {filteredPoints.map(p => {
-            const isSelected = activePoint && activePoint.id === p.id;
-            const pinColor = getPointColor(p);
-
-            return (
-              <div
-                key={p.id}
-                onClick={() => setActiveId(p.id)}
-                style={{
-                  position: 'absolute',
-                  left: `${p.x}%`,
-                  top: `${p.y}%`,
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: isSelected ? 50 : 20,
-                  cursor: 'pointer'
-                }}
-              >
-                {/* Ping animation if problem active */}
-                {p.hasProblem && (
-                  <div style={{
-                    position: 'absolute',
-                    inset: '-6px',
-                    borderRadius: '50%',
-                    backgroundColor: 'rgba(220, 38, 38, 0.4)',
-                    animation: 'ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite'
-                  }} />
-                )}
-
-                {/* Pin Box */}
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  backgroundColor: isSelected ? '#2563eb' : '#ffffff',
-                  border: `2px solid ${isSelected ? '#1d4ed8' : pinColor}`,
-                  color: isSelected ? '#ffffff' : '#0f172a',
-                  padding: '5px 12px',
-                  borderRadius: '20px',
-                  fontSize: '12.5px',
-                  fontWeight: '800',
-                  boxShadow: isSelected
-                    ? `0 4px 14px rgba(37, 99, 235, 0.35)`
-                    : '0 2px 6px rgba(0,0,0,0.1)',
-                  transition: 'all 0.15s ease',
-                  whiteSpace: 'nowrap'
-                }}>
-                  <span style={{ color: isSelected ? '#ffffff' : pinColor }}>{renderIcon(p.type)}</span>
-                  <span>{p.code}</span>
-                  {p.hasProblem && <span style={{ color: isSelected ? '#ffffff' : '#dc2626', fontWeight: '900' }}>!</span>}
-                </div>
+          {q && (
+            <div className="map-card">
+              <div className="field-label">Találatok ({filtered.length})</div>
+              <div className="map-list">
+                {filtered.slice(0, 30).map(it => (
+                  <button key={it.key} className="map-list-item" onClick={() => selectItem(it)}>
+                    <span className="type-dot" style={{ background: TYPES[it.type]?.color }} />
+                    <span><strong>{it.code}</strong> {it.name}</span>
+                    {!hasPos(it) && <span className="badge badge-amber">nincs helye</span>}
+                  </button>
+                ))}
               </div>
-            );
-          })}
-        </div>
-
-        </div>
-
-        {/* Right: Selected Stand / Point Inspector */}
-        {activePoint ? (
-          <div className="ops-card" style={{ padding: '22px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1', position: 'sticky', top: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <span className={`badge ${activePoint.type === 'wine' ? 'badge-blue' : activePoint.type === 'food' ? 'badge-amber' : activePoint.type === 'stage' ? 'badge-gray' : 'badge-green'}`}>
-                {activePoint.type.toUpperCase()}
-              </span>
-              <span style={{
-                fontFamily: 'JetBrains Mono',
-                fontWeight: '800',
-                color: activePoint.hasProblem ? '#dc2626' : '#2563eb',
-                fontSize: '14px'
-              }}>
-                {activePoint.code}
-              </span>
             </div>
+          )}
 
-            <h3 style={{ fontSize: '18px', fontWeight: '800', color: '#000000', marginBottom: '6px' }}>
-              {activePoint.name}
-            </h3>
-
-            {/* Problem Alert Banner if active */}
-            {activePoint.hasProblem && (
-              <div style={{
-                backgroundColor: '#fee2e2',
-                border: '1.5px solid #f87171',
-                borderRadius: '8px',
-                padding: '12px 14px',
-                margin: '14px 0',
-                fontSize: '13px',
-                color: '#991b1b'
-              }}>
-                <div style={{ fontWeight: '800', display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                  <AlertCircle size={16} color="#dc2626" /> AKTÍV PROBLÉMA A STANDNÁL!
-                </div>
-                <div>{activePoint.problemText || 'Helyszíni beavatkozás szükséges!'}</div>
-              </div>
-            )}
-
-            {/* Details List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '16px', fontSize: '13.5px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                <span style={{ color: '#475569' }}>Áramellátás:</span>
-                <span style={{ fontWeight: '800', color: (activePoint.power || '').includes('32A') ? '#b45309' : '#0f172a' }}>
-                  {activePoint.power}
-                </span>
+          {editMode && (
+            <div className="map-card">
+              <div className="map-card-head">
+                <div className="field-label">Elhelyezésre vár ({unplaced.length})</div>
+                <button className="btn-secondary" onClick={() => setNewPointOpen(o => !o)}><Plus size={14} /> Új pont</button>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                <span style={{ color: '#475569' }}>Kapcsolattartó:</span>
-                <span style={{ fontWeight: '700', color: '#000000' }}>
-                  {activePoint.contact}
-                </span>
-              </div>
-
-              {activePoint.trashBags && (
-                <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                  <span style={{ color: '#475569' }}>Kiadott 120L zsák:</span>
-                  <span style={{ fontWeight: '800', color: '#1d4ed8' }}>
-                    {activePoint.trashBags} db zsák
-                  </span>
-                </div>
+              {newPointOpen && (
+                <form onSubmit={createPoint} className="map-new-point">
+                  <input name="name" placeholder="Megnevezés (pl. Fő tér WC 2)" required />
+                  <div className="grid-2">
+                    <input name="code" placeholder="Kód (pl. WC-02)" />
+                    <select name="type" defaultValue="toilet">
+                      {POINT_TYPES.map(t => <option key={t} value={t}>{TYPES[t].label}</option>)}
+                    </select>
+                  </div>
+                  <div className="grid-2">
+                    <input name="contact" placeholder="Kapcsolattartó" />
+                    <input name="power" placeholder="Áram (pl. 1x16A)" />
+                  </div>
+                  <button type="submit" className="btn-primary"><Plus size={14} /> Létrehozás és elhelyezés</button>
+                  <div className="field-hint" style={{ marginTop: 0 }}>Árust az Árusok menüben vegyél fel — itt csak elhelyezed.</div>
+                </form>
               )}
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #e2e8f0', paddingBottom: '8px' }}>
-                <span style={{ color: '#475569' }}>Állapot:</span>
-                <span className={`badge ${activePoint.hasProblem ? 'badge-rose' : 'badge-green'}`}>
-                  {activePoint.status}
-                </span>
+              {unplaced.length === 0 ? (
+                <div className="dash-empty"><CheckCircle2 size={16} color="#059669" /> Minden pont a térképen van.</div>
+              ) : (
+                <div className="map-list">
+                  {unplaced.map(it => (
+                    <div key={it.key} className="map-list-item static">
+                      <span className="type-dot" style={{ background: TYPES[it.type]?.color }} />
+                      <span><strong>{it.code}</strong> {it.name}</span>
+                      <button className="btn-primary compact" onClick={() => { setSelectedKey(it.key); setPlacingKey(it.key); }}>
+                        <Crosshair size={13} /> Elhelyezés
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="field-hint" style={{ marginTop: '8px' }}>
+                Szerkesztés módban a jelölők húzhatók is. A helyszínen legegyszerűbb: állj oda, és „Ide, ahol állok”.
               </div>
             </div>
+          )}
 
-            {/* Emergency Action Buttons */}
-            <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <button
-                onClick={() => handleToggleProblem(activePoint)}
-                style={{
-                  width: '100%',
-                  padding: '12px',
-                  borderRadius: '6px',
-                  fontSize: '13.5px',
-                  fontWeight: '800',
-                  backgroundColor: activePoint.hasProblem ? '#059669' : '#dc2626',
-                  color: '#ffffff',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px'
-                }}
-              >
-                {activePoint.hasProblem ? (
-                  <>
-                    <CheckCircle2 size={16} /> Probléma Megoldva Jelölése
-                  </>
-                ) : (
-                  <>
-                    <AlertCircle size={16} /> HIBA / SOS PROBLÉMA JELENTÉSE
-                  </>
-                )}
-              </button>
+          {!selected && !q && !editMode && (
+            <div className="map-card dash-muted">
+              Koppints egy jelölőre a részletekért. {unplaced.length > 0 && `${unplaced.length} pont még nincs elhelyezve — a „Pontok szerkesztése” gombbal teheted fel őket.`}
             </div>
-          </div>
-        ) : (
-          <div className="ops-card" style={{ padding: '36px', textAlign: 'center', color: '#475569', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
-            Kattints a térképen bármelyik standra vagy színpadra a részletekért!
-          </div>
-        )}
-
+          )}
+        </aside>
       </div>
     </div>
   );

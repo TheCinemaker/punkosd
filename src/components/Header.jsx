@@ -5,27 +5,27 @@ function SyncPill({ status, pendingCount }) {
   if (status === 'local') {
     return (
       <span className="sync-pill local" title="Nincs Supabase kapcsolat beállítva: az adatok csak ezen az eszközön vannak">
-        <HardDrive size={13} /> Helyi mód
+        <HardDrive size={13} /> <span className="sync-label">Helyi mód</span>
       </span>
     );
   }
   if (status === 'offline') {
     return (
       <span className="sync-pill offline" title="Nincs kapcsolat. A módosítások elmentődnek, és visszatéréskor automatikusan felkerülnek.">
-        <WifiOff size={13} /> Offline{pendingCount > 0 ? ` · ${pendingCount} várakozik` : ''}
+        <WifiOff size={13} /> <span className="sync-label">Offline</span>{pendingCount > 0 ? ` · ${pendingCount}` : ''}
       </span>
     );
   }
   if (status === 'connecting' || pendingCount > 0) {
     return (
       <span className="sync-pill connecting" title="Szinkronizálás folyamatban">
-        <Loader2 size={13} className="spin" /> Szinkron...
+        <Loader2 size={13} className="spin" /> <span className="sync-label">Szinkron...</span>
       </span>
     );
   }
   return (
     <span className="sync-pill online" title="Élő kapcsolat: minden módosítás azonnal megjelenik mindenkinél">
-      <Wifi size={13} /> Élő
+      <Wifi size={13} /> <span className="sync-label">Élő</span>
     </span>
   );
 }

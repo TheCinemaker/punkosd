@@ -960,51 +960,21 @@ export const INITIAL_CONTRACTORS = [
   }
 ];
 
-export const MAP_ZONES = [
-  { id: 'zone-fo-ter', name: 'Fő tér — Borok Helyszíne & Nagyszínpad', color: '#3b82f6', bg: '#1e3a8a' },
-  { id: 'zone-jurisics', name: 'Jurisics tér — Ételek Utcája & Kisszínpad 1', color: '#f59e0b', bg: '#78350f' },
-  { id: 'zone-var', name: 'Várjátszótér & Várárok — Gyerekbirodalom', color: '#10b981', bg: '#064e3b' },
-  { id: 'zone-kapualj', name: 'Belvárosi Kapualjak — Utcazenei Pontok', color: '#8b5cf6', bg: '#4c1d95' }
-];
-
+// Infrastruktúra-pontok a térképen (áram, víz, WC, mentő, info, kapualjak...).
+// A színpadok helye a config.js-ben van, az árusok helye az árus adatlapján.
+// lat/lng nélküli pont a térképen „elhelyezésre vár” listában jelenik meg.
 export const MAP_POINTS = [
-  // FŐ TÉR
-  { id: 'pt-nsz', zoneId: 'zone-fo-ter', code: 'NAGYSZÍNPAD', name: 'Nagyszínpad 10x8m Fedett', type: 'stage', x: 28, y: 22, power: '63A Ipari', contact: 'Szilveszter (+36 30 123 4567)', status: 'Üzemkész', hasProblem: false, problemText: '' },
-  { id: 'pt-back', zoneId: 'zone-fo-ter', code: 'BACKSTAGE', name: 'Nagyszínpad Öltözősátor & Zóna', type: 'backstage', x: 18, y: 18, power: '1x16A', contact: 'Szilveszter', status: 'Zárt VIP', hasProblem: false, problemText: '' },
-  { id: 'pt-el-1', zoneId: 'zone-fo-ter', code: 'ÁRAM-01', name: 'Fő tér Központi Villamos Szekrény & E.ON Mérő', type: 'power', x: 22, y: 35, power: '125A Főbetáp', contact: 'Bognár Zoltán Vill. (+36 30 789 4512)', status: 'Bekapcsolva', hasProblem: false, problemText: '' },
-  { id: 'pt-mento', zoneId: 'zone-fo-ter', code: 'MENTŐ-01', name: 'Orvosi Ügyelet & Rohammentő Bázis', type: 'medical', x: 12, y: 45, power: '230V', contact: 'OMSZ Ügyelet (+36 20 445 6677)', status: 'Készenlétben', hasProblem: false, problemText: '' },
-  { id: 'pt-info', zoneId: 'zone-fo-ter', code: 'INFO-KTSZE', name: 'KTSZE Információs Sátor & Karszalag Pont', type: 'info', x: 42, y: 48, power: '1x16A', contact: 'Gábor Elnök', status: 'Nyitva', hasProblem: false, problemText: '' },
-  { id: 'pt-wc-1', zoneId: 'zone-fo-ter', code: 'TOI-FŐTÉR', name: 'Fő tér Mobil WC Sziget (6 db + 1 Kerekesszékes)', type: 'toilet', x: 14, y: 65, power: '-', contact: 'ToiToi Ügyelet', status: 'Tiszta / Üzemel', hasProblem: false, problemText: '' },
-  
-  // BOROK FAHÁZAI (FŐ TÉR)
-  { id: 'pt-bor-1', zoneId: 'zone-fo-ter', code: 'BOR-01', name: 'Stefanich Pincészet Kőszeg', type: 'wine', x: 50, y: 22, power: '1x16A', contact: 'Stefanich Zoltán (+36 30 222 1100)', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-  { id: 'pt-bor-2', zoneId: 'zone-fo-ter', code: 'BOR-02', name: 'Tóth Pincészet Kőszeg', type: 'wine', x: 62, y: 22, power: '1x16A', contact: 'Tóth Ferenc (+36 30 333 2211)', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-  { id: 'pt-bor-3', zoneId: 'zone-fo-ter', code: 'BOR-03', name: 'Alasz Pince & Borterasz', type: 'wine', x: 74, y: 22, power: '1x16A', contact: 'Alasz Pál (+36 30 444 3322)', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-  { id: 'pt-bor-4', zoneId: 'zone-fo-ter', code: 'BOR-04', name: 'Láng Pincészet Kőszegdoroszló', type: 'wine', x: 86, y: 22, power: '1x16A', contact: 'Láng József (+36 30 555 4433)', status: 'Zsákhiány!', trashBags: 6, hasProblem: true, problemText: 'Kifogyott a 120L szemeteszsák, 2 tekercs azonnal kell!' },
-  { id: 'pt-bor-5', zoneId: 'zone-fo-ter', code: 'BOR-05', name: 'Jagodics Pincészet', type: 'wine', x: 50, y: 38, power: '1x16A', contact: 'Jagodics Attila', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-  { id: 'pt-bor-6', zoneId: 'zone-fo-ter', code: 'BOR-06', name: 'Kampits Családi Pince', type: 'wine', x: 62, y: 38, power: '1x16A', contact: 'Kampits Tibor', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-  { id: 'pt-bor-7', zoneId: 'zone-fo-ter', code: 'BOR-07', name: 'Mándli Kőszegi Borászat', type: 'wine', x: 74, y: 38, power: '1x16A', contact: 'Mándli Tibor', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-  { id: 'pt-bor-8', zoneId: 'zone-fo-ter', code: 'BOR-08', name: 'Frank Kőszegi Borház', type: 'wine', x: 86, y: 38, power: '1x16A', contact: 'Frank János', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
-
-  // JURISICS TÉR — ÉTELEK UTCÁJA
-  { id: 'pt-ksz-1', zoneId: 'zone-jurisics', code: 'KISSZÍNPAD-1', name: 'Kisszínpad 1 (Jurisics tér - Szökőkút)', type: 'stage', x: 30, y: 72, power: '32A Ipari', contact: 'Adrienn', status: 'Aktív Műsor', hasProblem: false, problemText: '' },
-  { id: 'pt-el-2', zoneId: 'zone-jurisics', code: 'ÁRAM-02', name: 'Jurisics tér Ipari 3x32A Gasztro Elosztó', type: 'power', x: 48, y: 68, power: '3x63A Főbetáp', contact: 'Villanyszerelő stáb', status: 'Fokozott terhelés', hasProblem: false, problemText: '' },
-  { id: 'pt-viz-1', zoneId: 'zone-jurisics', code: 'VÍZ-01', name: 'Központi Vízvételezés és Szennyvíz Csatlakozás', type: 'water', x: 58, y: 68, power: '-', contact: 'Városüzemeltetés', status: 'Nyomás rendben', hasProblem: false, problemText: '' },
-  { id: 'pt-kont', zoneId: 'zone-jurisics', code: 'KONTÉNER', name: '2 db 10m3 Zárt Hulladéktömörítő Konténer', type: 'waste', x: 18, y: 88, power: '-', contact: 'Kőszegi Kommunális', status: 'Ürítés reggel', hasProblem: false, problemText: '' },
-  { id: 'pt-wc-2', zoneId: 'zone-jurisics', code: 'TOI-JURISICS', name: 'Jurisics tér Mobil WC Sziget (6 db ToiToi)', type: 'toilet', x: 88, y: 88, power: '-', contact: 'ToiToi Ügyelet', status: 'Tiszta', hasProblem: false, problemText: '' },
-
-  // FOOD TRUCKS & KAJÁSOK (JURISICS TÉR)
-  { id: 'pt-g-1', zoneId: 'zone-jurisics', code: 'GASZT-01', name: 'Kőszegi Ínyenc Lángos & Grill', type: 'food', x: 42, y: 82, power: '3x32A Ipari', contact: 'Varga Béla (+36 70 123 4567)', status: 'Üzemel', trashBags: 15, hasProblem: false, problemText: '' },
-  { id: 'pt-g-2', zoneId: 'zone-jurisics', code: 'GASZT-02', name: 'Várkapu Burger & Pulled Pork Truck', type: 'food', x: 55, y: 82, power: '3x32A Ipari', contact: 'Horváth Tamás (+36 30 666 7788)', status: 'BIZTOSÍTÉK LEVÁGVA!', trashBags: 15, hasProblem: true, problemText: 'A fritőz lecsapta a 32A biztosítékot, villanyszerelő úton van!' },
-  { id: 'pt-g-3', zoneId: 'zone-jurisics', code: 'GASZT-03', name: 'Kürtőskalács & Rétes Házikó', type: 'food', x: 68, y: 82, power: '3x16A', contact: 'Szabó Éva (+36 20 777 8899)', status: 'Üzemel', trashBags: 8, hasProblem: false, problemText: '' },
-  { id: 'pt-g-4', zoneId: 'zone-jurisics', code: 'GASZT-04', name: 'Kézműves Sörök Udvara', type: 'food', x: 80, y: 82, power: '1x16A', contact: 'Molnár Dániel (+36 30 888 9900)', status: 'Üzemel', trashBags: 12, hasProblem: false, problemText: '' },
-
-  // VÁRJÁTSZÓTÉR & VÁRÁROK
-  { id: 'pt-ksz-2', zoneId: 'zone-var', code: 'KISSZÍNPAD-2', name: 'Kisszínpad 2 (Várjátszótér Gyerekbirodalom)', type: 'stage', x: 15, y: 15, power: '1x16A', contact: 'Gábor Elnök', status: 'Gyerekprogramok', hasProblem: false, problemText: '' },
-  
-  // KAPUALJAK
-  { id: 'pt-utc-1', zoneId: 'zone-kapualj', code: 'UTC-01', name: 'Hősök Tornya alatti kapualj (Balkan Brass)', type: 'street', x: 38, y: 55, power: '230V Hosszabbító', contact: 'Peti', status: 'Utcazenész játszik', hasProblem: false, problemText: '' },
-  { id: 'pt-utc-2', zoneId: 'zone-kapualj', code: 'UTC-02', name: 'Chernel utca sétány kapu', type: 'street', x: 45, y: 12, power: 'Akusztikus', contact: 'Szilveszter', status: 'Szabad sáv', hasProblem: false, problemText: '' }
+  { id: 'pt-back', code: 'BACKSTAGE', name: 'Nagyszínpad öltözősátor & backstage zóna', type: 'backstage', power: '1x16A', contact: 'Szilveszter', status: 'Zárt terület', hasProblem: false, problemText: '' },
+  { id: 'pt-el-1', code: 'ÁRAM-01', name: 'Fő tér központi elosztószekrény & mérő', type: 'power', power: '125A főbetáp', contact: 'Villanyszerelő', status: 'Bekapcsolva', hasProblem: false, problemText: '' },
+  { id: 'pt-el-2', code: 'ÁRAM-02', name: 'Jurisics tér 3x32A gasztro elosztó', type: 'power', power: '3x63A főbetáp', contact: 'Villanyszerelő', status: 'Üzemel', hasProblem: false, problemText: '' },
+  { id: 'pt-mento', code: 'MENTŐ-01', name: 'Orvosi ügyelet & mentő bázis', type: 'medical', power: '230V', contact: 'Mentőszolgálat', status: 'Készenlétben', hasProblem: false, problemText: '' },
+  { id: 'pt-info', code: 'INFO', name: 'KTSZE információs sátor & karszalag pont', type: 'info', power: '1x16A', contact: 'Gábor', status: 'Nyitva', hasProblem: false, problemText: '' },
+  { id: 'pt-wc-1', code: 'WC-FŐTÉR', name: 'Fő tér mobil WC sziget', type: 'toilet', power: '-', contact: 'ToiToi ügyelet', status: 'Üzemel', hasProblem: false, problemText: '' },
+  { id: 'pt-wc-2', code: 'WC-JURISICS', name: 'Jurisics tér mobil WC sziget', type: 'toilet', power: '-', contact: 'ToiToi ügyelet', status: 'Üzemel', hasProblem: false, problemText: '' },
+  { id: 'pt-viz-1', code: 'VÍZ-01', name: 'Vízvételi pont & szennyvíz csatlakozás', type: 'water', power: '-', contact: 'Városüzemeltetés', status: 'Rendben', hasProblem: false, problemText: '' },
+  { id: 'pt-kont', code: 'KONTÉNER', name: 'Hulladékkonténerek', type: 'waste', power: '-', contact: 'Kommunális', status: 'Ürítés reggel', hasProblem: false, problemText: '' },
+  { id: 'pt-utc-1', code: 'UTC-01', name: 'Hősök tornya alatti kapualj', type: 'street', power: '230V hosszabbító', contact: 'Peti', status: 'Utcazene', hasProblem: false, problemText: '' },
+  { id: 'pt-utc-2', code: 'UTC-02', name: 'Chernel utcai kapu', type: 'street', power: 'Akusztikus', contact: 'Szilveszter', status: 'Utcazene', hasProblem: false, problemText: '' }
 ];
 
 export const INITIAL_INCIDENTS = [

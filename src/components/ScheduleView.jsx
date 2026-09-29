@@ -696,7 +696,13 @@ export function ScheduleView({
                       onUploaded={handleDocUploaded('stage plot')}
                     />
                   </div>
-                  <div className="field-hint">A feltöltött fájl a Mentés gombbal rögzül a fellépő adatlapján.</div>
+                  <label className="checkbox-row" style={{ marginTop: '12px' }}>
+                    <input type="checkbox" name="riderApproved" defaultChecked={Boolean(selectedItem.riderApproved)} />
+                    Rider egyeztetve, jóváhagyva (a technika rendben van)
+                  </label>
+                  <label className="field-label" style={{ marginTop: '10px' }}>Technikai igények röviden (csatornák, mikrofonok, backline, áram)</label>
+                  <textarea name="techRider" rows={3} defaultValue={selectedItem.techRider} placeholder="pl. 12 csatorna, 4 monitor, dobfelszerelés helyben, 2x Schuko a színpad szélén" />
+                  <div className="field-hint">A feltöltött fájl és a rider adatai a Mentés gombbal rögzülnek a fellépő adatlapján.</div>
                 </div>
 
                 <div className="grid-3">
