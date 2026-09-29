@@ -78,6 +78,13 @@ export function App() {
   });
 
   useEffect(() => { setLocalData('currentUser', currentUser); }, [currentUser]);
+
+  // Ha a bejelentkezett név kikerült a stábból, kiléptetjük
+  useEffect(() => {
+    if (currentUser && data.users.length > 0 && !data.users.some(u => u.name === currentUser)) {
+      setCurrentUser(null);
+    }
+  }, [currentUser, data.users]);
   useEffect(() => { setLocalData('activeTab', activeTab); }, [activeTab]);
 
   const handleTabChange = useCallback((tab) => {

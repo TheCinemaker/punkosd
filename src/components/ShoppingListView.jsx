@@ -43,7 +43,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
 
   const teamMembers = [
     'Összes felelős',
-    ...(users.length > 0 ? users.map(u => u.name) : ['Szilveszter', 'Gábor', 'Zoltán', 'Műszaki Stáb', 'Önkéntes Csapat'])
+    ...(users.length > 0 ? users.map(u => u.name) : ['Szilveszter', 'Gábor', 'Robi', 'Peti', 'Adrienn', 'Bea'])
   ];
 
   const filtered = shoppingList.filter(item => {

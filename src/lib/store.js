@@ -2,7 +2,7 @@
 // élő szinkron (Realtime), offline kimenő sor, és helyi gyorsítótár.
 // Supabase nélkül helyi módban fut (localStorage + böngészőfülek közti szinkron).
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { supabase, isSupabaseConfigured, getLocalData, setLocalData } from './supabase';
+import { supabase, isSupabaseConfigured, getLocalData, setLocalData, removeLocalData } from './supabase';
 
 const TABLE = 'fest_records';
 const META = '_meta';
@@ -12,6 +12,15 @@ const NEWEST_FIRST = new Set(['tasks', 'shoppingList', 'incidents', 'logs']);
 const APPEND_ONLY = new Set(['logs']);
 const LOG_LIMIT = 1000;
 const RETRY_MS = 5000;
+// Emeld meg, ha a kezdő adatkészlet lecserélődik: a régi helyi adat egyszer törlődik minden eszközön
+const DATA_VERSION = 2;
+
+function resetOutdatedLocalData(keys) {
+  if (getLocalData('dataVersion', 1) === DATA_VERSION) return;
+  keys.forEach(removeLocalData);
+  removeLocalData(OUTBOX_KEY);
+  setLocalData('dataVersion', DATA_VERSION);
+}
 
 let lastSort = 0;
 function nextSort() {
@@ -43,6 +52,7 @@ export function useFestivalStore(collections, { currentUser, onRemoteInsert } = 
   const keys = Object.keys(collections);
 
   const [data, setData] = useState(() => {
+    resetOutdatedLocalData(keys);
     const out = {};
     keys.forEach(key => { out[key] = sortItems(key, ensureSort(key, getLocalData(key, collections[key]))); });
     return out;
@@ -140,8 +150,10 @@ export function useFestivalStore(collections, { currentUser, onRemoteInsert } = 
     const seedOps = [];
     keys.forEach(key => {
       if (grouped[key].length === 0 && !meta.has(`seeded:${key}`)) {
-        // Első indulás: a helyben meglévő (vagy kezdő) adat feltöltése
-        dataRef.current[key].forEach(item => seedOps.push({ op: 'upsert', collection: key, id: item.id, data: item }));
+        // Üres adatbázis: a kezdő adatkészlet feltöltése (sosem egy eszköz régi helyi adata)
+        const seed = sortItems(key, ensureSort(key, collections[key]));
+        changes[key] = seed;
+        seed.forEach(item => seedOps.push({ op: 'upsert', collection: key, id: item.id, data: item }));
         seedOps.push({ op: 'upsert', collection: META, id: `seeded:${key}`, data: { seededAt: new Date().toISOString() } });
         return;
       }

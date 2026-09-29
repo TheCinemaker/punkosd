@@ -2,11 +2,12 @@
 import { FESTIVAL } from './config';
 
 export const DEFAULT_USERS = [
-  { id: 'usr-1', name: 'Szilveszter', role: 'Nagyszínpad Koordinátor & Műszaki Vezető', badge: 'Technika', phone: '+36 30 987 6543', email: 'szilveszter@ktsze.hu', pin: '1532', radio: 'URH Ch-1' },
-  { id: 'usr-2', name: 'Gábor', role: 'KTSZE Elnök & Főszervező', badge: 'Elnökség', phone: '+36 30 876 5432', email: 'gabor@ktsze.hu', pin: '1532', radio: 'URH Ch-1' },
-  { id: 'usr-3', name: 'Zoltán', role: 'Pénzügyi & Pályázati Felelős', badge: 'Pénzügy', phone: '+36 30 765 4321', email: 'zoltan@ktsze.hu', pin: '1532', radio: 'URH Ch-3' },
-  { id: 'usr-4', name: 'Műszaki Stáb', role: 'Hang- és Fénytechnikus Csapat', badge: 'Technika', phone: '+36 30 654 3210', email: 'technika@ktsze.hu', pin: '1532', radio: 'URH Ch-2' },
-  { id: 'usr-5', name: 'Önkéntes Csapat', role: 'Helyszíni Koordináció & Zsákos Ügyelet', badge: 'Helyszín', phone: '+36 30 543 2109', email: 'onkentes@ktsze.hu', pin: '1532', radio: 'URH Ch-4' },
+  { id: 'usr-1', name: 'Szilveszter', role: 'Nagyszínpad Koordinátor & Műszaki Vezető', badge: 'Technika', phone: '', email: '', pin: '1532', radio: 'URH Ch-1' },
+  { id: 'usr-2', name: 'Gábor', role: 'KTSZE Elnök & Főszervező', badge: 'Elnökség', phone: '', email: '', pin: '1532', radio: 'URH Ch-1' },
+  { id: 'usr-3', name: 'Robi', role: 'Szervező', badge: 'Helyszín', phone: '', email: '', pin: '1532', radio: 'URH Ch-2' },
+  { id: 'usr-4', name: 'Peti', role: 'Szervező', badge: 'Helyszín', phone: '', email: '', pin: '1532', radio: 'URH Ch-2' },
+  { id: 'usr-5', name: 'Adrienn', role: 'Szervező', badge: 'Helyszín', phone: '', email: '', pin: '1532', radio: 'URH Ch-3' },
+  { id: 'usr-6', name: 'Bea', role: 'Szervező', badge: 'Helyszín', phone: '', email: '', pin: '1532', radio: 'URH Ch-3' },
 ];
 
 export const STAGES = [
@@ -281,7 +282,7 @@ export const INITIAL_SCHEDULE = [
     soundcheck: '14:30',
     loadIn: '14:00',
     status: 'Visszaigazolva',
-    stageManager: 'Önkéntes Csapat',
+    stageManager: 'Adrienn',
     notes: 'Gasztro zenei aláfestés'
   },
   {
@@ -295,7 +296,7 @@ export const INITIAL_SCHEDULE = [
     soundcheck: '14:30',
     loadIn: '14:00',
     status: 'Visszaigazolva',
-    stageManager: 'Önkéntes Csapat',
+    stageManager: 'Bea',
     notes: 'Váltásban a food truckok mellett'
   },
 
@@ -611,10 +612,10 @@ export const INITIAL_TASKS = [
     title: 'Ocho Macho szerződés aláírása és 50% előleg átutalásának indítása',
     category: 'Nagyszínpad',
     priority: 'Sürgős',
-    assignedTo: 'Zoltán',
+    assignedTo: 'Robi',
     dueDate: '2027-05-08',
     completed: true,
-    completedBy: 'Zoltán',
+    completedBy: 'Robi',
     completedAt: '2027-04-22 16:30',
     createdBy: 'Szilveszter',
     notes: 'Előleg számla beérkezett, átutalás teljesítve.'
@@ -624,7 +625,7 @@ export const INITIAL_TASKS = [
     title: 'E.ON és Városüzemeltetés egyeztetés az ideiglenes mérőhelyekről a Fő téren és Jurisics téren',
     category: 'Technika & Áram',
     priority: 'Magas',
-    assignedTo: 'Műszaki Stáb',
+    assignedTo: 'Peti',
     dueDate: '2027-05-10',
     completed: false,
     completedBy: null,
@@ -637,7 +638,7 @@ export const INITIAL_TASKS = [
     title: '120L extra erős szemeteszsákok (40 tekercs) és 20 db kukaállvány beérkezése a KTSZE raktárba',
     category: 'Higiénia & Szemét',
     priority: 'Magas',
-    assignedTo: 'Önkéntes Csapat',
+    assignedTo: 'Adrienn',
     dueDate: '2027-05-12',
     completed: false,
     completedBy: null,
@@ -689,7 +690,7 @@ export const INITIAL_TASKS = [
     title: 'Backstage catering és ásványvíz (15 tálca) kiszállítása a nagyszínpad öltözősátrába',
     category: 'Nagyszínpad',
     priority: 'Magas',
-    assignedTo: 'Önkéntes Csapat',
+    assignedTo: 'Bea',
     dueDate: '2027-05-22',
     completed: false,
     completedBy: null,
@@ -702,7 +703,7 @@ export const INITIAL_TASKS = [
     title: 'Utcazenész kapualjak és kérések ellenőrzése: asztalok, 20m hosszabbítók kiszállítása',
     category: 'Technika & Áram',
     priority: 'Normál',
-    assignedTo: 'Műszaki Stáb',
+    assignedTo: 'Peti',
     dueDate: '2027-05-22',
     completed: false,
     completedBy: null,
@@ -714,26 +715,26 @@ export const INITIAL_TASKS = [
 
 export const INITIAL_INVENTORY = [
   // HIGIÉNIA & SZEMETESZSÁKOK
-  { id: 'inv-1', code: 'ZSAK-001..010', name: '120L Extra Erős Szemeteszsákok (Kék Kommunális)', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'Fő tér boros faházak', responsible: 'Önkéntes Csapat', status: 'Kiadva' },
-  { id: 'inv-2', code: 'ZSAK-011..020', name: '120L Extra Erős Szemeteszsákok (Sárga Műanyag)', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'Jurisics tér Ételek utcája', responsible: 'Önkéntes Csapat', status: 'Kiadva' },
+  { id: 'inv-1', code: 'ZSAK-001..010', name: '120L Extra Erős Szemeteszsákok (Kék Kommunális)', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'Fő tér boros faházak', responsible: 'Adrienn', status: 'Kiadva' },
+  { id: 'inv-2', code: 'ZSAK-011..020', name: '120L Extra Erős Szemeteszsákok (Sárga Műanyag)', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'Jurisics tér Ételek utcája', responsible: 'Bea', status: 'Kiadva' },
   { id: 'inv-3', code: 'ZSAK-021..030', name: '120L Fekete Zsákok (Nagyszínpad & Backstage)', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'Fő tér Backstage sátor', responsible: 'Szilveszter', status: 'Raktáron' },
-  { id: 'inv-4', code: 'ZSAK-031..040', name: '120L Tartalék Szemeteszsák készlet', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'KTSZE Raktár', responsible: 'Önkéntes Csapat', status: 'Raktáron' },
-  { id: 'inv-5', code: 'KUKA-01..10', name: '120L Mobil Kukaállványok szelektív fedéllel', category: 'Higiénia & Szemét', qty: 10, unit: 'db', location: 'Fő tér sétány', responsible: 'Műszaki Stáb', status: 'Telepítve' },
-  { id: 'inv-6', code: 'KUKA-11..20', name: '240L Zöld Hulladékgyűjtő konténer', category: 'Higiénia & Szemét', qty: 10, unit: 'db', location: 'Jurisics tér sarok', responsible: 'Műszaki Stáb', status: 'Telepítve' },
+  { id: 'inv-4', code: 'ZSAK-031..040', name: '120L Tartalék Szemeteszsák készlet', category: 'Higiénia & Szemét', qty: 10, unit: 'tekercs (250db)', location: 'KTSZE Raktár', responsible: 'Adrienn', status: 'Raktáron' },
+  { id: 'inv-5', code: 'KUKA-01..10', name: '120L Mobil Kukaállványok szelektív fedéllel', category: 'Higiénia & Szemét', qty: 10, unit: 'db', location: 'Fő tér sétány', responsible: 'Peti', status: 'Telepítve' },
+  { id: 'inv-6', code: 'KUKA-11..20', name: '240L Zöld Hulladékgyűjtő konténer', category: 'Higiénia & Szemét', qty: 10, unit: 'db', location: 'Jurisics tér sarok', responsible: 'Peti', status: 'Telepítve' },
 
   // ÁRAM & KÁBEL
-  { id: 'inv-7', code: 'KABEL-01', name: '63A Ipari Főkábel 25m (Nagyszínpad betáp)', category: 'Áram & Kábel', qty: 1, unit: 'db', location: 'Fő tér villanyóra', responsible: 'Műszaki Stáb', status: 'Használatban' },
-  { id: 'inv-8', code: 'KABEL-02..05', name: '32A Ipari Elosztódobozok 4x230V kimenettel', category: 'Áram & Kábel', qty: 4, unit: 'db', location: 'Jurisics tér Gasztro', responsible: 'Műszaki Stáb', status: 'Kiadva' },
+  { id: 'inv-7', code: 'KABEL-01', name: '63A Ipari Főkábel 25m (Nagyszínpad betáp)', category: 'Áram & Kábel', qty: 1, unit: 'db', location: 'Fő tér villanyóra', responsible: 'Peti', status: 'Használatban' },
+  { id: 'inv-8', code: 'KABEL-02..05', name: '32A Ipari Elosztódobozok 4x230V kimenettel', category: 'Áram & Kábel', qty: 4, unit: 'db', location: 'Jurisics tér Gasztro', responsible: 'Peti', status: 'Kiadva' },
   { id: 'inv-9', code: 'KABEL-06..15', name: '20m Kültéri Gumi Hosszabbítók (Kapualjakhoz)', category: 'Áram & Kábel', qty: 10, unit: 'db', location: 'Utcazenész pontok', responsible: 'Szilveszter', status: 'Kiadva' },
-  { id: 'inv-10', code: 'TAPOS-01..20', name: 'Sárga-fekete Gumi Kábelátvezetők (1m/db)', category: 'Áram & Kábel', qty: 20, unit: 'méter', location: 'Fő tér gyalogos sáv', responsible: 'Műszaki Stáb', status: 'Telepítve' },
+  { id: 'inv-10', code: 'TAPOS-01..20', name: 'Sárga-fekete Gumi Kábelátvezetők (1m/db)', category: 'Áram & Kábel', qty: 20, unit: 'méter', location: 'Fő tér gyalogos sáv', responsible: 'Peti', status: 'Telepítve' },
 
   // KORDONOK & VÉDELEM
   { id: 'inv-11', code: 'KORD-01..15', name: 'Mojo Alumínium Taposókordon (Nagyszínpad elé)', category: 'Kordon & Védelem', qty: 15, unit: 'db (30m)', location: 'Fő tér Nagyszínpad', responsible: 'Szilveszter', status: 'Raktáron' },
-  { id: 'inv-12', code: 'KORD-16..40', name: 'Mobil Fesztivál Kordonok (Backstage lezárás)', category: 'Kordon & Védelem', qty: 25, unit: 'db (50m)', location: 'Backstage & Színpad hátul', responsible: 'Műszaki Stáb', status: 'Telepítve' },
+  { id: 'inv-12', code: 'KORD-16..40', name: 'Mobil Fesztivál Kordonok (Backstage lezárás)', category: 'Kordon & Védelem', qty: 25, unit: 'db (50m)', location: 'Backstage & Színpad hátul', responsible: 'Peti', status: 'Telepítve' },
   
   // BÚTOR & SÁTOR
   { id: 'inv-13', code: 'SATO-01', name: 'Nagyszínpad Öltözősátor 6x4m (zárható, ablakos)', category: 'Színpad & Bútor', qty: 1, unit: 'db', location: 'Fő tér színpad mögött', responsible: 'Szilveszter', status: 'Raktáron' },
-  { id: 'inv-14', code: 'SÖRP-01..15', name: 'Sörpad garnitúrák (1 asztal + 2 pad)', category: 'Színpad & Bútor', qty: 15, unit: 'garnitúra', location: 'Backstage & Infópont', responsible: 'Önkéntes Csapat', status: 'Raktáron' },
+  { id: 'inv-14', code: 'SÖRP-01..15', name: 'Sörpad garnitúrák (1 asztal + 2 pad)', category: 'Színpad & Bútor', qty: 15, unit: 'garnitúra', location: 'Backstage & Infópont', responsible: 'Bea', status: 'Raktáron' },
   
   // BIZTONSÁG & MENTÉS
   { id: 'inv-15', code: 'TUZ-01..08', name: '6kg ABC Hitelesített Poroltó Készülék', category: 'Biztonság & Mentés', qty: 8, unit: 'db', location: 'Színpadok & Gasztro bódék', responsible: 'Gábor', status: 'Ellenőrizve' }
@@ -773,7 +774,7 @@ export const INITIAL_LOGS = [
   { id: 'log-1', user: 'Szilveszter', action: 'CREATE', module: 'Nagyszínpad', description: 'Felvette a péntek esti VÁRDISCO blokkot: Kunyik, Magnus, TornyosiGabi, TISZTAFAXXA', time: '2027-04-18 09:15' },
   { id: 'log-2', user: 'Gábor', action: 'COMPLETE_TASK', module: 'To-Do', description: 'Kipipálta a polgármesteri csendrendelet felmentési kérelmet', time: '2027-04-18 10:45' },
   { id: 'log-3', user: 'Szilveszter', action: 'COMPLETE_TASK', module: 'To-Do', description: 'Kipipálta a nagyszínpad és Line Array hangtechnika szerződést', time: '2027-04-20 14:12' },
-  { id: 'log-4', user: 'Zoltán', action: 'COMPLETE_TASK', module: 'To-Do', description: 'Kipipálta az Ocho Macho 50% előleg átutalását', time: '2027-04-22 16:30' },
+  { id: 'log-4', user: 'Robi', action: 'COMPLETE_TASK', module: 'To-Do', description: 'Kipipálta az Ocho Macho 50% előleg átutalását', time: '2027-04-22 16:30' },
   { id: 'log-5', user: 'Szilveszter', action: 'UPDATE', module: 'Árusok', description: 'Módosította a GASZT-01 (Kőszegi Lángos) áramigényét 3x32A Ipari-ra', time: '2027-04-23 11:20' }
 ];
 
@@ -986,7 +987,7 @@ export const MAP_POINTS = [
   { id: 'pt-bor-8', zoneId: 'zone-fo-ter', code: 'BOR-08', name: 'Frank Kőszegi Borház', type: 'wine', x: 86, y: 38, power: '1x16A', contact: 'Frank János', status: 'Üzemel', trashBags: 6, hasProblem: false, problemText: '' },
 
   // JURISICS TÉR — ÉTELEK UTCÁJA
-  { id: 'pt-ksz-1', zoneId: 'zone-jurisics', code: 'KISSZÍNPAD-1', name: 'Kisszínpad 1 (Jurisics tér - Szökőkút)', type: 'stage', x: 30, y: 72, power: '32A Ipari', contact: 'Önkéntes Csapat', status: 'Aktív Műsor', hasProblem: false, problemText: '' },
+  { id: 'pt-ksz-1', zoneId: 'zone-jurisics', code: 'KISSZÍNPAD-1', name: 'Kisszínpad 1 (Jurisics tér - Szökőkút)', type: 'stage', x: 30, y: 72, power: '32A Ipari', contact: 'Adrienn', status: 'Aktív Műsor', hasProblem: false, problemText: '' },
   { id: 'pt-el-2', zoneId: 'zone-jurisics', code: 'ÁRAM-02', name: 'Jurisics tér Ipari 3x32A Gasztro Elosztó', type: 'power', x: 48, y: 68, power: '3x63A Főbetáp', contact: 'Villanyszerelő stáb', status: 'Fokozott terhelés', hasProblem: false, problemText: '' },
   { id: 'pt-viz-1', zoneId: 'zone-jurisics', code: 'VÍZ-01', name: 'Központi Vízvételezés és Szennyvíz Csatlakozás', type: 'water', x: 58, y: 68, power: '-', contact: 'Városüzemeltetés', status: 'Nyomás rendben', hasProblem: false, problemText: '' },
   { id: 'pt-kont', zoneId: 'zone-jurisics', code: 'KONTÉNER', name: '2 db 10m3 Zárt Hulladéktömörítő Konténer', type: 'waste', x: 18, y: 88, power: '-', contact: 'Kőszegi Kommunális', status: 'Ürítés reggel', hasProblem: false, problemText: '' },
@@ -1002,7 +1003,7 @@ export const MAP_POINTS = [
   { id: 'pt-ksz-2', zoneId: 'zone-var', code: 'KISSZÍNPAD-2', name: 'Kisszínpad 2 (Várjátszótér Gyerekbirodalom)', type: 'stage', x: 15, y: 15, power: '1x16A', contact: 'Gábor Elnök', status: 'Gyerekprogramok', hasProblem: false, problemText: '' },
   
   // KAPUALJAK
-  { id: 'pt-utc-1', zoneId: 'zone-kapualj', code: 'UTC-01', name: 'Hősök Tornya alatti kapualj (Balkan Brass)', type: 'street', x: 38, y: 55, power: '230V Hosszabbító', contact: 'Műszaki Stáb', status: 'Utcazenész játszik', hasProblem: false, problemText: '' },
+  { id: 'pt-utc-1', zoneId: 'zone-kapualj', code: 'UTC-01', name: 'Hősök Tornya alatti kapualj (Balkan Brass)', type: 'street', x: 38, y: 55, power: '230V Hosszabbító', contact: 'Peti', status: 'Utcazenész játszik', hasProblem: false, problemText: '' },
   { id: 'pt-utc-2', zoneId: 'zone-kapualj', code: 'UTC-02', name: 'Chernel utca sétány kapu', type: 'street', x: 45, y: 12, power: 'Akusztikus', contact: 'Szilveszter', status: 'Szabad sáv', hasProblem: false, problemText: '' }
 ];
 
@@ -1022,7 +1023,7 @@ export const INITIAL_INCIDENTS = [
     id: 'inc-2',
     severity: 'warning',
     location: 'Fő tér — BOR-04 (Láng Pincészet)',
-    reporter: 'Önkéntes Csapat',
+    reporter: 'Bea',
     time: '13:15',
     text: 'Elfogyott a 120L kommunális kék szemeteszsák. A KTSZE raktárból 2 tekercset ki kell szállítani.',
     isResolved: false,
@@ -1093,7 +1094,7 @@ export const INITIAL_SHOPPING_LIST = [
     actualPrice: 0,
     createdBy: 'Szilveszter',
     createdAt: '2027-04-15 14:00',
-    responsible: 'Műszaki Stáb',
+    responsible: 'Peti',
     priority: 'Sürgős',
     isPurchased: false,
     purchasedBy: null,
@@ -1167,12 +1168,12 @@ export const INITIAL_SHOPPING_LIST = [
     unit: 'nyomtatvány',
     estimatedPrice: 320000,
     actualPrice: 310000,
-    createdBy: 'Zoltán',
+    createdBy: 'Robi',
     createdAt: '2027-04-20 08:30',
-    responsible: 'Zoltán',
+    responsible: 'Robi',
     priority: 'Normál',
     isPurchased: true,
-    purchasedBy: 'Zoltán',
+    purchasedBy: 'Robi',
     purchasedAt: '2027-05-10 13:00',
     hasReceipt: true,
     notes: 'Kőszeg, Szombathely és határmenti települések terjesztésére.'
@@ -1207,12 +1208,12 @@ export const INITIAL_SHOPPING_LIST = [
     unit: 'tekercs (25db/tek)',
     estimatedPrice: 64000,
     actualPrice: 62000,
-    createdBy: 'Zoltán',
+    createdBy: 'Robi',
     createdAt: '2027-05-01 10:15',
-    responsible: 'Önkéntes Csapat',
+    responsible: 'Adrienn',
     priority: 'Normál',
     isPurchased: true,
-    purchasedBy: 'Önkéntes Csapat',
+    purchasedBy: 'Bea',
     purchasedAt: '2027-05-18 11:45',
     hasReceipt: true,
     notes: 'Ételek utcája és borászatok műanyaghulladékához.'
@@ -1228,7 +1229,7 @@ export const INITIAL_SHOPPING_LIST = [
     actualPrice: 0,
     createdBy: 'Szilveszter',
     createdAt: '2027-05-02 14:00',
-    responsible: 'Műszaki Stáb',
+    responsible: 'Peti',
     priority: 'Sürgős',
     isPurchased: false,
     purchasedBy: null,
@@ -1247,7 +1248,7 @@ export const INITIAL_SHOPPING_LIST = [
     actualPrice: 0,
     createdBy: 'Szilveszter',
     createdAt: '2027-05-02 14:15',
-    responsible: 'Műszaki Stáb',
+    responsible: 'Peti',
     priority: 'Normál',
     isPurchased: false,
     purchasedBy: null,
@@ -1266,7 +1267,7 @@ export const INITIAL_SHOPPING_LIST = [
     actualPrice: 0,
     createdBy: 'Szilveszter',
     createdAt: '2027-05-05 09:30',
-    responsible: 'Önkéntes Csapat',
+    responsible: 'Adrienn',
     priority: 'Magas',
     isPurchased: false,
     purchasedBy: null,
@@ -1323,7 +1324,7 @@ export const INITIAL_SHOPPING_LIST = [
     actualPrice: 0,
     createdBy: 'Szilveszter',
     createdAt: '2027-05-08 15:30',
-    responsible: 'Önkéntes Csapat',
+    responsible: 'Bea',
     priority: 'Normál',
     isPurchased: false,
     purchasedBy: null,
@@ -1340,9 +1341,9 @@ export const INITIAL_SHOPPING_LIST = [
     unit: 'kanna (5L)',
     estimatedPrice: 24000,
     actualPrice: 0,
-    createdBy: 'Zoltán',
+    createdBy: 'Robi',
     createdAt: '2027-05-10 10:00',
-    responsible: 'Önkéntes Csapat',
+    responsible: 'Adrienn',
     priority: 'Normál',
     isPurchased: false,
     purchasedBy: null,

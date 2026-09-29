@@ -29,3 +29,11 @@ export function setLocalData(key, data) {
     console.warn('Storage write error:', e);
   }
 }
+
+export function removeLocalData(key) {
+  try {
+    localStorage.removeItem(STORAGE_PREFIX + key);
+  } catch (e) {
+    console.warn('Storage remove error:', e);
+  }
+}

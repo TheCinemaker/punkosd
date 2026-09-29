@@ -11,7 +11,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
 
   const teamMembers = users.length > 0 
     ? users.map(u => u.name) 
-    : ['Szilveszter', 'Gábor', 'Zoltán', 'Műszaki Stáb', 'Önkéntes Csapat'];
+    : ['Szilveszter', 'Gábor', 'Robi', 'Peti', 'Adrienn', 'Bea'];
 
   const categories = [
     'Összes kategória',
