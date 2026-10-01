@@ -51,7 +51,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
       id: uid('ven'),
       code: `STAND-${String(vendors.length + 1).padStart(2, '0')}`,
       name: '',
-      category: 'Borászat (Fő tér)',
+      category: '',
       location: '',
       contact: '',
       phone: '',
@@ -82,7 +82,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
       ...selectedVendor,
       code: formData.get('code'),
       name: formData.get('name'),
-      category: formData.get('category'),
+      category: (formData.get('category') || '').trim(),
       location: formData.get('location'),
       contact: formData.get('contact'),
       phone: formData.get('phone'),
@@ -427,12 +427,21 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                 <div className="grid-2">
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kategória</label>
-                    <select name="category" defaultValue={selectedVendor.category} style={{ width: '100%' }}>
-                      <option value="Borászat (Fő tér)">Borászat (Fő tér)</option>
-                      <option value="Ételek utcája (Jurisics tér)">Ételek utcája (Jurisics tér)</option>
-                      <option value="Kézműves">Kézműves</option>
-                      <option value="Kávé / Édesség">Kávé / Édesség</option>
-                    </select>
+                    <input
+                      name="category"
+                      defaultValue={selectedVendor.category}
+                      list="vendor-categories"
+                      required
+                      placeholder="Válassz vagy írj be újat"
+                      style={{ width: '100%' }}
+                    />
+                    <datalist id="vendor-categories">
+                      {Array.from(new Set([
+                        'Borászat (Fő tér)', 'Ételek utcája (Jurisics tér)', 'Kávé / Édesség', 'Kézműves',
+                        'Gyerekprogram (pl. arcfestés)', 'Civil / egyesületi stand',
+                        ...vendors.map(v => v.category).filter(Boolean)
+                      ])).map(c => <option key={c} value={c} />)}
+                    </datalist>
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Pontos Helyszín / Stand</label>

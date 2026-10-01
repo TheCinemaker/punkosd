@@ -15,29 +15,37 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNew, setIsNew] = useState(false);
 
-  const categories = [
-    'Összes szolgáltató',
+  // Javasolt kategóriák + amit már valaki beírt (szabadon bővíthető)
+  const suggestedCategories = Array.from(new Set([
     'Színpad- és Hangtechnika',
+    'Villanyszerelő & Áram',
+    'Aggregátor & Tartalék Áram',
     'Kukás & Hulladékkezelés',
-    'Villanyszerelő & E.ON',
+    'Mobil WC & Higiénia',
     'Mentőszolgálat & Egészségügy',
     'Biztonsági Szolgálat & Őrzés',
-    'Mobil WC & Higiénia',
-    'Aggregátor & Tartalék Áram',
-    'Nyomda & Reklámfelület',
     'Kordonok & Sátorbérlés',
-    'Felelősségbiztosítás'
-  ];
+    'Gyerekprogram & Animáció',
+    'Catering & Vendéglátás',
+    'Fotó & Videó',
+    'Dekoráció',
+    'Szállítás & Logisztika',
+    'Takarítás',
+    'Nyomda & Reklámfelület',
+    'Felelősségbiztosítás',
+    ...contractors.map(c => c.category).filter(Boolean)
+  ]));
+  // Szűrőgombok: csak azok a kategóriák, amelyekben van szolgáltató
+  const usedCategories = Array.from(new Set(contractors.map(c => c.category).filter(Boolean)))
+    .sort((a, b) => a.localeCompare(b, 'hu'));
+  const categories = ['Összes szolgáltató', ...usedCategories];
 
   // Filtering
   const filtered = contractors.filter(c => {
     const matchesCat = selectedCategory === 'all' || c.category === selectedCategory;
-    const matchesSearch = !searchQuery ||
-      c.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.contactName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      c.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (c.notes && c.notes.toLowerCase().includes(searchQuery.toLowerCase()));
+    const q = (searchQuery || '').toLowerCase();
+    const matchesSearch = !q ||
+      [c.companyName, c.service, c.contactName, c.code, c.category, c.notes].some(v => (v || '').toLowerCase().includes(q));
     return matchesCat && matchesSearch;
   });
 
@@ -52,7 +60,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
       id: uid('cnt'),
       code: `SZOLG-0${contractors.length + 1}`,
       companyName: '',
-      category: 'Színpad- és Hangtechnika',
+      category: '',
       service: '',
       contactName: '',
       phone: '',
@@ -82,7 +90,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
       ...selectedContractor,
       code: formData.get('code') || selectedContractor.code,
       companyName: formData.get('companyName'),
-      category: formData.get('category'),
+      category: (formData.get('category') || '').trim(),
       service: formData.get('service'),
       contactName: formData.get('contactName'),
       phone: formData.get('phone'),
@@ -219,7 +227,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                   cursor: 'pointer'
                 }}
               >
-                {cat}
+                {cat}{!isAll && ` (${contractors.filter(c => c.category === cat).length})`}
               </button>
             );
           })}
@@ -384,9 +392,18 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szakterület / Kategória
                     </label>
-                    <select name="category" defaultValue={selectedContractor.category} style={{ width: '100%' }}>
-                      {categories.slice(1).map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                    </select>
+                    <input
+                      name="category"
+                      defaultValue={selectedContractor.category}
+                      list="contractor-categories"
+                      required
+                      placeholder="Válassz vagy írj be újat (pl. Gyerekprogram & Animáció)"
+                      style={{ width: '100%' }}
+                    />
+                    <datalist id="contractor-categories">
+                      {suggestedCategories.map(cat => <option key={cat} value={cat} />)}
+                    </datalist>
+                    <div className="field-hint" style={{ marginTop: '4px' }}>Ha nincs a listában, egyszerűen írd be — legközelebb már felajánlja.</div>
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
