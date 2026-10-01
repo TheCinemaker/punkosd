@@ -7,6 +7,7 @@ import { STAGES } from '../lib/initialData';
 import { FESTIVAL } from '../lib/config';
 import { getFestivalClock, parseRange, sortByTime, formatClock, formatDuration, findOverlaps } from '../lib/time';
 import { findArtist, hasRider, isContractSigned, telHref } from '../lib/artists';
+import { isPermitOpen } from './PermitsView';
 
 function useNow(intervalMs = 30000) {
   const [now, setNow] = useState(() => new Date());
@@ -99,7 +100,7 @@ function StageCard({ stage, items, live, minutes, artists }) {
 
 export function DashboardView({
   schedule, artists, tasks, onUpdateTasks, shoppingList, incidents, onUpdateIncidents,
-  users, onNavigate, onAddLog, currentUser
+  users, permits = [], onNavigate, onAddLog, currentUser
 }) {
   const now = useNow();
   const clock = getFestivalClock(now);
@@ -130,6 +131,8 @@ export function DashboardView({
     const overlaps = findOverlaps(schedule);
     const overdue = tasks.filter(t => !t.completed && t.dueDate && t.dueDate < today);
     const me = users.find(u => u.name === currentUser);
+    const daysTo = (d) => Math.round((new Date(d) - new Date(today)) / 86400000);
+    const urgentPermits = permits.filter(p => isPermitOpen(p) && p.deadline && daysTo(p.deadline) <= 14);
     return [
       me && String(me.pin) === '1532' && {
         icon: KeyRound, tone: 'rose', tab: 'team',
@@ -140,6 +143,11 @@ export function DashboardView({
         icon: CalendarClock, tone: 'rose', tab: 'schedule',
         title: `${overlaps.length} időpont-ütközés a menetrendben`,
         detail: overlaps.slice(0, 3).map(o => `${o.a.day}: ${o.a.artist} ↔ ${o.b.artist}`).join(' · ')
+      },
+      urgentPermits.length > 0 && {
+        icon: CalendarClock, tone: urgentPermits.some(p => daysTo(p.deadline) < 0) ? 'rose' : 'amber', tab: 'permits',
+        title: `${urgentPermits.length} engedély határideje lejárt vagy 14 napon belül lejár`,
+        detail: urgentPermits.slice(0, 3).map(p => `${p.name} (${p.deadline})`).join(' · ')
       },
       overdue.length > 0 && {
         icon: AlertTriangle, tone: 'rose', tab: 'tasks',
@@ -157,7 +165,7 @@ export function DashboardView({
         detail: noContract.slice(0, 5).map(x => x.name).join(', ')
       }
     ].filter(Boolean);
-  }, [schedule, artists, tasks, today, users, currentUser]);
+  }, [schedule, artists, tasks, today, users, currentUser, permits]);
 
   const toggleTask = (task) => {
     const stamp = `${today} ${now.toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' })}`;

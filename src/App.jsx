@@ -20,6 +20,7 @@ import { TracklistView } from './components/TracklistView';
 import { BudgetView } from './components/BudgetView';
 import { AuditLogView } from './components/AuditLogView';
 import { TeamView } from './components/TeamView';
+import { PermitsView, isPermitOpen } from './components/PermitsView';
 
 import {
   DEFAULT_USERS,
@@ -55,7 +56,8 @@ const COLLECTIONS = {
   budget: INITIAL_BUDGET,
   logs: INITIAL_LOGS,
   incidents: INITIAL_INCIDENTS,
-  mapPoints: MAP_POINTS
+  mapPoints: MAP_POINTS,
+  permits: []
 };
 
 export function App() {
@@ -123,7 +125,7 @@ export function App() {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, tracklist, budget, logs, incidents, mapPoints } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, tracklist, budget, logs, incidents, mapPoints, permits } = data;
 
   const totalBudgetHuf = budget.reduce((sum, b) => sum + (Number(b.qty) || 0) * (Number(b.unitPrice) || 0), 0);
   const myOpenTasks = tasks.filter(t => !t.completed && t.assignedTo === currentUser).length;
@@ -140,6 +142,8 @@ export function App() {
     shopping: shoppingList.filter(s => !s.isPurchased).length,
     shoppingAlert: shoppingList.some(s => !s.isPurchased && s.responsible === currentUser),
     vendors: vendors.length,
+    permits: permits.filter(isPermitOpen).length,
+    permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
     tracklist: tracklist.length,
     budget: `${(totalBudgetHuf / 1000000).toFixed(1)}M`,
@@ -194,6 +198,7 @@ export function App() {
             incidents={incidents}
             onUpdateIncidents={handleUpdateIncidents}
             users={users}
+            permits={permits}
             onNavigate={handleTabChange}
             onAddLog={handleAddLog}
             currentUser={currentUser}
@@ -259,6 +264,10 @@ export function App() {
 
         {activeTab === 'shopping' && (
           <ShoppingListView shoppingList={shoppingList} onUpdateShoppingList={setter('shoppingList')} users={users} {...common} />
+        )}
+
+        {activeTab === 'permits' && (
+          <PermitsView permits={permits} onUpdatePermits={setter('permits')} users={users} {...common} />
         )}
 
         {activeTab === 'vendors' && (

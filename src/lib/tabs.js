@@ -1,6 +1,6 @@
 import {
   Home, Calendar, Users, Building2, MapPin, CheckSquare, ShoppingCart, Wine,
-  Package, Music, DollarSign, History, UserCheck, Phone
+  Package, Music, DollarSign, History, UserCheck, Phone, FileCheck
 } from 'lucide-react';
 
 // Menüpontok; `collection` = melyik adatlistához tartozik (globális kereséshez)
@@ -13,6 +13,7 @@ export const TABS = [
   { id: 'map', label: 'Helyszínrajz', longLabel: 'Helyszínrajz & Standok', icon: MapPin, collection: 'mapPoints' },
   { id: 'shopping', label: 'Beszerzés', longLabel: 'Beszerzés & Anyagigény', icon: ShoppingCart, collection: 'shoppingList' },
   { id: 'contractors', label: 'Szolgáltatók', longLabel: 'Szolgáltatók & Szerződések', icon: Building2, collection: 'contractors' },
+  { id: 'permits', label: 'Engedélyek', longLabel: 'Engedélyek & Ügyintézés', icon: FileCheck, collection: 'permits' },
   { id: 'vendors', label: 'Árusok', longLabel: 'Árusok & Közművek', icon: Wine, collection: 'vendors' },
   { id: 'inventory', label: 'Készlet', longLabel: 'Készlet & Zsákok', icon: Package, collection: 'inventory' },
   { id: 'team', label: 'Stáb', longLabel: 'Szervezők & Stáb', icon: UserCheck, collection: 'users' },
