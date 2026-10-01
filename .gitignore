@@ -29,3 +29,4 @@ dist-ssr
 
 # Teszt PDF-ek (feltoltes kiprobalasahoz)
 teszt-pdf/
+dist-test

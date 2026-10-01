@@ -5,8 +5,8 @@ import {
   MapPin, AlertCircle, CheckCircle2, Phone, Navigation, Crosshair, Pencil, Plus,
   Trash2, X, Search, LocateFixed, Radio, Clock
 } from 'lucide-react';
-import { STAGES } from '../lib/initialData';
-import { FESTIVAL, MAP_ZONES, STAGE_POSITIONS } from '../lib/config';
+import { getStages } from '../lib/stages';
+import { FESTIVAL, MAP_ZONES } from '../lib/config';
 import { uid } from '../lib/store';
 import { telHref } from '../lib/artists';
 import { responsibleCalls } from '../lib/contacts';
@@ -43,7 +43,7 @@ function getCurrentPosition() {
 }
 
 export function SiteMapView({
-  points, onUpdatePoints, vendors, onUpdateVendors, schedule, contractors = [], incidents, onUpdateIncidents,
+  points, onUpdatePoints, vendors, onUpdateVendors, stages = [], onUpdateStages, schedule, contractors = [], incidents, onUpdateIncidents,
   onAddLog, currentUser, searchQuery
 }) {
   const [typeFilter, setTypeFilter] = useState('all');
@@ -62,10 +62,10 @@ export function SiteMapView({
 
   // ---------- Minden térképi elem egy listában ----------
   const items = useMemo(() => [
-    ...STAGES.filter(s => STAGE_POSITIONS[s.id]).map(s => ({
+    ...getStages().filter(s => !s.parallel || hasPos(s)).map(s => ({
       key: `stage:${s.id}`, kind: 'stage', id: s.id, type: 'stage',
       code: s.name.split('(')[0].trim(), name: s.name, location: s.location,
-      lat: STAGE_POSITIONS[s.id][0], lng: STAGE_POSITIONS[s.id][1]
+      lat: s.lat, lng: s.lng
     })),
     ...vendors.map(v => ({
       key: `vendor:${v.id}`, kind: 'vendor', id: v.id,
@@ -80,7 +80,7 @@ export function SiteMapView({
       power: p.power, status: p.status, lat: p.lat, lng: p.lng,
       hasProblem: p.hasProblem, problemText: p.problemText
     }))
-  ], [points, vendors]);
+  ], [points, vendors, stages]);
 
   const q = `${searchQuery || ''} ${localQuery}`.trim().toLowerCase();
   const matches = (it) => !q || q.split(/\s+/).every(w =>
@@ -98,6 +98,7 @@ export function SiteMapView({
     const pos = lat == null ? { lat: null, lng: null } : { lat: round(lat), lng: round(lng) };
     if (it.kind === 'vendor') onUpdateVendors(vendors.map(v => (v.id === it.id ? { ...v, ...pos } : v)));
     else if (it.kind === 'point') onUpdatePoints(points.map(p => (p.id === it.id ? { ...p, ...pos } : p)));
+    else if (it.kind === 'stage' && onUpdateStages) onUpdateStages(getStages().map(st => (st.id === it.id ? { ...st, ...pos } : st)));
     else return;
     onAddLog({
       user: currentUser,
@@ -161,7 +162,7 @@ export function SiteMapView({
       });
       const marker = L.marker([it.lat, it.lng], {
         icon,
-        draggable: editMode && it.kind !== 'stage',
+        draggable: editMode,
         zIndexOffset: isSel ? 1000 : it.hasProblem ? 500 : it.kind === 'stage' ? 300 : 0,
         keyboard: false
       });
@@ -358,7 +359,7 @@ export function SiteMapView({
           )}
         </div>
 
-        {editMode && it.kind !== 'stage' && (
+        {editMode && (
           <div className="map-edit-actions">
             <button className="btn-secondary" onClick={() => setPlacingKey(it.key)}><Crosshair size={14} /> Elhelyezés koppintással</button>
             <button className="btn-secondary" onClick={() => placeHereByGps(it)}><LocateFixed size={14} /> Ide, ahol állok</button>
@@ -385,7 +386,7 @@ export function SiteMapView({
           </form>
         )}
         {editMode && it.kind === 'stage' && (
-          <div className="field-hint" style={{ marginTop: '10px' }}>A színpadok helye rögzített (config.js).</div>
+          <div className="field-hint" style={{ marginTop: '10px' }}>A helyszín nevét és adatait a Menetrend → Helyszínek gombbal lehet módosítani.</div>
         )}
       </div>
     );

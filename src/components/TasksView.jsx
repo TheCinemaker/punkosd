@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, Check, X } from 'lucide-react';
+import { Edit2, CheckSquare, Square, Plus, Trash2, Calendar, UserCheck, Check, X } from 'lucide-react';
 import { uid } from '../lib/store';
 import { FESTIVAL } from '../lib/config';
 
@@ -7,7 +7,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'completed'
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterAssignee, setFilterAssignee] = useState('all');
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editing, setEditing] = useState(null); // null = zárva, {} = új, feladat = szerkesztés
 
   const teamMembers = users.length > 0 
     ? users.map(u => u.name) 
@@ -57,32 +57,49 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
     });
   };
 
-  const handleAddNewTask = (e) => {
+  const handleSaveTask = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const newTask = {
-      id: uid('tsk'),
-      title: formData.get('title'),
+    const fields = {
+      title: formData.get('title').trim(),
       category: (formData.get('category') || '').trim(),
       priority: formData.get('priority'),
       assignedTo: formData.get('assignedTo') || currentUser,
       dueDate: formData.get('dueDate'),
-      completed: false,
-      completedBy: null,
-      completedAt: null,
-      createdBy: currentUser,
       notes: formData.get('notes')
     };
 
-    onUpdateTasks([newTask, ...tasks]);
-    onAddLog({
-      user: currentUser,
-      action: 'CREATE',
-      module: 'To-Do Feladatok',
-      description: `Új feladatot hozott létre: "${newTask.title}" (Felelős: ${newTask.assignedTo})`
-    });
+    if (editing.id) {
+      const updated = { ...editing, ...fields };
+      onUpdateTasks(tasks.map(t => (t.id === editing.id ? updated : t)));
+      const changes = [];
+      if (editing.assignedTo !== fields.assignedTo) changes.push(`felelős: ${editing.assignedTo} → ${fields.assignedTo}`);
+      if (editing.dueDate !== fields.dueDate) changes.push(`határidő: ${editing.dueDate || '—'} → ${fields.dueDate || '—'}`);
+      onAddLog({
+        user: currentUser,
+        action: 'UPDATE',
+        module: 'To-Do Feladatok',
+        description: `Módosította a feladatot: "${fields.title}"${changes.length ? ` (${changes.join(', ')})` : ''}`
+      });
+    } else {
+      const newTask = {
+        id: uid('tsk'),
+        ...fields,
+        completed: false,
+        completedBy: null,
+        completedAt: null,
+        createdBy: currentUser
+      };
+      onUpdateTasks([newTask, ...tasks]);
+      onAddLog({
+        user: currentUser,
+        action: 'CREATE',
+        module: 'To-Do Feladatok',
+        description: `Új feladatot hozott létre: "${newTask.title}" (Felelős: ${newTask.assignedTo})`
+      });
+    }
 
-    setIsModalOpen(false);
+    setEditing(null);
   };
 
   const handleDeleteTask = (id, title) => {
@@ -203,7 +220,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
           </select>
 
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setEditing({})}
             className="btn-primary"
             style={{ padding: '8px 16px', fontSize: '13px' }}
           >
@@ -261,7 +278,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                   {task.completed ? <CheckSquare size={22} color="#059669" /> : <Square size={22} color="#64748b" />}
                 </button>
 
-                <div style={{ flex: 1 }}>
+                <div style={{ flex: 1, cursor: 'pointer' }} onClick={() => setEditing(task)} title="Szerkesztés">
                   <div style={{
                     fontSize: '14.5px',
                     fontWeight: '700',
@@ -280,7 +297,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                   {/* Audit Footer: WHO COMPLETED IT */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '8px', fontSize: '12px', flexWrap: 'wrap' }}>
                     <span className="badge badge-gray">{task.category}</span>
-                    <span className={`badge ${task.priority.includes('Sürgős') ? 'badge-rose' : task.priority === 'Magas' ? 'badge-amber' : 'badge-blue'}`}>
+                    <span className={`badge ${(task.priority || '').includes('Sürgős') ? 'badge-rose' : task.priority === 'Magas' ? 'badge-amber' : 'badge-blue'}`}>
                       {task.priority}
                     </span>
 
@@ -319,7 +336,14 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
               </div>
 
               {/* Right: Actions */}
-              <div>
+              <div style={{ display: 'flex', gap: '2px' }}>
+                <button
+                  onClick={() => setEditing(task)}
+                  title="Feladat szerkesztése"
+                  style={{ color: '#2563eb', padding: '6px', borderRadius: '4px', cursor: 'pointer' }}
+                >
+                  <Edit2 size={17} />
+                </button>
                 <button
                   onClick={() => handleDeleteTask(task.id, task.title)}
                   title="Feladat törlése"
@@ -336,16 +360,16 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
       </div>
 
       {/* Add Task Modal */}
-      {isModalOpen && (
+      {editing && (
         <div className="modal-overlay">
           <div className="modal-card">
             <div className="modal-header">
               <h2 style={{ fontSize: '16px', fontWeight: '800', color: '#0f172a' }}>
-                Új Operatív Feladat Rögzítése
+                {editing.id ? 'Feladat szerkesztése' : 'Új feladat rögzítése'}
               </h2>
-              <button onClick={() => setIsModalOpen(false)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
+              <button onClick={() => setEditing(null)} style={{ color: '#475569', padding: '6px', cursor: 'pointer' }}><X size={20} /></button>
             </div>
-            <form onSubmit={handleAddNewTask}>
+            <form key={editing.id || 'new'} onSubmit={handleSaveTask}>
               <div className="modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div>
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
@@ -353,6 +377,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                   </label>
                   <input
                     name="title"
+                    defaultValue={editing.title}
                     placeholder="pl. 120L szemeteszsákok kiszállítása a Jurisics térre"
                     required
                     style={{ width: '100%' }}
@@ -364,7 +389,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kategória
                     </label>
-                    <input name="category" list="task-categories" required placeholder="Válassz vagy írj be újat" style={{ width: '100%' }} />
+                    <input name="category" defaultValue={editing.category} list="task-categories" required placeholder="Válassz vagy írj be újat" style={{ width: '100%' }} />
                     <datalist id="task-categories">
                       {categories.slice(1).map(c => <option key={c} value={c} />)}
                     </datalist>
@@ -373,7 +398,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Prioritás
                     </label>
-                    <select name="priority" style={{ width: '100%' }}>
+                    <select name="priority" defaultValue={editing.priority || 'Normál'} style={{ width: '100%' }}>
                       <option value="Sürgős">Sürgős</option>
                       <option value="Magas">Magas</option>
                       <option value="Normál">Normál</option>
@@ -387,7 +412,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Felelős Személy
                     </label>
-                    <select name="assignedTo" defaultValue={currentUser} style={{ width: '100%' }}>
+                    <select name="assignedTo" defaultValue={editing.assignedTo || currentUser} style={{ width: '100%' }}>
                       {teamMembers.map(m => (
                         <option key={m} value={m}>{m}</option>
                       ))}
@@ -397,7 +422,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Határidő Dátuma
                     </label>
-                    <input type="date" name="dueDate" defaultValue={FESTIVAL.days[0].date} style={{ width: '100%' }} />
+                    <input type="date" name="dueDate" defaultValue={editing.id ? editing.dueDate : FESTIVAL.days[0].date} style={{ width: '100%' }} />
                   </div>
                 </div>
 
@@ -405,12 +430,12 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                     Megjegyzés / Részletek
                   </label>
-                  <textarea name="notes" rows={3} placeholder="Helyszín, kontakt, speciális teendő..." style={{ width: '100%' }} />
+                  <textarea name="notes" rows={3} defaultValue={editing.notes} placeholder="Helyszín, kontakt, speciális teendő..." style={{ width: '100%' }} />
                 </div>
               </div>
               <div className="modal-footer">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">Mégse</button>
-                <button type="submit" className="btn-primary">Feladat Rögzítése</button>
+                <button type="button" onClick={() => setEditing(null)} className="btn-secondary">Mégse</button>
+                <button type="submit" className="btn-primary">{editing.id ? 'Mentés' : 'Feladat rögzítése'}</button>
               </div>
             </form>
           </div>

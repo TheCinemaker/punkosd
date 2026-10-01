@@ -12,11 +12,12 @@ export const DEFAULT_USERS = [
   { id: 'usr-6', name: 'Bea', role: 'Szervező', badge: 'Helyszín', phone: '', email: '', pin: '1532', radio: '' }
 ];
 
+// Kezdő helyszínlista — az appban (Menetrend → Helyszínek) szerkeszthető, bővíthető
 export const STAGES = [
-  { id: 'main_stage', name: 'Nagyszínpad (Fő tér)', location: 'Fő tér (Borok helyszíne)', type: 'Nagyszínpad', capacity: '4000 fő' },
-  { id: 'small_stage_1', name: 'Kisszínpad 1 (Jurisics tér)', location: 'Jurisics tér (Ételek utcája)', type: 'Utcazene & Akusztik', capacity: '1200 fő' },
-  { id: 'small_stage_2', name: 'Kisszínpad 2 (Várjátszótér)', location: 'Várjátszótér & Várárok', type: 'Gyerekbirodalom', capacity: '800 fő' },
-  { id: 'street_points', name: 'Belvárosi Kapualjak', location: 'Kapualjak & Sétányok', type: 'Egyedi Zenészek', capacity: '200 fő' },
+  { id: 'main_stage', name: 'Nagyszínpad (Fő tér)', location: 'Fő tér', capacity: '', parallel: false, order: 1, lat: 47.388091209174306, lng: 16.54176324306651 },
+  { id: 'small_stage_1', name: 'Kisszínpad 1 (Jurisics tér)', location: 'Jurisics tér', capacity: '', parallel: false, order: 2, lat: 47.388757161379104, lng: 16.54120497730775 },
+  { id: 'small_stage_2', name: 'Kisszínpad 2 (Várjátszótér)', location: 'Várjátszótér & Várárok', capacity: '', parallel: false, order: 3, lat: 47.388416783237474, lng: 16.538928064418478 },
+  { id: 'street_points', name: 'Belvárosi kapualjak', location: 'Kapualjak & sétányok', capacity: '', parallel: true, order: 4, lat: null, lng: null }
 ];
 
 export const DAYS = FESTIVAL.days.map(d => d.name);
@@ -26,7 +27,6 @@ export const INITIAL_ARTISTS = [];
 export const INITIAL_VENDORS = [];
 export const INITIAL_TASKS = [];
 export const INITIAL_INVENTORY = [];
-export const INITIAL_TRACKLIST = [];
 export const INITIAL_BUDGET = [];
 export const INITIAL_LOGS = [];
 export const INITIAL_CONTRACTORS = [];

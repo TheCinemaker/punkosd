@@ -1,4 +1,5 @@
-import { FESTIVAL, PARALLEL_STAGES } from './config';
+import { FESTIVAL } from './config';
+import { isParallelStage } from './stages';
 
 const DAY_START = FESTIVAL.dayStartsAtHour * 60;
 
@@ -47,7 +48,7 @@ export function findOverlaps(schedule) {
   const conflicts = [];
   const groups = {};
   schedule.forEach(item => {
-    if (PARALLEL_STAGES.includes(item.stageId)) return;
+    if (isParallelStage(item.stageId)) return;
     const key = `${item.day}|${item.stageId}`;
     (groups[key] = groups[key] || []).push(item);
   });

@@ -1,11 +1,14 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Plus, Trash2, Clock, Volume2, UserCheck, AlertTriangle, FileText, CheckCircle2,
-  Eye, Radio, X, Printer, Star, LayoutGrid, List, GanttChartSquare, Copy, Undo2
+  Eye, Radio, X, Printer, Star, LayoutGrid, List, GanttChartSquare, Copy, Undo2, MapPin
 } from 'lucide-react';
+import { StagesManager } from './StagesManager';
+import { CONTRACT_STATUSES, normalizeContract } from '../lib/statuses';
 import { buildArtistInfo } from '../lib/callsheet';
 import { copyText } from '../lib/contacts';
-import { DAYS, STAGES } from '../lib/initialData';
+import { DAYS } from '../lib/initialData';
+import { getStages, stageShortName } from '../lib/stages';
 import { getFestivalClock, parseRange, sortByTime, findOverlaps, formatClock, shiftClockString } from '../lib/time';
 import { findArtist, hasRider, isContractSigned } from '../lib/artists';
 import { uid } from '../lib/store';
@@ -32,10 +35,6 @@ const DOC_FIELDS = ['techRiderDoc', 'contractDoc', 'stagePlotDoc'];
 
 const PX_PER_MIN = 1.4;
 
-function stageShortName(stageId) {
-  const s = STAGES.find(st => st.id === stageId);
-  return s ? s.name.split('(')[0].trim() : stageId;
-}
 
 function statusBadge(status) {
   if (status === 'Visszaigazolva' || status === 'Jóváhagyva') return 'badge-green';
@@ -48,11 +47,13 @@ export function ScheduleView({
   onUpdateSchedule,
   artists,
   onUpdateArtists,
+  onUpdateStages,
   users = [],
   onAddLog,
   currentUser,
   searchQuery
 }) {
+  const STAGES = getStages();
   const [selectedDay, setSelectedDay] = useState(() => getFestivalClock().day || DAYS[0]);
   const [viewMode, setViewMode] = useState('board');
   const [selectedItem, setSelectedItem] = useState(null);
@@ -61,6 +62,7 @@ export function ScheduleView({
   const [formError, setFormError] = useState('');
   const formRef = useRef(null);
   const [toast, setToast] = useState(null);
+  const [stagesOpen, setStagesOpen] = useState(false);
   const [printStageId, setPrintStageId] = useState(null);
   const scheduleRef = useRef(schedule);
   scheduleRef.current = schedule;
@@ -113,7 +115,7 @@ export function ScheduleView({
       featured: false,
       fee: 0,
       feeType: 'Átutalás / Kft számla',
-      contractStatus: 'Tervezet',
+      contractStatus: 'Nincs még',
       contactName: '',
       contactPhone: '',
       contactEmail: '',
@@ -602,10 +604,15 @@ export function ScheduleView({
               <button onClick={() => setViewMode('timeline')} className={viewMode === 'timeline' ? 'active' : ''}><GanttChartSquare size={14} /> Idővonal</button>
               <button onClick={() => setViewMode('list')} className={viewMode === 'list' ? 'active' : ''}><List size={14} /> Lista</button>
             </div>
+            {onUpdateStages && (
+              <button onClick={() => setStagesOpen(true)} className="btn-secondary" title="Színpadok, helyszínek felvétele és átnevezése">
+                <MapPin size={15} /> Helyszínek
+              </button>
+            )}
             <button onClick={() => handlePrint(null)} className="btn-secondary" title="A4 napi beosztás, színpadonként külön lapon">
               <Printer size={15} /> Napi beosztás (A4)
             </button>
-            <button onClick={() => handleAddNew('main_stage')} className="btn-primary">
+            <button onClick={() => handleAddNew(STAGES[0]?.id)} className="btn-primary">
               <Plus size={16} /> Új műsor
             </button>
           </div>
@@ -643,6 +650,20 @@ export function ScheduleView({
       </div>
 
       {renderPrintSheet()}
+
+      {stagesOpen && (
+        <StagesManager
+          stages={STAGES}
+          schedule={schedule}
+          onClose={() => setStagesOpen(false)}
+          onSave={(list) => {
+            onUpdateStages(list);
+            onAddLog({ user: currentUser, action: 'UPDATE', module: 'Menetrend & Lineup', description: `Módosította a helyszínlistát (${list.length} helyszín)` });
+            setStagesOpen(false);
+            setToast({ text: 'Helyszínek mentve.' });
+          }}
+        />
+      )}
 
       {toast && (
         <div className="toast no-print" role="status">
@@ -686,7 +707,7 @@ export function ScheduleView({
                     <option value="">— Meglévő fellépő kiválasztása —</option>
                     {artists.map(a => (
                       <option key={a.id} value={a.id}>
-                        {a.name} ({`${Number(a.fee || 0).toLocaleString('hu-HU')} Ft`} • {a.contractStatus})
+                        {a.name} ({`${Number(a.fee || 0).toLocaleString('hu-HU')} Ft`} • {normalizeContract(a.contractStatus)})
                       </option>
                     ))}
                   </select>
@@ -816,10 +837,8 @@ export function ScheduleView({
                   </div>
                   <div>
                     <label className="field-label">Szerződés státusz</label>
-                    <select name="contractStatus" defaultValue={selectedItem.contractStatus}>
-                      <option value="Tervezet">Tervezet</option>
-                      <option value="Kiküldve">Kiküldve</option>
-                      <option value="Aláírva">Aláírva</option>
+                    <select name="contractStatus" defaultValue={normalizeContract(selectedItem.contractStatus)}>
+                      {CONTRACT_STATUSES.map(c => <option key={c.value} value={c.value}>{c.value}</option>)}
                     </select>
                   </div>
                 </div>

@@ -7,15 +7,7 @@ import { telHref } from '../lib/artists';
 import { responsibleCalls } from '../lib/contacts';
 import { numOr } from '../lib/form';
 
-// Szerződés állapotai (sorrend = folyamat)
-const CONTRACT_STATUSES = [
-  { value: 'Nincs még', badge: 'badge-gray' },
-  { value: 'Egyeztetés folyamatban', badge: 'badge-amber' },
-  { value: 'Kiküldve, aláírásra vár', badge: 'badge-blue' },
-  { value: 'Aláírva', badge: 'badge-green' },
-  { value: 'Visszalépett / lemondta', badge: 'badge-rose' }
-];
-const contractBadge = (status) => CONTRACT_STATUSES.find(c => c.value === status)?.badge || 'badge-gray';
+import { CONTRACT_STATUSES, CONTRACT_PENDING, contractBadge } from '../lib/statuses';
 
 export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddLog, currentUser, searchQuery }) {
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -40,7 +32,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
   const total32ACount = vendors.filter(v => (v.power || '').includes('3x32A')).length;
   const total16ACount = vendors.filter(v => (v.power || '').includes('16A')).length;
   const signedCount = vendors.filter(v => v.contractStatus === 'Aláírva').length;
-  const pendingCount = vendors.filter(v => ['Egyeztetés folyamatban', 'Kiküldve, aláírásra vár'].includes(v.contractStatus)).length;
+  const pendingCount = vendors.filter(v => CONTRACT_PENDING.includes(v.contractStatus)).length;
   const totalTrashBags = vendors.reduce((sum, v) => sum + (v.trashBagsIssued || 0), 0);
   const totalTrashBins = vendors.reduce((sum, v) => sum + (v.trashBins || 0), 0);
   const totalDeposits = vendors.reduce((sum, v) => sum + (v.deposit || 0), 0);

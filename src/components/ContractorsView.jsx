@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
+import { CONTRACT_STATUSES, CONTRACT_PENDING, normalizeContract, contractBadge } from '../lib/statuses';
 import { docName } from '../lib/files';
 import { telHref } from '../lib/artists';
 import { numOr } from '../lib/form';
@@ -52,7 +53,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
   // KPI Calculations
   const totalContractedHuf = contractors.reduce((sum, c) => sum + (c.feeHuf || 0), 0);
   const signedCount = contractors.filter(c => c.contractStatus === 'Aláírva').length;
-  const pendingCount = contractors.filter(c => c.contractStatus !== 'Aláírva').length;
+  const pendingCount = contractors.filter(c => CONTRACT_PENDING.includes(normalizeContract(c.contractStatus))).length;
 
   const handleOpenAdd = () => {
     setIsNew(true);
@@ -66,7 +67,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
       phone: '',
       email: '',
       feeHuf: 0,
-      contractStatus: 'Tárgyalás alatt',
+      contractStatus: 'Egyeztetés folyamatban',
       paymentStatus: 'Fizetésre vár',
       invoiceNumber: '-',
       contractDoc: null,
@@ -304,8 +305,8 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                       {`${Number(c.feeHuf || 0).toLocaleString('hu-HU')} Ft`}
                     </td>
                     <td>
-                      <span className={`badge ${isSigned ? 'badge-green' : 'badge-amber'}`}>
-                        {c.contractStatus}
+                      <span className={`badge ${contractBadge(c.contractStatus)}`}>
+                        {normalizeContract(c.contractStatus)}
                       </span>
                     </td>
                     <td>
@@ -447,10 +448,8 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Szerződés Státusza
                     </label>
-                    <select name="contractStatus" defaultValue={selectedContractor.contractStatus} style={{ width: '100%' }}>
-                      <option value="Tárgyalás alatt">Tárgyalás alatt</option>
-                      <option value="Kiküldve">Kiküldve</option>
-                      <option value="Aláírva">Aláírva</option>
+                    <select name="contractStatus" defaultValue={normalizeContract(selectedContractor.contractStatus)} style={{ width: '100%' }}>
+                      {CONTRACT_STATUSES.map(c => <option key={c.value} value={c.value}>{c.value}</option>)}
                     </select>
                   </div>
                   <div>

@@ -3,7 +3,7 @@ import {
   Radio, Clock, CheckSquare, Square, ShoppingCart, AlertCircle, AlertTriangle,
   Phone, ChevronRight, Volume2, FileWarning, FileSignature, CalendarClock, CheckCircle2, KeyRound
 } from 'lucide-react';
-import { STAGES } from '../lib/initialData';
+import { getStages } from '../lib/stages';
 import { FESTIVAL } from '../lib/config';
 import { getFestivalClock, parseRange, sortByTime, formatClock, formatDuration, findOverlaps } from '../lib/time';
 import { findArtist, hasRider, isContractSigned, telHref } from '../lib/artists';
@@ -20,7 +20,7 @@ function useNow(intervalMs = 30000) {
 
 function StageCard({ stage, items, live, minutes, artists }) {
   const withRange = items.map(item => ({ item, range: parseRange(item.time) })).filter(x => x.range);
-  const isParallel = stage.id === 'street_points';
+  const isParallel = Boolean(stage.parallel);
 
   if (withRange.length === 0) {
     return (
@@ -234,7 +234,7 @@ export function DashboardView({
           <button className="link-btn" onClick={() => onNavigate('schedule')}>Menetrend <ChevronRight size={14} /></button>
         </div>
         <div className="dash-stages">
-          {STAGES.map(stage => (
+          {getStages().map(stage => (
             <StageCard
               key={stage.id}
               stage={stage}

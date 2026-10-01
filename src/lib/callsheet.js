@@ -1,4 +1,4 @@
-import { STAGES } from './initialData';
+import { getStage } from './stages';
 import { FESTIVAL } from './config';
 import { findArtist } from './artists';
 import { sortByTime } from './time';
@@ -12,7 +12,7 @@ export function buildArtistInfo(artist, schedule, users) {
   slots
     .sort((a, b) => FESTIVAL.days.findIndex(d => d.name === a.day) - FESTIVAL.days.findIndex(d => d.name === b.day))
     .forEach(s => {
-      const stage = STAGES.find(st => st.id === s.stageId);
+      const stage = getStage(s.stageId);
       const date = FESTIVAL.days.find(d => d.name === s.day)?.date;
       const manager = users.find(u => u.name === s.stageManager);
       const parts = [

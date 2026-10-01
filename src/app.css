@@ -214,6 +214,29 @@ a { color: #1d4ed8; }
 .permit-docs a { display: inline-flex; align-items: center; gap: 4px; font-size: 12.5px; }
 .chip:disabled { opacity: .5; }
 
+/* Menücsoportok, helyszínkezelő, lomtár */
+.nav-group {
+  font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em;
+  color: #64748b; padding: 12px 12px 4px;
+}
+.top-nav-inner > .nav-group:first-child { padding-top: 2px; }
+.nav-group.sheet { padding: 12px 4px 6px; }
+@media (max-width: 768px) { .top-nav .nav-group { display: none; } }
+@media (min-width: 769px) { .top-nav-tab { padding-top: 8px; padding-bottom: 8px; } }
+
+.stage-row { display: flex; gap: 10px; align-items: flex-start; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px; }
+.stage-row-order { display: flex; flex-direction: column; gap: 4px; }
+.stage-row-order button { border: 1px solid #cbd5e1; border-radius: 6px; padding: 3px; display: inline-flex; }
+.stage-row-fields { flex: 1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.stage-row-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.trash-list { display: flex; flex-direction: column; gap: 8px; }
+.trash-item { display: flex; align-items: center; gap: 12px; background: #fff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 12px; }
+.trash-main { flex: 1; min-width: 0; }
+.trash-title { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 14px; }
+.trash-actions { display: flex; align-items: center; gap: 6px; }
+@media (max-width: 768px) { .trash-item { flex-direction: column; align-items: stretch; } }
+
 /* Hibavédő */
 .error-box {
   max-width: 640px; margin: 24px auto; background: #fff; border: 2px solid #fca5a5; border-radius: 12px;

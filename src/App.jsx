@@ -16,11 +16,11 @@ import { TasksView } from './components/TasksView';
 import { ShoppingListView } from './components/ShoppingListView';
 import { VendorsView } from './components/VendorsView';
 import { InventoryView } from './components/InventoryView';
-import { TracklistView } from './components/TracklistView';
 import { BudgetView } from './components/BudgetView';
 import { AuditLogView } from './components/AuditLogView';
 import { TeamView } from './components/TeamView';
 import { PermitsView, isPermitOpen } from './components/PermitsView';
+import { TrashView, TRASH_DAYS } from './components/TrashView';
 
 import {
   DEFAULT_USERS,
@@ -31,17 +31,19 @@ import {
   INITIAL_TASKS,
   INITIAL_SHOPPING_LIST,
   INITIAL_INVENTORY,
-  INITIAL_TRACKLIST,
   INITIAL_BUDGET,
   INITIAL_LOGS,
   INITIAL_INCIDENTS,
-  MAP_POINTS
+  MAP_POINTS,
+  STAGES
 } from './lib/initialData';
 
 import { getLocalData, setLocalData } from './lib/supabase';
 import { useFestivalStore, uid } from './lib/store';
 import { notify } from './lib/notify';
 import { TABS } from './lib/tabs';
+import { setStages } from './lib/stages';
+import { itemLabel, labelOf } from './lib/backup';
 
 const COLLECTIONS = {
   users: DEFAULT_USERS,
@@ -52,13 +54,17 @@ const COLLECTIONS = {
   tasks: INITIAL_TASKS,
   shoppingList: INITIAL_SHOPPING_LIST,
   inventory: INITIAL_INVENTORY,
-  tracklist: INITIAL_TRACKLIST,
   budget: INITIAL_BUDGET,
   logs: INITIAL_LOGS,
   incidents: INITIAL_INCIDENTS,
   mapPoints: MAP_POINTS,
-  permits: []
+  permits: [],
+  stages: STAGES,
+  trash: []
 };
+
+// Ezekből a törölt tételek a lomtárba kerülnek
+const TRASHABLE = new Set(Object.keys(COLLECTIONS).filter(k => k !== 'logs' && k !== 'trash'));
 
 export function App() {
   const [currentUser, setCurrentUser] = useState(() => getLocalData('currentUser', null));
@@ -119,13 +125,47 @@ export function App() {
     }
   }, [update, get]);
 
-  const setter = (key) => (next) => update(key, next);
+  // Mentés + a törölt tételek lomtárba helyezése (30 napig visszaállítható)
+  const setter = (key) => (next) => {
+    const prev = get(key);
+    const nextIds = new Set(next.map(i => i.id));
+    const removed = prev.filter(i => !nextIds.has(i.id));
+    update(key, next);
+    if (removed.length && TRASHABLE.has(key)) {
+      const deletedAt = new Date().toISOString();
+      update('trash', [
+        ...removed.map(item => ({ id: uid('trash'), collection: key, item, label: itemLabel(item), deletedBy: currentUser, deletedAt })),
+        ...get('trash')
+      ]);
+    }
+  };
+
+  const handleRestore = useCallback((entry) => {
+    const list = get(entry.collection);
+    if (!list.some(i => i.id === entry.item.id)) update(entry.collection, [...list, entry.item]);
+    update('trash', get('trash').filter(t => t.id !== entry.id));
+    handleAddLog({ user: currentUser, action: 'RESTORE', module: 'Lomtár & Mentés', description: `Visszaállította: ${labelOf(entry.collection)} — ${entry.label}` });
+  }, [get, update, handleAddLog, currentUser]);
+
+  const handlePurge = useCallback((ids) => {
+    update('trash', get('trash').filter(t => !ids.includes(t.id)));
+  }, [get, update]);
+
+  // 30 napnál régebbi lomtár-tételek automatikus végleges törlése
+  useEffect(() => {
+    const limit = Date.now() - TRASH_DAYS * 86400000;
+    const old = data.trash.filter(t => new Date(t.deletedAt).getTime() < limit).map(t => t.id);
+    if (old.length) handlePurge(old);
+  }, [data.trash, handlePurge]);
+
+  // A helyszínlistát minden nézet innen olvassa
+  setStages(data.stages);
 
   if (!currentUser) {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, tracklist, budget, logs, incidents, mapPoints, permits } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, trash } = data;
 
   const totalBudgetHuf = budget.reduce((sum, b) => sum + (Number(b.qty) || 0) * (Number(b.unitPrice) || 0), 0);
   const myOpenTasks = tasks.filter(t => !t.completed && t.assignedTo === currentUser).length;
@@ -145,7 +185,7 @@ export function App() {
     permits: permits.filter(isPermitOpen).length,
     permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
-    tracklist: tracklist.length,
+    trash: trash.length || undefined,
     budget: `${(totalBudgetHuf / 1000000).toFixed(1)}M`,
     logs: logs.length,
     dashboard: incidents.filter(i => !i.isResolved).length || undefined,
@@ -221,6 +261,7 @@ export function App() {
             onUpdateSchedule={setter('schedule')}
             artists={artists}
             onUpdateArtists={setter('artists')}
+            onUpdateStages={setter('stages')}
             users={users}
             {...common}
           />
@@ -250,6 +291,8 @@ export function App() {
             onUpdatePoints={setter('mapPoints')}
             vendors={vendors}
             onUpdateVendors={setter('vendors')}
+            stages={stages}
+            onUpdateStages={setter('stages')}
             schedule={schedule}
             contractors={contractors}
             incidents={incidents}
@@ -278,12 +321,12 @@ export function App() {
           <InventoryView inventory={inventory} onUpdateInventory={setter('inventory')} {...common} />
         )}
 
-        {activeTab === 'tracklist' && (
-          <TracklistView tracklist={tracklist} onUpdateTracklist={setter('tracklist')} artists={artists} {...common} />
-        )}
-
         {activeTab === 'budget' && (
           <BudgetView budget={budget} onUpdateBudget={setter('budget')} {...common} />
+        )}
+
+        {activeTab === 'trash' && (
+          <TrashView trash={trash} onRestore={handleRestore} onPurge={handlePurge} data={data} onAddLog={handleAddLog} currentUser={currentUser} />
         )}
 
         {activeTab === 'logs' && (

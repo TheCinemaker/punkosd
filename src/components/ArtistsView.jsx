@@ -7,6 +7,7 @@ import { DocSlot } from './DocSlot';
 import { buildArtistInfo } from '../lib/callsheet';
 import { copyText } from '../lib/contacts';
 import { numOr } from '../lib/form';
+import { CONTRACT_STATUSES, normalizeContract, contractBadge } from '../lib/statuses';
 
 export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [], onAddLog, currentUser, searchQuery }) {
   const [copyMsg, setCopyMsg] = useState('');
@@ -45,7 +46,7 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
       email: '',
       fee: 0,
       feeType: 'Átutalás / Kft számla',
-      contractStatus: 'Tervezet',
+      contractStatus: 'Nincs még',
       paymentStatus: 'Fizetésre vár',
       techRider: 'Egyeztetés alatt',
       hospitality: 'Ásványvíz, kávé, gyümölcstál',
@@ -201,8 +202,8 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
                       {a.feeType}
                     </td>
                     <td>
-                      <span className={`badge ${isSigned ? 'badge-green' : 'badge-amber'}`}>
-                        {a.contractStatus}
+                      <span className={`badge ${contractBadge(a.contractStatus)}`}>
+                        {normalizeContract(a.contractStatus)}
                       </span>
                     </td>
                     <td>
@@ -341,10 +342,8 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
                     <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       Szerződés Státusza
                     </label>
-                    <select name="contractStatus" defaultValue={selectedArtist.contractStatus} style={{ width: '100%' }}>
-                      <option value="Tervezet">Tervezet</option>
-                      <option value="Kiküldve">Kiküldve</option>
-                      <option value="Aláírva">Aláírva</option>
+                    <select name="contractStatus" defaultValue={normalizeContract(selectedArtist.contractStatus)} style={{ width: '100%' }}>
+                      {CONTRACT_STATUSES.map(c => <option key={c.value} value={c.value}>{c.value}</option>)}
                     </select>
                   </div>
                 </div>

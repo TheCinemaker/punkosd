@@ -14,9 +14,6 @@ export const FESTIVAL = {
   dayStartsAtHour: 6
 };
 
-// Színpadok, ahol több produkció párhuzamosan is mehet (ütközésvizsgálat kihagyja)
-export const PARALLEL_STAGES = ['street_points'];
-
 export const MASTER_PIN = import.meta.env?.VITE_MASTER_PIN || '';
 
 // Helyszínek a térképen (gyorsgombok). `area`: a helyszín biztosan belső sarokpontjai
@@ -37,9 +34,3 @@ export const MAP_ZONES = [
   { id: 'vararok', name: 'Várárok', center: [47.38844703426874, 16.53874441895081], zoom: 19 }
 ];
 
-// Színpadok pontos helye (a `street_points` kapualjak külön pontokként szerepelnek)
-export const STAGE_POSITIONS = {
-  main_stage: [47.388091209174306, 16.54176324306651],
-  small_stage_1: [47.388757161379104, 16.54120497730775],
-  small_stage_2: [47.388416783237474, 16.538928064418478]
-};

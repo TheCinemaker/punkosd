@@ -23,12 +23,14 @@ export function Navigation({ activeTab, onTabChange, counts }) {
       {/* Asztali / tablet: felső menüsor */}
       <nav className="top-nav" aria-label="Fő menü">
         <div className="top-nav-inner">
-          {TABS.map(tab => {
+          {TABS.map((tab, i) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
+            const newGroup = i === 0 || TABS[i - 1].group !== tab.group;
             return (
+              <React.Fragment key={tab.id}>
+              {newGroup && <div className="nav-group">{tab.group}</div>}
               <button
-                key={tab.id}
                 onClick={() => go(tab.id)}
                 className={`top-nav-tab${isActive ? ' active' : ''}`}
                 aria-current={isActive ? 'page' : undefined}
@@ -37,6 +39,7 @@ export function Navigation({ activeTab, onTabChange, counts }) {
                 <span>{tab.longLabel}</span>
                 <Badge value={counts[tab.id]} alert={counts[`${tab.id}Alert`]} active={isActive} />
               </button>
+              </React.Fragment>
             );
           })}
         </div>
@@ -73,19 +76,24 @@ export function Navigation({ activeTab, onTabChange, counts }) {
               <strong>Minden modul</strong>
               <button onClick={() => setMoreOpen(false)} aria-label="Bezárás"><X size={22} /></button>
             </div>
-            <div className="sheet-grid">
-              {secondaryTabs.map(tab => {
-                const Icon = tab.icon;
-                const isActive = activeTab === tab.id;
-                return (
-                  <button key={tab.id} onClick={() => go(tab.id)} className={`sheet-item${isActive ? ' active' : ''}`}>
-                    <Icon size={22} />
-                    <span>{tab.longLabel}</span>
-                    <Badge value={counts[tab.id]} alert={counts[`${tab.id}Alert`]} active={isActive} />
-                  </button>
-                );
-              })}
-            </div>
+            {Array.from(new Set(secondaryTabs.map(t => t.group))).map(group => (
+              <div key={group}>
+                <div className="nav-group sheet">{group}</div>
+                <div className="sheet-grid">
+                  {secondaryTabs.filter(t => t.group === group).map(tab => {
+                    const Icon = tab.icon;
+                    const isActive = activeTab === tab.id;
+                    return (
+                      <button key={tab.id} onClick={() => go(tab.id)} className={`sheet-item${isActive ? ' active' : ''}`}>
+                        <Icon size={22} />
+                        <span>{tab.longLabel}</span>
+                        <Badge value={counts[tab.id]} alert={counts[`${tab.id}Alert`]} active={isActive} />
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}
