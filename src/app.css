@@ -161,6 +161,23 @@ a { color: #1d4ed8; }
 
 .row-conflict td { background: #fff1f2; }
 
+.vendor-note {
+  display: flex; align-items: flex-start; gap: 4px; margin-top: 4px; max-width: 280px;
+  font-size: 12px; color: #92400e; background: #fffbeb; border-radius: 4px; padding: 2px 6px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.vendor-note svg { flex-shrink: 0; margin-top: 2px; }
+
+/* Hibavédő */
+.error-box {
+  max-width: 640px; margin: 24px auto; background: #fff; border: 2px solid #fca5a5; border-radius: 12px;
+  padding: 24px; display: flex; flex-direction: column; gap: 10px; align-items: flex-start;
+}
+.error-box h2 { font-size: 18px; font-weight: 800; }
+.error-box p { color: #334155; }
+.error-box code { background: #f1f5f9; border-radius: 6px; padding: 8px 10px; font-size: 12.5px; word-break: break-word; width: 100%; }
+.error-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
 /* Zöld hívógomb a táblázatokban */
 .call-icon {
   display: inline-flex; align-items: center; justify-content: center; vertical-align: middle;

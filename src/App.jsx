@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { Navigation } from './components/Navigation';
 import { LiveAlertsBar } from './components/LiveAlertsBar';
 import { GlobalSearchResults } from './components/GlobalSearchResults';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 import { DashboardView } from './components/DashboardView';
 import { ContactsView } from './components/ContactsView';
@@ -179,6 +180,8 @@ export function App() {
           onNavigate={handleTabChange}
         />
 
+        <ErrorBoundary key={activeTab} onHome={() => handleTabChange('dashboard')}>
+
         {activeTab === 'dashboard' && (
           <DashboardView
             schedule={schedule}
@@ -275,6 +278,7 @@ export function App() {
         {activeTab === 'logs' && (
           <AuditLogView logs={logs} currentUser={currentUser} searchQuery={searchQuery} />
         )}
+        </ErrorBoundary>
       </main>
     </div>
   );

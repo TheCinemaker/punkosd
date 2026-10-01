@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
-import { Phone, Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, DollarSign, X } from 'lucide-react';
+import { Phone, Wine, Utensils, Zap, Droplets, Trash2, Plus, Edit2, AlertCircle, DollarSign, X, FileSignature, StickyNote } from 'lucide-react';
+import { DocSlot } from './DocSlot';
+import { docUrl } from '../lib/files';
 import { uid } from '../lib/store';
 import { telHref } from '../lib/artists';
 import { responsibleCalls } from '../lib/contacts';
+
+// Szerződés állapotai (sorrend = folyamat)
+const CONTRACT_STATUSES = [
+  { value: 'Nincs még', badge: 'badge-gray' },
+  { value: 'Egyeztetés folyamatban', badge: 'badge-amber' },
+  { value: 'Kiküldve, aláírásra vár', badge: 'badge-blue' },
+  { value: 'Aláírva', badge: 'badge-green' },
+  { value: 'Visszalépett / lemondta', badge: 'badge-rose' }
+];
+const contractBadge = (status) => CONTRACT_STATUSES.find(c => c.value === status)?.badge || 'badge-gray';
 
 export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddLog, currentUser, searchQuery }) {
   const [selectedLocation, setSelectedLocation] = useState('all');
@@ -13,21 +25,21 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
   const filteredVendors = vendors.filter(v => {
     const matchesLoc =
       selectedLocation === 'all' ? true :
-      selectedLocation === 'wine' ? v.category.includes('Borászat') :
-      v.category.includes('Ételek');
+      selectedLocation === 'wine' ? (v.category || '').includes('Borászat') :
+      (v.category || '').includes('Ételek');
 
-    const matchesSearch = !searchQuery ||
-      v.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.contact.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      v.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = (searchQuery || '').toLowerCase();
+    const matchesSearch = !q ||
+      [v.name, v.code, v.contact, v.location, v.notes, v.contractStatus].some(x => (x || '').toLowerCase().includes(q));
 
     return matchesLoc && matchesSearch;
   });
 
   // Calculate total power demand
-  const total32ACount = vendors.filter(v => v.power.includes('3x32A')).length;
-  const total16ACount = vendors.filter(v => v.power.includes('16A')).length;
+  const total32ACount = vendors.filter(v => (v.power || '').includes('3x32A')).length;
+  const total16ACount = vendors.filter(v => (v.power || '').includes('16A')).length;
+  const signedCount = vendors.filter(v => v.contractStatus === 'Aláírva').length;
+  const pendingCount = vendors.filter(v => ['Egyeztetés folyamatban', 'Kiküldve, aláírásra vár'].includes(v.contractStatus)).length;
   const totalTrashBags = vendors.reduce((sum, v) => sum + (v.trashBagsIssued || 0), 0);
   const totalTrashBins = vendors.reduce((sum, v) => sum + (v.trashBins || 0), 0);
   const totalDeposits = vendors.reduce((sum, v) => sum + (v.deposit || 0), 0);
@@ -36,19 +48,22 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
     setIsNew(true);
     setSelectedVendor({
       id: uid('ven'),
-      code: `BOR-0${vendors.length + 1}`,
+      code: `STAND-${String(vendors.length + 1).padStart(2, '0')}`,
       name: '',
       category: 'Borászat (Fő tér)',
-      location: 'Fő tér pavilon',
+      location: '',
       contact: '',
       phone: '',
       power: '1x16A (Hűtőkhöz)',
       water: false,
       trashBins: 1,
-      trashBagsIssued: 6,
-      deposit: 50000,
-      fee: 120000,
-      status: 'Visszaigazolva'
+      trashBagsIssued: 0,
+      deposit: 0,
+      fee: 0,
+      status: 'Visszaigazolva',
+      contractStatus: 'Nincs még',
+      contractDoc: null,
+      notes: ''
     });
     setIsModalOpen(true);
   };
@@ -76,7 +91,11 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
       trashBagsIssued: Number(formData.get('trashBagsIssued')) || 5,
       deposit: Number(formData.get('deposit')) || 0,
       fee: Number(formData.get('fee')) || 0,
-      status: formData.get('status')
+      feePaid: formData.get('feePaid') === 'true',
+      status: formData.get('status') || 'Visszaigazolva',
+      contractStatus: formData.get('contractStatus') || 'Nincs még',
+      contractDoc: selectedVendor.contractDoc || null,
+      notes: (formData.get('notes') || '').trim()
     };
 
     if (isNew) {
@@ -93,7 +112,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
         user: currentUser,
         action: 'UPDATE',
         module: 'Árusok & Gasztro',
-        description: `Módosította a kitelepülőt: ${updated.name} (Áram: ${updated.power})`
+        description: `Módosította a kitelepülőt: ${updated.name} (szerződés: ${updated.contractStatus})`
       });
     }
 
@@ -121,6 +140,18 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
         gap: '12px',
         marginBottom: '16px'
       }}>
+        <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
+          <div style={{ fontSize: '11.5px', color: '#14532d', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <FileSignature size={15} color="#059669" /> Szerződések
+          </div>
+          <div style={{ fontSize: '20px', fontWeight: '800', color: '#000000', marginTop: '4px' }}>
+            {signedCount} / {vendors.length} aláírva
+          </div>
+          <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
+            {pendingCount} folyamatban · {vendors.length - signedCount - pendingCount} nincs még / lemondta
+          </div>
+        </div>
+
         <div className="ops-card" style={{ padding: '16px 20px', backgroundColor: '#ffffff', border: '1.5px solid #cbd5e1' }}>
           <div style={{ fontSize: '11.5px', color: '#92400e', fontWeight: '800', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '6px' }}>
             <Zap size={15} color="#b45309" /> Összesített Áramigény
@@ -247,7 +278,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
               <th>Szemeteskuka</th>
               <th>120L Zsák</th>
               <th>Kaució (Ft)</th>
-              <th>Státusz</th>
+              <th>Szerződés</th>
               <th style={{ textAlign: 'right' }}>Művelet</th>
             </tr>
           </thead>
@@ -271,9 +302,14 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                     <div style={{ fontSize: '12px', color: '#475569' }}>
                       {v.location}
                     </div>
+                    {v.notes && (
+                      <div className="vendor-note" title={v.notes}>
+                        <StickyNote size={12} /> {v.notes}
+                      </div>
+                    )}
                   </td>
                   <td>
-                    <span className={`badge ${v.category.includes('Bor') ? 'badge-blue' : 'badge-amber'}`}>
+                    <span className={`badge ${(v.category || '').includes('Bor') ? 'badge-blue' : 'badge-amber'}`}>
                       {v.category}
                     </span>
                   </td>
@@ -285,12 +321,12 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                     <span style={{
                       fontWeight: '700',
                       fontSize: '12px',
-                      color: v.power.includes('3x32A') ? '#b45309' : '#0f172a',
+                      color: (v.power || '').includes('3x32A') ? '#b45309' : '#0f172a',
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px'
                     }}>
-                      <Zap size={13} color={v.power.includes('3x32A') ? '#d97706' : '#2563eb'} />
+                      <Zap size={13} color={(v.power || '').includes('3x32A') ? '#d97706' : '#2563eb'} />
                       {v.power}
                     </span>
                   </td>
@@ -313,9 +349,17 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                     {v.deposit ? `${v.deposit.toLocaleString()} Ft` : '-'}
                   </td>
                   <td>
-                    <span className={`badge ${v.status.includes('Települt') || v.status === 'Visszaigazolva' ? 'badge-green' : 'badge-amber'}`}>
-                      {v.status}
+                    <span className={`badge ${contractBadge(v.contractStatus)}`}>
+                      {v.contractStatus || 'Nincs még'}
                     </span>
+                    {docUrl(v.contractDoc) && (
+                      <a href={docUrl(v.contractDoc)} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} className="phone-link" style={{ display: 'block', marginTop: '4px', fontSize: '12px' }}>
+                        Szerződés megnyitása
+                      </a>
+                    )}
+                    {v.status && v.status !== 'Visszaigazolva' && (
+                      <div style={{ fontSize: '11.5px', color: '#475569', marginTop: '3px' }}>{v.status}</div>
+                    )}
                   </td>
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <button
@@ -391,19 +435,49 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Pontos Helyszín / Stand</label>
-                    <input name="location" defaultValue={selectedVendor.location} placeholder="pl. Fő tér 1. pavilon" required style={{ width: '100%' }} />
+                    <input name="location" defaultValue={selectedVendor.location} placeholder="pl. Fő tér 1. pavilon" style={{ width: '100%' }} />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kapcsolattartó</label>
-                    <input name="contact" defaultValue={selectedVendor.contact} required style={{ width: '100%' }} />
+                    <input name="contact" defaultValue={selectedVendor.contact} style={{ width: '100%' }} />
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Telefonszám</label>
-                    <input name="phone" defaultValue={selectedVendor.phone} required style={{ width: '100%' }} />
+                    <input name="phone" type="tel" defaultValue={selectedVendor.phone} style={{ width: '100%' }} />
                   </div>
+                </div>
+
+                <div className="section-box">
+                  <h4 className="section-title"><FileSignature size={16} color="#059669" /> Szerződés</h4>
+                  <div className="grid-2">
+                    <div>
+                      <label className="field-label">Szerződés állapota</label>
+                      <select name="contractStatus" defaultValue={selectedVendor.contractStatus || 'Nincs még'}>
+                        {CONTRACT_STATUSES.map(c => <option key={c.value} value={c.value}>{c.value}</option>)}
+                      </select>
+                    </div>
+                    <DocSlot
+                      label="Aláírt szerződés"
+                      doc={selectedVendor.contractDoc}
+                      folder="vendors/contracts"
+                      emptyText="Nincs feltöltve"
+                      onChange={(doc) => setSelectedVendor(prev => ({ ...prev, contractDoc: doc }))}
+                    />
+                  </div>
+                  <div className="field-hint">A feltöltött fájl a Mentés gombbal rögzül.</div>
+                </div>
+
+                <div>
+                  <label className="field-label">Megjegyzés</label>
+                  <textarea
+                    name="notes"
+                    rows={3}
+                    defaultValue={selectedVendor.notes}
+                    placeholder="pl. Csak péntektől jön, saját aggregátort hoz, a számlát az egyesület nevére kéri..."
+                  />
                 </div>
 
                 <div className="grid-2">
@@ -437,6 +511,28 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kaució Letét (Ft)</label>
                     <input type="number" name="deposit" defaultValue={selectedVendor.deposit} style={{ width: '100%' }} />
+                  </div>
+                </div>
+
+                <div className="grid-3">
+                  <div>
+                    <label className="field-label">Standdíj / helypénz (Ft)</label>
+                    <input type="number" name="fee" min="0" defaultValue={selectedVendor.fee} />
+                  </div>
+                  <div>
+                    <label className="field-label">Standdíj fizetve?</label>
+                    <select name="feePaid" defaultValue={String(Boolean(selectedVendor.feePaid))}>
+                      <option value="false">Még nem</option>
+                      <option value="true">Igen, kifizetve</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="field-label">Helyszíni állapot</label>
+                    <select name="status" defaultValue={selectedVendor.status || 'Visszaigazolva'}>
+                      <option value="Visszaigazolva">Visszaigazolva (még nem települt)</option>
+                      <option value="Települt / Ellenőrizve">Települt / ellenőrizve</option>
+                      <option value="Elbontott, rendben">Elbontott, rendben</option>
+                    </select>
                   </div>
                 </div>
               </div>
