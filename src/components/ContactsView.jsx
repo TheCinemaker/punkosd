@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Phone, Mail, Radio, Siren, Search } from 'lucide-react';
 import { telHref } from '../lib/artists';
+import { EmergencyPanel } from './EmergencyPanel';
 
 const GROUPS = [
   { id: 'all', label: 'Mind' },
@@ -18,7 +19,7 @@ const GROUP_BADGE = {
 };
 
 // Egyetlen telefonkönyv: stáb, fellépők, szolgáltatók és árusok egy helyen, egy koppintásos hívással
-export function ContactsView({ users, artists, contractors, vendors, searchQuery = '' }) {
+export function ContactsView({ users, artists, contractors, vendors, emergency = [], onUpdateEmergency, plan, onUpdatePlan, onAddLog, currentUser, searchQuery = '' }) {
   const [group, setGroup] = useState('all');
   const [localQuery, setLocalQuery] = useState('');
 
@@ -47,9 +48,14 @@ export function ContactsView({ users, artists, contractors, vendors, searchQuery
         </div>
       </div>
 
-      <a href="tel:112" className="emergency-bar">
-        <Siren size={20} /> Vészhelyzet: <strong>112</strong> <span className="call-pill danger"><Phone size={14} /> Hívás</span>
-      </a>
+      <EmergencyPanel
+        emergency={emergency}
+        onUpdateEmergency={onUpdateEmergency}
+        plan={plan}
+        onUpdatePlan={onUpdatePlan}
+        onAddLog={onAddLog}
+        currentUser={currentUser}
+      />
 
       <div className="contacts-toolbar">
         <div className="contacts-search">

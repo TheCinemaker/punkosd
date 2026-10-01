@@ -23,9 +23,10 @@ const TYPES = {
   info: { label: 'Info', color: '#0f172a' },
   waste: { label: 'Hulladék', color: '#64748b' },
   backstage: { label: 'Backstage', color: '#475569' },
-  street: { label: 'Utcazene', color: '#9333ea' }
+  street: { label: 'Utcazene', color: '#9333ea' },
+  assembly: { label: 'Gyülekezőpont', color: '#16a34a' }
 };
-const POINT_TYPES = ['power', 'water', 'toilet', 'medical', 'info', 'waste', 'backstage', 'street'];
+const POINT_TYPES = ['power', 'water', 'toilet', 'medical', 'info', 'waste', 'backstage', 'street', 'assembly'];
 
 const hasPos = (it) => typeof it.lat === 'number' && typeof it.lng === 'number';
 const round = (n) => Math.round(n * 1e7) / 1e7;

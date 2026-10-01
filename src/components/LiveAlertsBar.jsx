@@ -39,6 +39,19 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
     });
   };
 
+  const handleTakeOver = (inc) => {
+    const time = new Date().toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+    onUpdateIncidents(incidents.map(i => (i.id === inc.id ? { ...i, assignee: currentUser, takenAt: time } : i)));
+    onAddLog({ user: currentUser, action: 'TAKE_INCIDENT', module: 'Helyszíni SOS Problémafal', description: `Átvette, úton van: "${inc.text}"` });
+  };
+
+  const handleEditText = (inc) => {
+    const text = window.prompt('A bejelentés szövege:', inc.text);
+    if (text === null || !text.trim() || text.trim() === inc.text) return;
+    onUpdateIncidents(incidents.map(i => (i.id === inc.id ? { ...i, text: text.trim() } : i)));
+    onAddLog({ user: currentUser, action: 'UPDATE', module: 'Helyszíni SOS Problémafal', description: `Javította a bejelentést: "${text.trim()}"` });
+  };
+
   const handleCreateIncident = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -262,7 +275,14 @@ export function LiveAlertsBar({ incidents, onUpdateIncidents, onAddLog, currentU
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '12px', borderTop: '1px solid #e2e8f0', paddingTop: '8px' }}>
                       <span style={{ color: '#475569' }}>
                         Jelentette: <strong style={{ color: '#0f172a' }}>{inc.reporter}</strong>
+                        {inc.assignee && !inc.isResolved && <span className="badge badge-blue" style={{ marginLeft: '6px' }}>Úton: {inc.assignee} ({inc.takenAt})</span>}
                       </span>
+                      {!inc.isResolved && (
+                        <span style={{ display: 'flex', gap: '6px' }}>
+                          <button onClick={() => handleEditText(inc)} className="btn-secondary compact-btn">Javítás</button>
+                          {inc.assignee !== currentUser && <button onClick={() => handleTakeOver(inc)} className="btn-secondary compact-btn">Átvettem</button>}
+                        </span>
+                      )}
 
                       {!inc.isResolved ? (
                         <button

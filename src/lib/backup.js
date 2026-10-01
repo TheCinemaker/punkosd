@@ -23,6 +23,11 @@ export const COLLECTION_LABELS = {
   accommodation: 'Szállás',
   transfers: 'Transzfer',
   catering: 'Catering',
+  shifts: 'Műszakok',
+  accreditations: 'Akkreditáció',
+  notices: 'Közlemények',
+  emergency: 'Vészkontaktok',
+  settings: 'Beállítások',
   trash: 'Lomtár'
 };
 

@@ -8,6 +8,7 @@ import { FESTIVAL } from '../lib/config';
 import { getFestivalClock, parseRange, sortByTime, formatClock, formatDuration, findOverlaps } from '../lib/time';
 import { findArtist, hasRider, isContractSigned, telHref } from '../lib/artists';
 import { isPermitOpen } from './PermitsView';
+import { NoticesBoard } from './NoticesView';
 
 function useNow(intervalMs = 30000) {
   const [now, setNow] = useState(() => new Date());
@@ -100,7 +101,7 @@ function StageCard({ stage, items, live, minutes, artists }) {
 
 export function DashboardView({
   schedule, artists, tasks, onUpdateTasks, shoppingList, incidents, onUpdateIncidents,
-  users, permits = [], production = [], contractors = [], onNavigate, onAddLog, currentUser
+  users, permits = [], production = [], contractors = [], notices = [], shifts = [], onNavigate, onAddLog, currentUser
 }) {
   const now = useNow();
   const clock = getFestivalClock(now);
@@ -179,6 +180,13 @@ export function DashboardView({
     onAddLog({ user: currentUser, action: 'RESOLVE_INCIDENT', module: 'Helyszíni SOS Problémafal', description: `Megoldotta a problémát: "${inc.text}"` });
   };
 
+  const takeOver = (inc) => {
+    const time = new Date().toLocaleTimeString('hu-HU', { hour: '2-digit', minute: '2-digit' });
+    onUpdateIncidents(incidents.map(i => (i.id === inc.id ? { ...i, assignee: currentUser, takenAt: time } : i)));
+    onAddLog({ user: currentUser, action: 'TAKE_INCIDENT', module: 'Helyszíni SOS Problémafal', description: `Átvette, úton van: "${inc.text}"` });
+  };
+  const myShiftsToday = shifts.filter(s => s.date === today && s.person === currentUser).sort((a, b) => (a.start || '').localeCompare(b.start || ''));
+
   let statusText;
   if (clock.status === 'during') statusText = `Élő: ${clock.day}, ${formatClock(clock.minutes)}`;
   else if (clock.status === 'before') statusText = `A fesztiválig ${clock.daysUntil} nap van hátra`;
@@ -206,6 +214,25 @@ export function DashboardView({
         </div>
       </div>
 
+      <NoticesBoard notices={notices} onNavigate={onNavigate} />
+
+      {myShiftsToday.length > 0 && (
+        <section className="dash-card">
+          <div className="dash-card-title">
+            <CalendarClock size={18} color="#2563eb" /> A mai műszakom
+            <button className="link-btn" onClick={() => onNavigate('shifts')}>Beosztás <ChevronRight size={14} /></button>
+          </div>
+          <div className="dash-list">
+            {myShiftsToday.map(s => (
+              <div key={s.id} className="dash-line">
+                <span><strong>{s.start}–{s.end}</strong> · {s.post}</span>
+                {s.location && <span className="dash-sub">{s.location}{s.notes ? ` · ${s.notes}` : ''}</span>}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* SOS / problémák */}
       {activeIncidents.length > 0 && (
         <section className="dash-card dash-sos">
@@ -218,9 +245,12 @@ export function DashboardView({
                 <div className="dash-incident-body">
                   <div className="dash-incident-loc">{inc.location}</div>
                   <div>{inc.text}</div>
-                  <div className="dash-sub">{inc.reporter} · {inc.time}</div>
+                  <div className="dash-sub">{inc.reporter} · {inc.time}{inc.assignee ? ` · Úton: ${inc.assignee} (${inc.takenAt})` : ' · Még senki nem vette át!'}</div>
                 </div>
-                <button className="btn-success" onClick={() => resolveIncident(inc)}>Megoldva</button>
+                <div style={{ display: 'flex', gap: '6px' }}>
+                  {inc.assignee !== currentUser && <button className="btn-secondary" onClick={() => takeOver(inc)}>Átvettem</button>}
+                  <button className="btn-success" onClick={() => resolveIncident(inc)}>Megoldva</button>
+                </div>
               </div>
             ))}
           </div>

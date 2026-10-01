@@ -35,7 +35,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
   const pendingCount = vendors.filter(v => CONTRACT_PENDING.includes(v.contractStatus)).length;
   const totalTrashBags = vendors.reduce((sum, v) => sum + (v.trashBagsIssued || 0), 0);
   const totalTrashBins = vendors.reduce((sum, v) => sum + (v.trashBins || 0), 0);
-  const totalDeposits = vendors.reduce((sum, v) => sum + (v.deposit || 0), 0);
+  const totalDeposits = vendors.filter(v => !v.depositReturned).reduce((sum, v) => sum + (Number(v.deposit) || 0), 0);
 
   const handleOpenAdd = () => {
     setIsNew(true);
@@ -85,6 +85,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
       deposit: numOr(formData.get('deposit'), 0),
       fee: numOr(formData.get('fee'), 0),
       feePaid: formData.get('feePaid') === 'true',
+      depositReturned: formData.get('depositReturned') === 'true',
       status: formData.get('status') || 'Visszaigazolva',
       contractStatus: formData.get('contractStatus') || 'Nincs még',
       contractDoc: selectedVendor.contractDoc || null,
@@ -174,7 +175,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
             <DollarSign size={15} color="#059669" /> Kauciók & Helypénzek
           </div>
           <div style={{ fontSize: '20px', fontWeight: '800', color: '#047857', marginTop: '4px' }}>
-            {totalDeposits.toLocaleString()} Ft letétben
+            {totalDeposits.toLocaleString('hu-HU')} Ft letétben (visszaadandó)
           </div>
           <div style={{ fontSize: '12px', color: '#475569', marginTop: '2px', fontWeight: '500' }}>
             Tisztaság és zárás után visszajár
@@ -340,6 +341,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: '800', color: '#047857' }}>
                     {`${Number(v.deposit || 0).toLocaleString('hu-HU')} Ft`}
+                    {Number(v.deposit) > 0 && <div style={{ fontSize: '11px', fontWeight: 700, color: v.depositReturned ? '#047857' : '#b45309' }}>{v.depositReturned ? 'visszaadva' : 'nálunk van'}</div>}
                   </td>
                   <td>
                     <span className={`badge ${contractBadge(v.contractStatus)}`}>
@@ -513,6 +515,10 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Kaució Letét (Ft)</label>
                     <input type="number" name="deposit" defaultValue={selectedVendor.deposit} style={{ width: '100%' }} />
+                    <select name="depositReturned" defaultValue={String(Boolean(selectedVendor.depositReturned))} style={{ marginTop: '6px' }}>
+                      <option value="false">Kaució nálunk van</option>
+                      <option value="true">Kaució visszaadva</option>
+                    </select>
                   </div>
                 </div>
 

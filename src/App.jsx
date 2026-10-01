@@ -25,6 +25,9 @@ import { FinanceView } from './components/FinanceView';
 import { SponsorsView } from './components/SponsorsView';
 import { ProductionView } from './components/ProductionView';
 import { LogisticsView } from './components/LogisticsView';
+import { ShiftsView } from './components/ShiftsView';
+import { AccreditationView } from './components/AccreditationView';
+import { NoticesView } from './components/NoticesView';
 import { expenseEntries, assignedByBudgetLine } from './lib/finance';
 
 import {
@@ -71,6 +74,11 @@ const COLLECTIONS = {
   accommodation: [],
   transfers: [],
   catering: [],
+  shifts: [],
+  accreditations: [],
+  notices: [],
+  emergency: [],
+  settings: [],
   trash: []
 };
 
@@ -86,6 +94,9 @@ export function App() {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleRemoteInsert = useCallback((collection, item, by) => {
+    if (collection === 'notices' && item.important) {
+      notify(`Közlemény (${item.author})`, item.text);
+    }
     if (collection === 'incidents' && !item.isResolved && item.severity !== 'info') {
       const prefix = item.severity === 'critical' ? 'SOS' : 'Figyelmeztetés';
       notify(`${prefix}: ${item.location}`, `${item.text}${by ? ` (${by})` : ''}`);
@@ -176,7 +187,8 @@ export function App() {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, accommodation, transfers, catering, trash } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, accommodation, transfers, catering, shifts, accreditations, notices, emergency, settings, trash } = data;
+  const emergencyPlan = settings.find(x => x.id === 'emergencyPlan');
   const budgetAssigned = assignedByBudgetLine(expenseEntries({ artists, contractors, shoppingList, permits }));
 
   const totalBudgetHuf = budget.reduce((sum, b) => sum + (Number(b.qty) || 0) * (Number(b.unitPrice) || 0), 0);
@@ -198,6 +210,10 @@ export function App() {
     permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
     trash: trash.length || undefined,
+    shifts: shifts.filter(x => x.date === new Date().toLocaleDateString('sv-SE')).length || undefined,
+    accreditation: accreditations.filter(a => !a.issued).length || undefined,
+    notices: notices.filter(n => Date.now() - new Date(n.time).getTime() < 86400000).length || undefined,
+    noticesAlert: notices.some(n => n.important && Date.now() - new Date(n.time).getTime() < 86400000),
     logistics: (accommodation.filter(a => !a.confirmed).length + transfers.filter(t => t.status !== 'Kész' && t.date === new Date().toLocaleDateString('sv-SE')).length) || undefined,
     production: production.filter(p => p.date === new Date().toLocaleDateString('sv-SE') && p.status !== 'Kész').length || undefined,
     productionAlert: production.some(p => p.status === 'Késik / probléma'),
@@ -258,6 +274,8 @@ export function App() {
             permits={permits}
             production={production}
             contractors={contractors}
+            notices={notices}
+            shifts={shifts}
             onNavigate={handleTabChange}
             onAddLog={handleAddLog}
             currentUser={currentUser}
@@ -270,6 +288,12 @@ export function App() {
             artists={artists}
             contractors={contractors}
             vendors={vendors}
+            emergency={emergency}
+            onUpdateEmergency={setter('emergency')}
+            plan={emergencyPlan}
+            onUpdatePlan={(plan) => setter('settings')(settings.some(x => x.id === plan.id) ? settings.map(x => (x.id === plan.id ? plan : x)) : [...settings, plan])}
+            onAddLog={handleAddLog}
+            currentUser={currentUser}
             searchQuery={searchQuery}
           />
         )}
@@ -342,6 +366,18 @@ export function App() {
 
         {activeTab === 'budget' && (
           <BudgetView budget={budget} onUpdateBudget={setter('budget')} assigned={budgetAssigned} {...common} />
+        )}
+
+        {activeTab === 'shifts' && (
+          <ShiftsView shifts={shifts} onUpdateShifts={setter('shifts')} users={users} {...common} />
+        )}
+
+        {activeTab === 'accreditation' && (
+          <AccreditationView accreditations={accreditations} onUpdateAccreditations={setter('accreditations')} artists={artists} {...common} />
+        )}
+
+        {activeTab === 'notices' && (
+          <NoticesView notices={notices} onUpdateNotices={setter('notices')} onAddLog={handleAddLog} currentUser={currentUser} />
         )}
 
         {activeTab === 'logistics' && (
