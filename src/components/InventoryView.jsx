@@ -3,7 +3,9 @@ import { Package, Plus, Edit2, Trash2, Tag, CheckCircle2, AlertTriangle, MapPin,
 import { uid } from '../lib/store';
 import { numOr } from '../lib/form';
 
-export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentUser, searchQuery }) {
+export function InventoryView({ inventory, onUpdateInventory, vendors = [], onAddLog, currentUser, searchQuery }) {
+  const bagsToVendors = vendors.reduce((s, v) => s + (Number(v.trashBagsIssued) || 0), 0);
+  const binsToVendors = vendors.reduce((s, v) => s + (Number(v.trashBins) || 0), 0);
   const [selectedCat, setSelectedCat] = useState('all');
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -100,6 +102,15 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
 
   return (
     <div>
+      {(bagsToVendors > 0 || binsToVendors > 0) && (
+        <div className="alert-box green">
+          <Package size={18} />
+          <div>
+            <strong>Árusoknak kiadva (az árusok adatlapjairól):</strong> {bagsToVendors} db 120L zsák · {binsToVendors} db kuka.
+            {' '}A zsákkészletből ennyit vonj le, vagy a kiadott tekercseket jelöld „Kiadva” állapotra.
+          </div>
+        </div>
+      )}
       {/* Top Bar */}
       <div style={{
         display: 'flex',

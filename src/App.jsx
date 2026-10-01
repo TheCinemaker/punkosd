@@ -28,6 +28,7 @@ import { LogisticsView } from './components/LogisticsView';
 import { ShiftsView } from './components/ShiftsView';
 import { AccreditationView } from './components/AccreditationView';
 import { NoticesView } from './components/NoticesView';
+import { ReportView } from './components/ReportView';
 import { expenseEntries, assignedByBudgetLine } from './lib/finance';
 
 import {
@@ -79,6 +80,9 @@ const COLLECTIONS = {
   notices: [],
   emergency: [],
   settings: [],
+  reportDays: [],
+  lessons: [],
+  reportDocs: [],
   trash: []
 };
 
@@ -187,7 +191,7 @@ export function App() {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, accommodation, transfers, catering, shifts, accreditations, notices, emergency, settings, trash } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, accommodation, transfers, catering, shifts, accreditations, notices, emergency, settings, reportDays, lessons, reportDocs, trash } = data;
   const emergencyPlan = settings.find(x => x.id === 'emergencyPlan');
   const budgetAssigned = assignedByBudgetLine(expenseEntries({ artists, contractors, shoppingList, permits }));
 
@@ -210,6 +214,7 @@ export function App() {
     permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
     trash: trash.length || undefined,
+    report: lessons.length || undefined,
     shifts: shifts.filter(x => x.date === new Date().toLocaleDateString('sv-SE')).length || undefined,
     accreditation: accreditations.filter(a => !a.issued).length || undefined,
     notices: notices.filter(n => Date.now() - new Date(n.time).getTime() < 86400000).length || undefined,
@@ -361,7 +366,7 @@ export function App() {
         )}
 
         {activeTab === 'inventory' && (
-          <InventoryView inventory={inventory} onUpdateInventory={setter('inventory')} {...common} />
+          <InventoryView inventory={inventory} onUpdateInventory={setter('inventory')} vendors={vendors} {...common} />
         )}
 
         {activeTab === 'budget' && (
@@ -422,6 +427,20 @@ export function App() {
 
         {activeTab === 'sponsors' && (
           <SponsorsView sponsors={sponsors} onUpdateSponsors={setter('sponsors')} {...common} />
+        )}
+
+        {activeTab === 'report' && (
+          <ReportView
+            data={data}
+            reportDays={reportDays}
+            onUpdateReportDays={setter('reportDays')}
+            lessons={lessons}
+            onUpdateLessons={setter('lessons')}
+            reportDocs={reportDocs}
+            onUpdateReportDocs={setter('reportDocs')}
+            onAddLog={handleAddLog}
+            currentUser={currentUser}
+          />
         )}
 
         {activeTab === 'trash' && (

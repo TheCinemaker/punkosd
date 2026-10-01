@@ -28,6 +28,9 @@ export const COLLECTION_LABELS = {
   notices: 'Közlemények',
   emergency: 'Vészkontaktok',
   settings: 'Beállítások',
+  reportDays: 'Beszámoló - napok',
+  lessons: 'Tanulságok',
+  reportDocs: 'Beszámoló - fotók',
   trash: 'Lomtár'
 };
 
