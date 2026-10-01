@@ -286,6 +286,8 @@ a { color: #1d4ed8; }
   .prod-actions { width: 100%; justify-content: flex-start; }
 }
 
+.meal-input { width: 70px !important; min-height: 32px !important; padding: 4px 6px !important; text-align: right; }
+
 /* Hibavédő */
 .error-box {
   max-width: 640px; margin: 24px auto; background: #fff; border: 2px solid #fca5a5; border-radius: 12px;

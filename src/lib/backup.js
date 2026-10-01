@@ -20,6 +20,9 @@ export const COLLECTION_LABELS = {
   income: 'Bevételek',
   sponsors: 'Szponzorok',
   production: 'Építés–bontás',
+  accommodation: 'Szállás',
+  transfers: 'Transzfer',
+  catering: 'Catering',
   trash: 'Lomtár'
 };
 

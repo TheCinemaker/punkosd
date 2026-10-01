@@ -24,6 +24,7 @@ import { TrashView, TRASH_DAYS } from './components/TrashView';
 import { FinanceView } from './components/FinanceView';
 import { SponsorsView } from './components/SponsorsView';
 import { ProductionView } from './components/ProductionView';
+import { LogisticsView } from './components/LogisticsView';
 import { expenseEntries, assignedByBudgetLine } from './lib/finance';
 
 import {
@@ -67,6 +68,9 @@ const COLLECTIONS = {
   income: [],
   sponsors: [],
   production: [],
+  accommodation: [],
+  transfers: [],
+  catering: [],
   trash: []
 };
 
@@ -172,7 +176,7 @@ export function App() {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, trash } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, accommodation, transfers, catering, trash } = data;
   const budgetAssigned = assignedByBudgetLine(expenseEntries({ artists, contractors, shoppingList, permits }));
 
   const totalBudgetHuf = budget.reduce((sum, b) => sum + (Number(b.qty) || 0) * (Number(b.unitPrice) || 0), 0);
@@ -194,6 +198,7 @@ export function App() {
     permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
     trash: trash.length || undefined,
+    logistics: (accommodation.filter(a => !a.confirmed).length + transfers.filter(t => t.status !== 'Kész' && t.date === new Date().toLocaleDateString('sv-SE')).length) || undefined,
     production: production.filter(p => p.date === new Date().toLocaleDateString('sv-SE') && p.status !== 'Kész').length || undefined,
     productionAlert: production.some(p => p.status === 'Késik / probléma'),
     sponsors: sponsors.length,
@@ -337,6 +342,25 @@ export function App() {
 
         {activeTab === 'budget' && (
           <BudgetView budget={budget} onUpdateBudget={setter('budget')} assigned={budgetAssigned} {...common} />
+        )}
+
+        {activeTab === 'logistics' && (
+          <LogisticsView
+            artists={artists}
+            onUpdateArtists={setter('artists')}
+            schedule={schedule}
+            accommodation={accommodation}
+            onUpdateAccommodation={setter('accommodation')}
+            transfers={transfers}
+            onUpdateTransfers={setter('transfers')}
+            catering={catering}
+            onUpdateCatering={setter('catering')}
+            shoppingList={shoppingList}
+            onUpdateShoppingList={setter('shoppingList')}
+            users={users}
+            onAddLog={handleAddLog}
+            currentUser={currentUser}
+          />
         )}
 
         {activeTab === 'production' && (
