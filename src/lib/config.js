@@ -11,8 +11,26 @@ export const FESTIVAL = {
     { name: 'Hétfő', date: '2027-05-17' }
   ],
   // 06:00 előtt még az előző fesztiválnaphoz tartozik minden (pl. péntek éjjel 02:00)
-  dayStartsAtHour: 6
+  dayStartsAtHour: 6,
+  // Építés a fesztivál előtt, bontás utána (napok száma)
+  buildDaysBefore: 3,
+  strikeDaysAfter: 1
 };
+
+const WEEKDAYS = ['Vasárnap', 'Hétfő', 'Kedd', 'Szerda', 'Csütörtök', 'Péntek', 'Szombat'];
+
+// A teljes produkciós időszak napjai: építés + fesztivál + bontás
+export function productionDays() {
+  const first = new Date(`${FESTIVAL.days[0].date}T12:00:00`);
+  const total = FESTIVAL.buildDaysBefore + FESTIVAL.days.length + FESTIVAL.strikeDaysAfter;
+  return Array.from({ length: total }, (_, i) => {
+    const d = new Date(first);
+    d.setDate(first.getDate() - FESTIVAL.buildDaysBefore + i);
+    const date = d.toLocaleDateString('sv-SE');
+    const phase = i < FESTIVAL.buildDaysBefore ? 'Építés' : i >= FESTIVAL.buildDaysBefore + FESTIVAL.days.length ? 'Bontás' : 'Fesztivál';
+    return { date, name: WEEKDAYS[d.getDay()], phase, label: `${WEEKDAYS[d.getDay()]} ${date.slice(5).replace('-', '.')}.` };
+  });
+}
 
 export const MASTER_PIN = import.meta.env?.VITE_MASTER_PIN || '';
 

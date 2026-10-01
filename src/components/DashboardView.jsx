@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import {
   Radio, Clock, CheckSquare, Square, ShoppingCart, AlertCircle, AlertTriangle,
-  Phone, ChevronRight, Volume2, FileWarning, FileSignature, CalendarClock, CheckCircle2, KeyRound
+  Phone, ChevronRight, Volume2, FileWarning, FileSignature, CalendarClock, CheckCircle2, KeyRound, Truck
 } from 'lucide-react';
 import { getStages } from '../lib/stages';
 import { FESTIVAL } from '../lib/config';
@@ -100,7 +100,7 @@ function StageCard({ stage, items, live, minutes, artists }) {
 
 export function DashboardView({
   schedule, artists, tasks, onUpdateTasks, shoppingList, incidents, onUpdateIncidents,
-  users, permits = [], onNavigate, onAddLog, currentUser
+  users, permits = [], production = [], contractors = [], onNavigate, onAddLog, currentUser
 }) {
   const now = useNow();
   const clock = getFestivalClock(now);
@@ -223,6 +223,30 @@ export function DashboardView({
                 <button className="btn-success" onClick={() => resolveIncident(inc)}>Megoldva</button>
               </div>
             ))}
+          </div>
+        </section>
+      )}
+
+      {/* Ma a produkcióban (építés, szállítás, bontás) */}
+      {production.some(p => p.date === today) && (
+        <section className="dash-card">
+          <div className="dash-card-title">
+            <Truck size={18} color="#b45309" /> Ma a produkcióban ({production.filter(p => p.date === today && p.status !== 'Kész').length} nyitott)
+            <button className="link-btn" onClick={() => onNavigate('production')}>Idővonal <ChevronRight size={14} /></button>
+          </div>
+          <div className="dash-list">
+            {production
+              .filter(p => p.date === today)
+              .sort((a, b) => (a.time || '').localeCompare(b.time || ''))
+              .map(p => {
+                const c = contractors.find(x => x.id === p.contractorId);
+                return (
+                  <div key={p.id} className={`dash-line${p.status === 'Kész' ? ' done' : ''}`}>
+                    <span><strong>{p.time}</strong> · {p.title} {p.responsible === currentUser && <span className="badge badge-blue">te fogadod</span>}</span>
+                    <span className="dash-sub">{p.status}{c ? ` · ${c.companyName}` : ''}{p.location ? ` · ${p.location}` : ''}</span>
+                  </div>
+                );
+              })}
           </div>
         </section>
       )}

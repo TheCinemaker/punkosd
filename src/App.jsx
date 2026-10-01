@@ -23,6 +23,7 @@ import { PermitsView, isPermitOpen } from './components/PermitsView';
 import { TrashView, TRASH_DAYS } from './components/TrashView';
 import { FinanceView } from './components/FinanceView';
 import { SponsorsView } from './components/SponsorsView';
+import { ProductionView } from './components/ProductionView';
 import { expenseEntries, assignedByBudgetLine } from './lib/finance';
 
 import {
@@ -65,6 +66,7 @@ const COLLECTIONS = {
   stages: STAGES,
   income: [],
   sponsors: [],
+  production: [],
   trash: []
 };
 
@@ -170,7 +172,7 @@ export function App() {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, trash } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, production, trash } = data;
   const budgetAssigned = assignedByBudgetLine(expenseEntries({ artists, contractors, shoppingList, permits }));
 
   const totalBudgetHuf = budget.reduce((sum, b) => sum + (Number(b.qty) || 0) * (Number(b.unitPrice) || 0), 0);
@@ -192,6 +194,8 @@ export function App() {
     permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
     trash: trash.length || undefined,
+    production: production.filter(p => p.date === new Date().toLocaleDateString('sv-SE') && p.status !== 'Kész').length || undefined,
+    productionAlert: production.some(p => p.status === 'Késik / probléma'),
     sponsors: sponsors.length,
     sponsorsAlert: sponsors.some(sp => (sp.obligations || []).some(o => !o.done) && sp.status !== 'Nem vállalta'),
     budget: `${(totalBudgetHuf / 1000000).toFixed(1)}M`,
@@ -247,6 +251,8 @@ export function App() {
             onUpdateIncidents={handleUpdateIncidents}
             users={users}
             permits={permits}
+            production={production}
+            contractors={contractors}
             onNavigate={handleTabChange}
             onAddLog={handleAddLog}
             currentUser={currentUser}
@@ -331,6 +337,10 @@ export function App() {
 
         {activeTab === 'budget' && (
           <BudgetView budget={budget} onUpdateBudget={setter('budget')} assigned={budgetAssigned} {...common} />
+        )}
+
+        {activeTab === 'production' && (
+          <ProductionView production={production} onUpdateProduction={setter('production')} contractors={contractors} users={users} {...common} />
         )}
 
         {activeTab === 'finance' && (
