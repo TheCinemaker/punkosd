@@ -87,6 +87,28 @@ a { color: #1d4ed8; }
 
 .bottom-nav { display: none; }
 
+/* Asztali gépen: bal oldali, függőleges menü */
+@media (min-width: 769px) {
+  .app-body { display: flex; align-items: flex-start; }
+  .top-nav {
+    position: sticky; top: 0; flex-shrink: 0; width: 250px; height: 100vh;
+    overflow-y: auto; overflow-x: hidden; border-bottom: none; border-right: 1px solid #e2e8f0;
+  }
+  .top-nav-inner { flex-direction: column; gap: 2px; padding: 12px 10px; max-width: none; margin: 0; }
+  .top-nav-tab {
+    width: 100%; justify-content: flex-start; padding: 10px 12px; border-radius: 8px;
+    border-bottom: none; border-left: 3px solid transparent; white-space: normal; text-align: left; line-height: 1.3;
+  }
+  .top-nav-tab svg { flex-shrink: 0; }
+  .top-nav-tab.active { border-left-color: #2563eb; }
+  .top-nav-tab .nav-badge { margin-left: auto; }
+  .app-body > .main-content { flex: 1; min-width: 0; margin: 0; }
+}
+@media (min-width: 769px) and (max-width: 1100px) {
+  .top-nav { width: 210px; }
+  .top-nav-tab { font-size: 12.5px; padding: 9px 10px; }
+}
+
 .sheet-overlay {
   position: fixed; inset: 0; z-index: 1100;
   background: rgba(15, 23, 42, .55);
@@ -569,7 +591,7 @@ button.map-list-item:hover { border-color: #2563eb; background: #f8fafc; }
 @media print {
   @page { size: A4 landscape; margin: 12mm; }
   body, .app-container { background: #fff !important; }
-  .no-print, .screen-only, .global-search, .modal-overlay, .bottom-nav { display: none !important; }
+  .no-print, .screen-only, .global-search, .modal-overlay, .bottom-nav, .top-nav { display: none !important; }
   .print-only { display: block !important; }
   .main-content { padding: 0 !important; max-width: none !important; }
   .print-sheet { page-break-after: always; break-after: page; }

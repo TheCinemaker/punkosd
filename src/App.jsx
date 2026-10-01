@@ -169,8 +169,10 @@ export function App() {
           currentUser={currentUser}
         />
 
-        <Navigation activeTab={activeTab} onTabChange={handleTabChange} counts={counts} />
       </div>
+
+      <div className="app-body">
+      <Navigation activeTab={activeTab} onTabChange={handleTabChange} counts={counts} />
 
       <main className="main-content">
         <GlobalSearchResults
@@ -280,6 +282,7 @@ export function App() {
         )}
         </ErrorBoundary>
       </main>
+      </div>
     </div>
   );
 }
