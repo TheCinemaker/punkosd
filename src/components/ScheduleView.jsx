@@ -10,6 +10,7 @@ import { getFestivalClock, parseRange, sortByTime, findOverlaps, formatClock, sh
 import { findArtist, hasRider, isContractSigned } from '../lib/artists';
 import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
+import { numOr } from '../lib/form';
 
 // Ezek a fellépő törzsadatai: a fellépőnél tárolódnak, nem a műsorsávnál
 const ARTIST_FIELDS = {
@@ -181,7 +182,7 @@ export function ScheduleView({
 
     // 1) Fellépő törzsadat mentése (új vagy meglévő)
     const artistData = {
-      fee: Number(f.fee) || 0,
+      fee: numOr(f.fee, 0),
       feeType: f.feeType,
       contractStatus: f.contractStatus,
       contact: f.contactName,
@@ -685,7 +686,7 @@ export function ScheduleView({
                     <option value="">— Meglévő fellépő kiválasztása —</option>
                     {artists.map(a => (
                       <option key={a.id} value={a.id}>
-                        {a.name} ({a.fee ? `${Number(a.fee).toLocaleString('hu-HU')} Ft` : 'gázsi nincs megadva'} • {a.contractStatus})
+                        {a.name} ({`${Number(a.fee || 0).toLocaleString('hu-HU')} Ft`} • {a.contractStatus})
                       </option>
                     ))}
                   </select>

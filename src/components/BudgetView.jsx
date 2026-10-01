@@ -64,9 +64,9 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
     e.preventDefault();
     const formData = new FormData(e.target);
     const qty = numOr(formData.get('qty'), 1);
-    const unitPrice = Number(formData.get('unitPrice')) || 0;
-    const grant = Number(formData.get('grant')) || 0;
-    const own = Number(formData.get('own')) || (qty * unitPrice - grant);
+    const unitPrice = numOr(formData.get('unitPrice'), 0);
+    const grant = numOr(formData.get('grant'), 0);
+    const own = numOr(formData.get('own'), qty * unitPrice - grant);
 
     const updated = {
       ...selectedItem,

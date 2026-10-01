@@ -7,6 +7,7 @@ import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
 import { docName } from '../lib/files';
 import { telHref } from '../lib/artists';
+import { numOr } from '../lib/form';
 
 export function ContractorsView({ contractors, onUpdateContractors, onAddLog, currentUser, searchQuery }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -86,7 +87,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
       contactName: formData.get('contactName'),
       phone: formData.get('phone'),
       email: formData.get('email'),
-      feeHuf: Number(formData.get('feeHuf')) || 0,
+      feeHuf: numOr(formData.get('feeHuf'), 0),
       contractStatus: formData.get('contractStatus'),
       paymentStatus: formData.get('paymentStatus'),
       invoiceNumber: formData.get('invoiceNumber'),
@@ -292,7 +293,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                       </div>
                     </td>
                     <td style={{ fontWeight: '800', color: '#b45309', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      {c.feeHuf ? `${c.feeHuf.toLocaleString()} Ft` : '-'}
+                      {`${Number(c.feeHuf || 0).toLocaleString('hu-HU')} Ft`}
                     </td>
                     <td>
                       <span className={`badge ${isSigned ? 'badge-green' : 'badge-amber'}`}>

@@ -90,8 +90,8 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
       water: formData.get('water') === 'true',
       trashBins: numOr(formData.get('trashBins'), 1),
       trashBagsIssued: numOr(formData.get('trashBagsIssued'), 5),
-      deposit: Number(formData.get('deposit')) || 0,
-      fee: Number(formData.get('fee')) || 0,
+      deposit: numOr(formData.get('deposit'), 0),
+      fee: numOr(formData.get('fee'), 0),
       feePaid: formData.get('feePaid') === 'true',
       status: formData.get('status') || 'Visszaigazolva',
       contractStatus: formData.get('contractStatus') || 'Nincs még',
@@ -347,7 +347,7 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
                     {v.trashBagsIssued} db
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: '800', color: '#047857' }}>
-                    {v.deposit ? `${v.deposit.toLocaleString()} Ft` : '-'}
+                    {`${Number(v.deposit || 0).toLocaleString('hu-HU')} Ft`}
                   </td>
                   <td>
                     <span className={`badge ${contractBadge(v.contractStatus)}`}>

@@ -129,8 +129,8 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
       store: formData.get('store'),
       qty: numOr(formData.get('qty'), 1),
       unit: formData.get('unit'),
-      estimatedPrice: Number(formData.get('estimatedPrice')) || 0,
-      actualPrice: Number(formData.get('actualPrice')) || 0,
+      estimatedPrice: numOr(formData.get('estimatedPrice'), 0),
+      actualPrice: numOr(formData.get('actualPrice'), 0),
       createdBy: selectedItem.createdBy || currentUser,
       createdAt: selectedItem.createdAt || new Date().toLocaleString('sv-SE').slice(0, 16),
       responsible: formData.get('responsible') || currentUser,
@@ -400,10 +400,10 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                     )}
                   </td>
                   <td style={{ textAlign: 'right', color: '#0f172a', fontWeight: '600', whiteSpace: 'nowrap' }}>
-                    {item.estimatedPrice ? `${item.estimatedPrice.toLocaleString()} Ft` : '-'}
+                    {`${Number(item.estimatedPrice || 0).toLocaleString('hu-HU')} Ft`}
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: '800', color: item.actualPrice ? '#047857' : '#64748b', whiteSpace: 'nowrap' }}>
-                    {item.actualPrice ? `${item.actualPrice.toLocaleString()} Ft` : '-'}
+                    {item.isPurchased || item.actualPrice ? `${Number(item.actualPrice || 0).toLocaleString('hu-HU')} Ft` : '-'}
                   </td>
                   <td>
                     {item.hasReceipt ? (

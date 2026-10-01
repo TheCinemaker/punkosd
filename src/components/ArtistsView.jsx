@@ -71,7 +71,7 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
       contact: formData.get('contact').trim(),
       phone: formData.get('phone').trim(),
       email: formData.get('email').trim(),
-      fee: Number(formData.get('fee')) || 0,
+      fee: numOr(formData.get('fee'), 0),
       feeType: formData.get('feeType'),
       contractStatus: formData.get('contractStatus'),
       paymentStatus: formData.get('paymentStatus'),
@@ -195,7 +195,7 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
                       <div style={{ fontSize: '11.5px', color: '#0f172a', fontWeight: '500' }}>{a.email}</div>
                     </td>
                     <td style={{ fontWeight: '800', color: '#000000', textAlign: 'right', whiteSpace: 'nowrap' }}>
-                      {a.fee ? `${a.fee.toLocaleString()} Ft` : '0 Ft'}
+                      {`${Number(a.fee || 0).toLocaleString('hu-HU')} Ft`}
                     </td>
                     <td style={{ fontSize: '12px', color: '#0f172a', fontWeight: '600' }}>
                       {a.feeType}
