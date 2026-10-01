@@ -13,16 +13,24 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
     ? users.map(u => u.name) 
     : ['Szilveszter', 'Gábor', 'Robi', 'Péter', 'Adrienn', 'Bea'];
 
+  // Javasolt kategóriák + a már beírtak (szabadon bővíthető)
   const categories = [
     'Összes kategória',
-    'Pályázat & Admin',
-    'Nagyszínpad',
-    'Technika & Áram',
-    'Engedélyek & Hatóság',
-    'Árusok & Gasztro',
-    'Higiénia & Szemét',
-    'Bontás & Elszámolás'
+    ...Array.from(new Set([
+      'Pályázat & Admin',
+      'Nagyszínpad',
+      'Technika & Áram',
+      'Engedélyek & Hatóság',
+      'Árusok & Gasztro',
+      'Fellépők & Program',
+      'Marketing & Nyomda',
+      'Higiénia & Szemét',
+      'Bontás & Elszámolás',
+      ...tasks.map(t => t.category).filter(Boolean)
+    ]))
   ];
+  // Szűrőben csak a ténylegesen használt kategóriák
+  const usedCategories = Array.from(new Set(tasks.map(t => t.category).filter(Boolean))).sort((a, b) => a.localeCompare(b, 'hu'));
 
   // Toggle completion with WHO checked it and WHEN!
   const handleToggleTask = (task) => {
@@ -55,7 +63,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
     const newTask = {
       id: uid('tsk'),
       title: formData.get('title'),
-      category: formData.get('category'),
+      category: (formData.get('category') || '').trim(),
       priority: formData.get('priority'),
       assignedTo: formData.get('assignedTo') || currentUser,
       dueDate: formData.get('dueDate'),
@@ -180,7 +188,7 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
             style={{ fontSize: '13px', padding: '7px 10px', width: 'auto' }}
           >
             <option value="all">Minden kategória</option>
-            {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
+            {usedCategories.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
 
           <select
@@ -356,9 +364,10 @@ export function TasksView({ tasks, onUpdateTasks, onAddLog, currentUser, searchQ
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Kategória
                     </label>
-                    <select name="category" style={{ width: '100%' }}>
-                      {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <input name="category" list="task-categories" required placeholder="Válassz vagy írj be újat" style={{ width: '100%' }} />
+                    <datalist id="task-categories">
+                      {categories.slice(1).map(c => <option key={c} value={c} />)}
+                    </datalist>
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
