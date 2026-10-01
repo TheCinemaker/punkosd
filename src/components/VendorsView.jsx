@@ -5,6 +5,7 @@ import { docUrl } from '../lib/files';
 import { uid } from '../lib/store';
 import { telHref } from '../lib/artists';
 import { responsibleCalls } from '../lib/contacts';
+import { numOr } from '../lib/form';
 
 // Szerződés állapotai (sorrend = folyamat)
 const CONTRACT_STATUSES = [
@@ -87,8 +88,8 @@ export function VendorsView({ vendors, onUpdateVendors, contractors = [], onAddL
       phone: formData.get('phone'),
       power: formData.get('power'),
       water: formData.get('water') === 'true',
-      trashBins: Number(formData.get('trashBins')) || 1,
-      trashBagsIssued: Number(formData.get('trashBagsIssued')) || 5,
+      trashBins: numOr(formData.get('trashBins'), 1),
+      trashBagsIssued: numOr(formData.get('trashBagsIssued'), 5),
       deposit: Number(formData.get('deposit')) || 0,
       fee: Number(formData.get('fee')) || 0,
       feePaid: formData.get('feePaid') === 'true',

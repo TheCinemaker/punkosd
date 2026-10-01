@@ -6,6 +6,7 @@ import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
 import { buildArtistInfo } from '../lib/callsheet';
 import { copyText } from '../lib/contacts';
+import { numOr } from '../lib/form';
 
 export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [], onAddLog, currentUser, searchQuery }) {
   const [copyMsg, setCopyMsg] = useState('');
@@ -79,7 +80,7 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
       hospitality: formData.get('hospitality'),
       diet: formData.get('diet'),
       accommodation: formData.get('accommodation'),
-      passes: Number(formData.get('passes')) || 1,
+      passes: numOr(formData.get('passes'), 1),
       parkingInfo: (formData.get('parkingInfo') || '').trim()
     };
 

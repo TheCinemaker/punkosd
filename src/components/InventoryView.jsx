@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Package, Plus, Edit2, Trash2, Tag, CheckCircle2, AlertTriangle, MapPin, UserCheck, X } from 'lucide-react';
 import { uid } from '../lib/store';
+import { numOr } from '../lib/form';
 
 export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentUser, searchQuery }) {
   const [selectedCat, setSelectedCat] = useState('all');
@@ -57,7 +58,7 @@ export function InventoryView({ inventory, onUpdateInventory, onAddLog, currentU
       code: formData.get('code'),
       name: formData.get('name'),
       category: formData.get('category'),
-      qty: Number(formData.get('qty')) || 1,
+      qty: numOr(formData.get('qty'), 1),
       unit: formData.get('unit'),
       location: formData.get('location'),
       responsible: formData.get('responsible'),

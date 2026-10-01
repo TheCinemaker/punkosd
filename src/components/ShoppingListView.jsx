@@ -5,6 +5,7 @@ import {
   User, Check, Layers, Tag
 } from 'lucide-react';
 import { uid } from '../lib/store';
+import { numOr } from '../lib/form';
 
 export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterCategory, setFilterCategory] = useState('all');
@@ -126,7 +127,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
       name: formData.get('name'),
       category: formData.get('category'),
       store: formData.get('store'),
-      qty: Number(formData.get('qty')) || 1,
+      qty: numOr(formData.get('qty'), 1),
       unit: formData.get('unit'),
       estimatedPrice: Number(formData.get('estimatedPrice')) || 0,
       actualPrice: Number(formData.get('actualPrice')) || 0,

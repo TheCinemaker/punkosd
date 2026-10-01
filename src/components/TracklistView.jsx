@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Music, Plus, Edit2, Trash2, CheckCircle2, Clock, X } from 'lucide-react';
 import { uid } from '../lib/store';
+import { numOr } from '../lib/form';
 
 export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog, currentUser, searchQuery }) {
   const [selectedArtist, setSelectedArtist] = useState('all');
@@ -48,7 +49,7 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
     const updated = {
       ...selectedTrack,
       artist: formData.get('artist'),
-      order: Number(formData.get('order')) || 1,
+      order: numOr(formData.get('order'), 1),
       title: formData.get('title'),
       composers: formData.get('composers'),
       lyricists: formData.get('lyricists'),

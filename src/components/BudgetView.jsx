@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { DollarSign, Plus, Edit2, Trash2, CheckCircle2, PieChart, X } from 'lucide-react';
 import { uid } from '../lib/store';
+import { numOr } from '../lib/form';
 
 export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, searchQuery }) {
   const [selectedCat, setSelectedCat] = useState('all');
@@ -62,7 +63,7 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
   const handleSaveModal = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const qty = Number(formData.get('qty')) || 1;
+    const qty = numOr(formData.get('qty'), 1);
     const unitPrice = Number(formData.get('unitPrice')) || 0;
     const grant = Number(formData.get('grant')) || 0;
     const own = Number(formData.get('own')) || (qty * unitPrice - grant);
