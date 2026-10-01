@@ -13,7 +13,7 @@ const APPEND_ONLY = new Set(['logs']);
 const LOG_LIMIT = 1000;
 const RETRY_MS = 5000;
 // Emeld meg, ha a kezdő adatkészlet lecserélődik: a régi helyi adat egyszer törlődik minden eszközön
-const DATA_VERSION = 2;
+const DATA_VERSION = 3;
 
 function resetOutdatedLocalData(keys) {
   if (getLocalData('dataVersion', 1) === DATA_VERSION) return;

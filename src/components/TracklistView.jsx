@@ -24,7 +24,7 @@ export function TracklistView({ tracklist, onUpdateTracklist, artists, onAddLog,
     setIsNew(true);
     setSelectedTrack({
       id: uid('trk'),
-      artist: uniqueArtists[0] || 'Ocho Macho',
+      artist: uniqueArtists[0] || artists[0]?.name || '',
       order: tracklist.length + 1,
       title: '',
       composers: '',

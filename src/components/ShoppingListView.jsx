@@ -25,25 +25,15 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
     'Iroda & Nyomda'
   ];
 
+  // Beszerzési források: a már használtakból (szabadon bővíthető)
   const stores = [
     'Összes beszerzési forrás',
-    'Stage Pro Hungary Kft.',
-    'Acoustic Sound Kft.',
-    'Aggregátor Bérlés Kft.',
-    'ToiToi & Dixi Kft.',
-    'Kőszegi Kommunális Kft.',
-    'Kordonbér Kft.',
-    'Savaria Nyomda Kft.',
-    'Metro Szombathely (Nagyker)',
-    'Bauhaus / Praktiker (Barkács)',
-    'Kőszegi Élelmiszer / Coop / Spar',
-    'Kőszegi Tüzép / Építőanyag',
-    'Irodaszer & Nyomda'
+    ...Array.from(new Set(shoppingList.map(i => i.store).filter(Boolean))).sort((x, y) => x.localeCompare(y, 'hu'))
   ];
 
   const teamMembers = [
     'Összes felelős',
-    ...(users.length > 0 ? users.map(u => u.name) : ['Szilveszter', 'Gábor', 'Robi', 'Peti', 'Adrienn', 'Bea'])
+    ...(users.length > 0 ? users.map(u => u.name) : ['Szilveszter', 'Gábor', 'Robi', 'Péter', 'Adrienn', 'Bea'])
   ];
 
   const filtered = shoppingList.filter(item => {
@@ -104,7 +94,7 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
       id: uid('shp'),
       name: '',
       category: 'Kellékek & Barkács',
-      store: 'Metro Szombathely (Nagyker)',
+      store: '',
       qty: 1,
       unit: 'db',
       estimatedPrice: 5000,
@@ -503,9 +493,10 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>
                       Beszerzési Forrás / Szállító / Bolt
                     </label>
-                    <select name="store" defaultValue={selectedItem.store} style={{ width: '100%', fontSize: '13.5px' }}>
-                      {stores.slice(1).map(s => <option key={s} value={s}>{s}</option>)}
-                    </select>
+                    <input name="store" defaultValue={selectedItem.store} list="store-list" placeholder="pl. Metro Szombathely, bérlő cég neve..." style={{ width: '100%', fontSize: '13.5px' }} />
+                    <datalist id="store-list">
+                      {stores.slice(1).map(s => <option key={s} value={s} />)}
+                    </datalist>
                   </div>
                 </div>
 
