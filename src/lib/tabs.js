@@ -1,6 +1,6 @@
 import {
   Home, Calendar, Users, Building2, MapPin, CheckSquare, ShoppingCart, Wine,
-  Package, DollarSign, History, UserCheck, Phone, FileCheck, ShieldCheck
+  Package, DollarSign, History, UserCheck, Phone, FileCheck, ShieldCheck, Wallet, Handshake
 } from 'lucide-react';
 
 // Menüpontok csoportokba rendezve; `collection` = melyik adatlistához tartozik (globális kereséshez)
@@ -19,7 +19,9 @@ export const TABS = [
   { id: 'shopping', group: 'Helyszín & produkció', label: 'Beszerzés', longLabel: 'Beszerzés & Anyagigény', icon: ShoppingCart, collection: 'shoppingList' },
   { id: 'inventory', group: 'Helyszín & produkció', label: 'Készlet', longLabel: 'Készlet & Zsákok', icon: Package, collection: 'inventory' },
 
+  { id: 'finance', group: 'Pénzügy', label: 'Pénzügy', longLabel: 'Pénzügyi áttekintés', icon: Wallet, collection: 'income' },
   { id: 'budget', group: 'Pénzügy', label: 'Költségvetés', longLabel: 'Pályázati Költségvetés', icon: DollarSign, collection: 'budget' },
+  { id: 'sponsors', group: 'Pénzügy', label: 'Szponzorok', longLabel: 'Szponzorok & támogatók', icon: Handshake, collection: 'sponsors' },
 
   { id: 'team', group: 'Csapat', label: 'Stáb', longLabel: 'Szervezők & Stáb', icon: UserCheck, collection: 'users' },
 

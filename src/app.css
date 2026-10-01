@@ -237,6 +237,26 @@ a { color: #1d4ed8; }
 .trash-actions { display: flex; align-items: center; gap: 6px; }
 @media (max-width: 768px) { .trash-item { flex-direction: column; align-items: stretch; } }
 
+/* Pénzügy, szponzorok */
+.fin-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 14px; }
+.fin-kpi { background: #fff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; display: flex; flex-direction: column; gap: 2px; }
+.fin-kpi span { font-size: 12px; font-weight: 800; color: #334155; text-transform: uppercase; letter-spacing: .03em; display: inline-flex; align-items: center; gap: 5px; }
+.fin-kpi strong { font-size: 22px; font-weight: 800; }
+.fin-kpi small { font-size: 12.5px; color: #475569; }
+.fin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.fin-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.fin-table th, .fin-table td { padding: 7px 8px; border-bottom: 1px solid #e2e8f0; text-align: right; background: none; text-transform: none; letter-spacing: 0; font-size: 13px; }
+.fin-table th:first-child, .fin-table td:first-child { text-align: left; }
+.fin-total td { font-weight: 800; border-top: 2px solid #cbd5e1; }
+.fin-lines { display: flex; flex-direction: column; }
+.fin-lines div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 0; border-bottom: 1px solid #e2e8f0; font-size: 13.5px; }
+.fin-lines span { color: #475569; }
+.obligations { display: flex; flex-direction: column; gap: 2px; }
+.obligation { display: flex; align-items: center; gap: 6px; text-align: left; font-size: 13px; padding: 4px 2px; color: #0f172a; }
+.obligation.done { color: #64748b; text-decoration: line-through; }
+.obligation-edit { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; border-bottom: 1px dashed #e2e8f0; font-size: 13.5px; }
+@media (max-width: 1100px) { .fin-kpis { grid-template-columns: 1fr 1fr; } .fin-grid { grid-template-columns: 1fr; } }
+
 /* Hibavédő */
 .error-box {
   max-width: 640px; margin: 24px auto; background: #fff; border: 2px solid #fca5a5; border-radius: 12px;

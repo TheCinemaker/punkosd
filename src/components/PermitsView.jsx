@@ -4,6 +4,7 @@ import { uid } from '../lib/store';
 import { numOr } from '../lib/form';
 import { docUrl } from '../lib/files';
 import { DocSlot } from './DocSlot';
+import { BudgetLineSelect } from './BudgetLineSelect';
 
 export const PERMIT_STATUSES = [
   { value: 'Teendő (nincs beadva)', badge: 'badge-gray', open: true },
@@ -41,7 +42,7 @@ function deadlineInfo(permit, today) {
   return { text: `${days} nap van hátra`, tone: 'gray' };
 }
 
-export function PermitsView({ permits, onUpdatePermits, users = [], onAddLog, currentUser, searchQuery = '' }) {
+export function PermitsView({ permits, onUpdatePermits, users = [], budget = [], onAddLog, currentUser, searchQuery = '' }) {
   const [filter, setFilter] = useState('open');
   const [selected, setSelected] = useState(null);
   const [isNew, setIsNew] = useState(false);
@@ -97,6 +98,8 @@ export function PermitsView({ permits, onUpdatePermits, users = [], onAddLog, cu
       validFrom: f.get('validFrom'),
       validTo: f.get('validTo'),
       fee: numOr(f.get('fee'), 0),
+      feePaid: f.get('feePaid') === 'true',
+      budgetLine: f.get('budgetLine') || '',
       notes: f.get('notes').trim()
     };
     if (isNew) {
@@ -260,9 +263,19 @@ export function PermitsView({ permits, onUpdatePermits, users = [], onAddLog, cu
                     <input type="date" name="validTo" defaultValue={selected.validTo} />
                   </div>
                 </div>
-                <div>
-                  <label className="field-label">Díj / illeték (Ft)</label>
-                  <input type="number" name="fee" min="0" defaultValue={selected.fee} />
+                <div className="grid-3">
+                  <div>
+                    <label className="field-label">Díj / illeték (Ft)</label>
+                    <input type="number" name="fee" min="0" defaultValue={selected.fee} />
+                  </div>
+                  <div>
+                    <label className="field-label">Díj kifizetve?</label>
+                    <select name="feePaid" defaultValue={String(Boolean(selected.feePaid))}>
+                      <option value="false">Még nem</option>
+                      <option value="true">Igen</option>
+                    </select>
+                  </div>
+                  <BudgetLineSelect budget={budget} value={selected.budgetLine} />
                 </div>
 
                 <div className="section-box">

@@ -17,6 +17,8 @@ export const COLLECTION_LABELS = {
   incidents: 'SOS / problémák',
   mapPoints: 'Térképpontok',
   permits: 'Engedélyek',
+  income: 'Bevételek',
+  sponsors: 'Szponzorok',
   trash: 'Lomtár'
 };
 

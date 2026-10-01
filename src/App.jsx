@@ -21,6 +21,9 @@ import { AuditLogView } from './components/AuditLogView';
 import { TeamView } from './components/TeamView';
 import { PermitsView, isPermitOpen } from './components/PermitsView';
 import { TrashView, TRASH_DAYS } from './components/TrashView';
+import { FinanceView } from './components/FinanceView';
+import { SponsorsView } from './components/SponsorsView';
+import { expenseEntries, assignedByBudgetLine } from './lib/finance';
 
 import {
   DEFAULT_USERS,
@@ -60,6 +63,8 @@ const COLLECTIONS = {
   mapPoints: MAP_POINTS,
   permits: [],
   stages: STAGES,
+  income: [],
+  sponsors: [],
   trash: []
 };
 
@@ -165,7 +170,8 @@ export function App() {
     return <PinLogin onLogin={setCurrentUser} users={data.users} />;
   }
 
-  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, trash } = data;
+  const { users, schedule, artists, contractors, vendors, tasks, shoppingList, inventory, budget, logs, incidents, mapPoints, permits, stages, income, sponsors, trash } = data;
+  const budgetAssigned = assignedByBudgetLine(expenseEntries({ artists, contractors, shoppingList, permits }));
 
   const totalBudgetHuf = budget.reduce((sum, b) => sum + (Number(b.qty) || 0) * (Number(b.unitPrice) || 0), 0);
   const myOpenTasks = tasks.filter(t => !t.completed && t.assignedTo === currentUser).length;
@@ -186,6 +192,8 @@ export function App() {
     permitsAlert: permits.some(p => isPermitOpen(p) && p.deadline && (new Date(p.deadline) - new Date()) / 86400000 <= 14),
     inventory: inventory.length,
     trash: trash.length || undefined,
+    sponsors: sponsors.length,
+    sponsorsAlert: sponsors.some(sp => (sp.obligations || []).some(o => !o.done) && sp.status !== 'Nem vállalta'),
     budget: `${(totalBudgetHuf / 1000000).toFixed(1)}M`,
     logs: logs.length,
     dashboard: incidents.filter(i => !i.isResolved).length || undefined,
@@ -268,11 +276,11 @@ export function App() {
         )}
 
         {activeTab === 'artists' && (
-          <ArtistsView artists={artists} onUpdateArtists={setter('artists')} schedule={schedule} users={users} {...common} />
+          <ArtistsView artists={artists} onUpdateArtists={setter('artists')} schedule={schedule} users={users} budget={budget} {...common} />
         )}
 
         {activeTab === 'contractors' && (
-          <ContractorsView contractors={contractors} onUpdateContractors={setter('contractors')} {...common} />
+          <ContractorsView contractors={contractors} onUpdateContractors={setter('contractors')} budget={budget} {...common} />
         )}
 
         {activeTab === 'team' && (
@@ -306,11 +314,11 @@ export function App() {
         )}
 
         {activeTab === 'shopping' && (
-          <ShoppingListView shoppingList={shoppingList} onUpdateShoppingList={setter('shoppingList')} users={users} {...common} />
+          <ShoppingListView shoppingList={shoppingList} onUpdateShoppingList={setter('shoppingList')} users={users} budget={budget} {...common} />
         )}
 
         {activeTab === 'permits' && (
-          <PermitsView permits={permits} onUpdatePermits={setter('permits')} users={users} {...common} />
+          <PermitsView permits={permits} onUpdatePermits={setter('permits')} users={users} budget={budget} {...common} />
         )}
 
         {activeTab === 'vendors' && (
@@ -322,7 +330,28 @@ export function App() {
         )}
 
         {activeTab === 'budget' && (
-          <BudgetView budget={budget} onUpdateBudget={setter('budget')} {...common} />
+          <BudgetView budget={budget} onUpdateBudget={setter('budget')} assigned={budgetAssigned} {...common} />
+        )}
+
+        {activeTab === 'finance' && (
+          <FinanceView
+            artists={artists}
+            contractors={contractors}
+            shoppingList={shoppingList}
+            permits={permits}
+            vendors={vendors}
+            sponsors={sponsors}
+            budget={budget}
+            income={income}
+            onUpdateIncome={setter('income')}
+            onNavigate={handleTabChange}
+            onAddLog={handleAddLog}
+            currentUser={currentUser}
+          />
+        )}
+
+        {activeTab === 'sponsors' && (
+          <SponsorsView sponsors={sponsors} onUpdateSponsors={setter('sponsors')} {...common} />
         )}
 
         {activeTab === 'trash' && (

@@ -3,30 +3,28 @@ import { DollarSign, Plus, Edit2, Trash2, CheckCircle2, PieChart, X } from 'luci
 import { uid } from '../lib/store';
 import { numOr } from '../lib/form';
 
-export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, searchQuery }) {
+export function BudgetView({ budget, onUpdateBudget, assigned = {}, onAddLog, currentUser, searchQuery }) {
   const [selectedCat, setSelectedCat] = useState('all');
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isNew, setIsNew] = useState(false);
 
-  const categories = [
-    'Összes tétel',
+  const suggestedCategories = Array.from(new Set([
     'Színpad- és Hangtechnika',
     'Fellépői Tiszteletdíjak',
     'Higiénia és Hulladékkezelés',
     'Biztonság és Engedélyek',
     'Marketing és Nyomda',
     'Infrastruktúra és Áram',
-    'Tartalékkeret'
-  ];
+    'Tartalékkeret',
+    ...budget.map(b => b.category).filter(Boolean)
+  ]));
+  const categories = ['Összes tétel', ...Array.from(new Set(budget.map(b => b.category).filter(Boolean)))];
 
   const filtered = budget.filter(b => {
     const matchesCat = selectedCat === 'all' || b.category === selectedCat;
-    const matchesSearch = !searchQuery ||
-      b.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.supplier.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      b.invoice.toLowerCase().includes(searchQuery.toLowerCase());
+    const q = (searchQuery || '').toLowerCase();
+    const matchesSearch = !q || [b.code, b.name, b.supplier, b.invoice, b.category].some(v => (v || '').toLowerCase().includes(q));
     return matchesCat && matchesSearch;
   });
 
@@ -39,16 +37,16 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
     setIsNew(true);
     setSelectedItem({
       id: uid('bgt'),
-      code: `KTG-0${budget.length + 1}`,
-      category: 'Színpad- és Hangtechnika',
+      code: `KTG-${String(budget.length + 1).padStart(2, '0')}`,
+      category: '',
       name: '',
       qty: 1,
       unit: 'db',
-      unitPrice: 100000,
-      grant: 80000,
-      own: 20000,
+      unitPrice: 0,
+      grant: 0,
+      own: '',
       supplier: '',
-      invoice: '-',
+      invoice: '',
       status: 'Tervezett'
     });
     setIsModalOpen(true);
@@ -71,7 +69,7 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
     const updated = {
       ...selectedItem,
       code: formData.get('code'),
-      category: formData.get('category'),
+      category: (formData.get('category') || '').trim(),
       name: formData.get('name'),
       qty,
       unit: formData.get('unit'),
@@ -222,6 +220,8 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
               <th>Összköltség</th>
               <th>Pályázatból (Ft)</th>
               <th>KTSZE Önrész</th>
+              <th title="A fellépők, szolgáltatók, beszerzések és engedélyek közül ehhez a sorhoz rendelt kiadások">Tény (hozzárendelve)</th>
+              <th>Eltérés</th>
               <th>Szállító / Partner</th>
               <th>Bizonylatszám</th>
               <th>Státusz</th>
@@ -231,7 +231,7 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
           <tbody>
             {filtered.length === 0 ? (
               <tr>
-                <td colSpan={12} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
+                <td colSpan={14} style={{ textAlign: 'center', padding: '36px', color: '#475569' }}>
                   Nem található költségtétel a szűrési feltételekkel.
                 </td>
               </tr>
@@ -251,16 +251,23 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
                     {b.qty} {b.unit}
                   </td>
                   <td style={{ textAlign: 'right', color: '#0f172a', whiteSpace: 'nowrap', fontWeight: '600' }}>
-                    {b.unitPrice.toLocaleString()} Ft
+                    {Number(b.unitPrice || 0).toLocaleString('hu-HU')} Ft
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: '800', color: '#000000', whiteSpace: 'nowrap' }}>
-                    {(b.qty * b.unitPrice).toLocaleString()} Ft
+                    {Number((b.qty || 0) * (b.unitPrice || 0)).toLocaleString('hu-HU')} Ft
                   </td>
                   <td style={{ textAlign: 'right', fontWeight: '800', color: '#1d4ed8', whiteSpace: 'nowrap' }}>
-                    {b.grant.toLocaleString()} Ft
+                    {Number(b.grant || 0).toLocaleString('hu-HU')} Ft
                   </td>
                   <td style={{ textAlign: 'right', color: '#b45309', whiteSpace: 'nowrap', fontWeight: '700' }}>
-                    {b.own.toLocaleString()} Ft
+                    {Number(b.own || 0).toLocaleString('hu-HU')} Ft
+                  </td>
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap', fontWeight: '700' }}>
+                    {Number(assigned[b.id]?.total || 0).toLocaleString('hu-HU')} Ft
+                    {assigned[b.id]?.count ? <div className="dash-muted" style={{ fontSize: '11px' }}>{assigned[b.id].count} tétel</div> : null}
+                  </td>
+                  <td style={{ textAlign: 'right', whiteSpace: 'nowrap', fontWeight: '800', color: (b.qty * b.unitPrice) - (assigned[b.id]?.total || 0) < 0 ? '#b91c1c' : '#047857' }}>
+                    {Number((b.qty * b.unitPrice) - (assigned[b.id]?.total || 0)).toLocaleString('hu-HU')} Ft
                   </td>
                   <td style={{ fontSize: '12.5px', color: '#0f172a', fontWeight: '500' }}>
                     {b.supplier}
@@ -315,9 +322,10 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>Költségvetési Főkategória</label>
-                    <select name="category" defaultValue={selectedItem.category} style={{ width: '100%' }}>
-                      {categories.slice(1).map(c => <option key={c} value={c}>{c}</option>)}
-                    </select>
+                    <input name="category" defaultValue={selectedItem.category} list="budget-categories" required placeholder="Válassz vagy írj be újat" style={{ width: '100%' }} />
+                    <datalist id="budget-categories">
+                      {suggestedCategories.map(c => <option key={c} value={c} />)}
+                    </datalist>
                   </div>
                 </div>
 
@@ -348,7 +356,7 @@ export function BudgetView({ budget, onUpdateBudget, onAddLog, currentUser, sear
                   </div>
                   <div>
                     <label style={{ display: 'block', fontSize: '12px', fontWeight: '800', color: '#0f172a', marginBottom: '4px' }}>KTSZE Önrész (Ft)</label>
-                    <input type="number" name="own" defaultValue={selectedItem.own} style={{ width: '100%' }} />
+                    <input type="number" name="own" defaultValue={selectedItem.own} placeholder="üresen: összköltség − támogatás" style={{ width: '100%' }} />
                   </div>
                 </div>
 

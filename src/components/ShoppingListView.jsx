@@ -6,8 +6,10 @@ import {
 } from 'lucide-react';
 import { uid } from '../lib/store';
 import { numOr } from '../lib/form';
+import { BudgetLineSelect } from './BudgetLineSelect';
+import { DocSlot } from './DocSlot';
 
-export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog, currentUser, searchQuery, users = [] }) {
+export function ShoppingListView({ shoppingList, onUpdateShoppingList, budget = [], onAddLog, currentUser, searchQuery, users = [] }) {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all'); // 'all', 'pending', 'purchased'
   const [filterAssignee, setFilterAssignee] = useState('all');
@@ -136,6 +138,8 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
       responsible: formData.get('responsible') || currentUser,
       priority: formData.get('priority') || 'Normál',
       hasReceipt: formData.get('hasReceipt') === 'true',
+      budgetLine: formData.get('budgetLine') || '',
+      receiptDoc: selectedItem.receiptDoc || null,
       notes: formData.get('notes')
     };
 
@@ -563,6 +567,12 @@ export function ShoppingListView({ shoppingList, onUpdateShoppingList, onAddLog,
                     <option value="true">Igen (KTSZE névre szóló számla leadva)</option>
                     <option value="false">Még nincs számla</option>
                   </select>
+                </div>
+
+                <div className="grid-2">
+                  <BudgetLineSelect budget={budget} value={selectedItem.budgetLine} />
+                  <DocSlot label="Számla / blokk (fotó is jó)" doc={selectedItem.receiptDoc} folder="shopping/receipts" emptyText="Nincs feltöltve"
+                    onChange={(doc) => setSelectedItem(prev => ({ ...prev, receiptDoc: doc }))} />
                 </div>
 
                 <div>

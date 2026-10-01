@@ -5,12 +5,13 @@ import {
 } from 'lucide-react';
 import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
+import { BudgetLineSelect } from './BudgetLineSelect';
 import { CONTRACT_STATUSES, CONTRACT_PENDING, normalizeContract, contractBadge } from '../lib/statuses';
 import { docName } from '../lib/files';
 import { telHref } from '../lib/artists';
 import { numOr } from '../lib/form';
 
-export function ContractorsView({ contractors, onUpdateContractors, onAddLog, currentUser, searchQuery }) {
+export function ContractorsView({ contractors, onUpdateContractors, budget = [], onAddLog, currentUser, searchQuery }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedContractor, setSelectedContractor] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -99,6 +100,7 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
       feeHuf: numOr(formData.get('feeHuf'), 0),
       contractStatus: formData.get('contractStatus'),
       paymentStatus: formData.get('paymentStatus'),
+      budgetLine: formData.get('budgetLine') || '',
       invoiceNumber: formData.get('invoiceNumber'),
       notes: formData.get('notes'),
       contractDoc: selectedContractor.contractDoc,
@@ -464,6 +466,8 @@ export function ContractorsView({ contractors, onUpdateContractors, onAddLog, cu
                     </select>
                   </div>
                 </div>
+
+                <BudgetLineSelect budget={budget} value={selectedContractor.budgetLine} />
 
                 {/* DOCUMENT MANAGEMENT SECTION (Contract, Quote, Completion) */}
                 <div style={{

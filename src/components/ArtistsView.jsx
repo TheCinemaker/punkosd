@@ -4,12 +4,13 @@ import { telHref, hasRider as artistHasRider } from '../lib/artists';
 import { docUrl } from '../lib/files';
 import { uid } from '../lib/store';
 import { DocSlot } from './DocSlot';
+import { BudgetLineSelect } from './BudgetLineSelect';
 import { buildArtistInfo } from '../lib/callsheet';
 import { copyText } from '../lib/contacts';
 import { numOr } from '../lib/form';
 import { CONTRACT_STATUSES, normalizeContract, contractBadge } from '../lib/statuses';
 
-export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [], onAddLog, currentUser, searchQuery }) {
+export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [], budget = [], onAddLog, currentUser, searchQuery }) {
   const [copyMsg, setCopyMsg] = useState('');
 
   const handleCopyInfo = async (artist) => {
@@ -76,6 +77,8 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
       feeType: formData.get('feeType'),
       contractStatus: formData.get('contractStatus'),
       paymentStatus: formData.get('paymentStatus'),
+      budgetLine: formData.get('budgetLine') || '',
+      invoiceDoc: selectedArtist.invoiceDoc || null,
       techRider: formData.get('techRider'),
       riderApproved: formData.get('riderApproved') === 'on',
       hospitality: formData.get('hospitality'),
@@ -360,6 +363,11 @@ export function ArtistsView({ artists, onUpdateArtists, schedule = [], users = [
                       <option value="Teljesen kifizetve">Teljesen kifizetve</option>
                     </select>
                   </div>
+                </div>
+                <div className="grid-2">
+                  <BudgetLineSelect budget={budget} value={selectedArtist.budgetLine} />
+                  <DocSlot label="Számla" doc={selectedArtist.invoiceDoc} folder="artists/invoices" emptyText="Még nem érkezett"
+                    onChange={(doc) => setSelectedArtist(prev => ({ ...prev, invoiceDoc: doc }))} />
                   <div>
                     <label style={{ display: 'block', fontSize: '11.5px', fontWeight: '700', color: '#334155', marginBottom: '3px' }}>
                       VIP / Backstage Behajtó Pass (db)
